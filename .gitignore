@@ -21,3 +21,10 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+#PompaESP32
+PompaESP32/.pio
+PompaESP32/.vscode/.browse.c_cpp.db*
+PompaESP32/.vscode/c_cpp_properties.json
+PompaESP32/.vscode/launch.json
+PompaESP32/.vscode/ipch
