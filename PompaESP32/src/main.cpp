@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Sensors.h>
 
-Sensors sensors(34,3000,1100,0x4A,0x76,0x20,7);
+Sensors sensors(34,2700,1000,0x4A,0x76,0x20,7);
 uint32_t interval = 5000;
 uint32_t lastDisplay = 0;
 

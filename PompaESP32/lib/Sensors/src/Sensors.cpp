@@ -72,7 +72,7 @@ void Sensors::setScropeSoilMoisture(int minValue, int maxValue)
 
 int Sensors::getValueSoilMoisture()
 {
-    if (soil_Moisture_PIN > 0) {
+    if (soil_Moisture_PIN > 0 && max_Value_Soil_Moisture > -1) {
         value_Soil_Moisture = analogRead(soil_Moisture_PIN);
         return map(value_Soil_Moisture, min_Value_Soil_Moisture, max_Value_Soil_Moisture, 0, 100);
     }

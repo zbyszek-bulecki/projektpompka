@@ -29,8 +29,8 @@ class Sensors
 private:
     int soil_Moisture_PIN; // soil moisture sensor  (PIN 34)
     int value_Soil_Moisture = 0;
-    int min_Value_Soil_Moisture = 0; //4095;
-    int max_Value_Soil_Moisture = 0;
+    int min_Value_Soil_Moisture = -1; //4095;
+    int max_Value_Soil_Moisture = -1;
 
     Max44009 *light_Sensor = NULL; // Light sensor GY-49 MAX44009  (addres 0x4A)
    

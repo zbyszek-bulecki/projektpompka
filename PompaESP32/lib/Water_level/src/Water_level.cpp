@@ -1,17 +1,10 @@
-
-
 #include "Water_level.h"
-// #include "PCF8574.h"
-
-
-// PCF8574 pcf8574()
 
 Water_level::Water_level(uint8_t address, int level) 
   : pcf8574_(address)
 {
   address_ = address;
   level_ = level;
-
 }
 
 bool Water_level::begin() {
