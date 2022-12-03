@@ -1,0 +1,17 @@
+Login: <input type="text" id="login" name="login"><br>
+Password: <input type="password" id="password" name="password"><br>
+<script>
+    function tryToLogin(){
+        let login = document.getElementById("login").value;
+        let password = document.getElementById("password").value;
+        let body = login + ":" + password;
+        contentManager.buildRequest('user_information', response=>{
+            loadMainComponent('components/module-page/user-page.html');
+        })
+        .post()
+        .withBody(body)
+        .withErrorCallback(response => alert('Couldn\'t login'))
+        .send();
+    }
+</script>   
+<button type="button" onclick="tryToLogin()">Login</button>
