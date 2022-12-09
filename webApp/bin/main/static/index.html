@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="lib/restShark.js"></script>
+    </head>
+    <script>
+        function loadMainComponent(url){
+            contentManager.buildRequestComponent(url, '#page').send();
+        }
+
+        contentManager.addFilter((response)=>{
+            let code = response.status;
+            if(code === 401 || code === 403){
+                loadMainComponent('components/module-login/login-page.html');
+                return false;
+            }
+            return true;
+        });
+    </script>
+<body>
+
+<div id="page"></div>
+
+<script>
+    loadMainComponent('components/module-login/login-page.html');
+</script>    
+
+</body>
+</html> 

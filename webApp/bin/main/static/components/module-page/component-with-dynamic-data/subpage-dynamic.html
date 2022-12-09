@@ -1,0 +1,14 @@
+<i  onload="alert('test')">List with genders:</i>
+<div id="component2-list"></div>
+
+<script>
+    function handleResponseList(response, selector){
+        let text = '';
+        for(const record of response.body){
+            text += '<b>' + record.name + ' - ' + record.surname + '</b> [' + record.age + "]<br/>";
+        }
+        document.querySelector(selector).innerHTML = text;
+    }
+
+    contentManager.buildRequest('/list', response=>{handleResponseList(response, '#component2-list')}).send();
+</script>
