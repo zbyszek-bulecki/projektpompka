@@ -29,16 +29,28 @@ const uint16_t port = 1234; // port TCP server
     digitalWrite(LED_BUILTIN, HIGH);
 
     DynamicJsonDocument doc(1024);
-    doc["address"] = WiFi.macAddress();
+    doc["address"] = "0";//WiFi.macAddress();
     doc["soil"] = sensors.getValueSoilMoisture();
-    doc["light"] = sensors.getLuxValueLightSensor();
-    doc["temp"] = sensors.getTemperature();
-    doc["pressure"] = sensors.getPressure();
+    doc["light"] = String(sensors.getLuxValueLightSensor(), 2);
+    doc["temp"] = String(sensors.getTemperature(), 2);
+    doc["pressure"] = String(sensors.getPressure(), 2);
     doc["water"] = sensors.getValueWaterLevel();
-    
+
+    float voltage = 0;
+    for (int i = 0; i < 32; i++){
+      voltage += analogRead(32);
+    }
+    voltage /=32;
+    voltage = voltage * (3.3/4096);
+    voltage = voltage * 2.1;
+    doc["voltage"] = String(voltage, 2);
+
+
     SharkFrameManager manager = SharkFrameManager(client);
     String outJson;
     serializeJson(doc, outJson);
+
+Serial.println(outJson);
 
     manager.send("sensors", outJson);
 
@@ -58,6 +70,7 @@ const uint16_t port = 1234; // port TCP server
 void setup() {
   Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(32, INPUT); 
   sensors.begin();
 
   WiFi.begin(ssid, password);
