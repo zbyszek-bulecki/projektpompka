@@ -3,7 +3,15 @@
 const short HEADER_SIZE = 3;
 
 SharkFrameManager::SharkFrameManager(WiFiClient& client){
-    this->client = client;
+  this->client = client;
+  this->remains = {};
+  this->remainsSize = 0;
+}
+
+void SharkFrameManager::stashRemains(Buffer buffer, int from){
+  this->remains = new uint8_t[buffer.size - from];
+  std::copy(buffer.data + from, buffer.data + buffer.size, this->remains);
+  this->remainsSize = buffer.size - from;
 }
 
 SharkMessage SharkFrameManager::read(){
@@ -12,111 +20,166 @@ SharkMessage SharkFrameManager::read(){
   message.key="";
   message.value="";
 
+  Serial.println("waiting...");
   int maxloops = 0;  
-  while (!client.available() && maxloops < 1000){
-    maxloops++;
-    delay(1); //delay 1 msec
-  }
+  int expectedLenght = 3;
+  Serial.println("=========================================================================");
+  while(!message.success && maxloops < 10000 && client.connected()){  
+    delay(1);
+    int available = client.available();
+    if (available + this->remainsSize > expectedLenght){
 
-  if (client.available() > 0){
-    uint8_t *buffer = new uint8_t[8000];
-    size_t lenght = client.readBytes(buffer, (size_t)8000);
-    /*
-      f000oooo
-      pppppppp
-      pppppppp
-    */
+      Serial.print(">>");
+      Serial.print(available);
+      Serial.print("::");
+      Serial.println(this->remainsSize);
 
-    // 10001011 & 10000000 => 10000000 >> 7 => 00000001
-    int fin = (buffer[0] & 128) >> 7;  
-    // 10001011 & 00001111 => 00001011
-    unsigned int opcode = (unsigned int)(buffer[0] & 15);
-    // tablica bajtów = 00000001 00000111
-    // 00000001 => 00000001 //255 skok o 1
-    // 00000111 => 00000111 00000000 // 256 - 65281 skok o 255
+      Serial.println("parsing message...");
+      uint8_t *rawBuffer;
+      size_t lenght;
+      if(available>0){
+        Serial.println("reading from buffer");
+        rawBuffer = new uint8_t[8000];
+        lenght = client.readBytes(rawBuffer, (size_t)8000);
+      }
+      else{
+        Serial.println("reading from remains");
+        rawBuffer = {};
+        lenght = 0;  
+      }
+      Buffer buffer = this->mergeRemainsWithBuffer(rawBuffer, lenght);
+      SharkMessageHeader header = this->readHeader(buffer);
 
-    //  1234
-    //  12 i 34
-    //  34
-    //  1200
-    //  1234
+      Serial.print(">>>>>>");
+      Serial.print(HEADER_SIZE);
+      Serial.print("+");
+      Serial.print(header.payloadSize);
+      Serial.print("?");
+      Serial.println(buffer.size);
 
-    // 65536 - 255 = 65281
 
-    // int = 00000111 00000001
-    unsigned int payloadSize = 0;
-    for(int i=0; i<HEADER_SIZE-1; i++){
-        payloadSize += ((unsigned int)buffer[i+1] << (i * 8));
+      if(buffer.size < HEADER_SIZE + header.payloadSize){
+        expectedLenght = buffer.size - HEADER_SIZE - header.payloadSize;
+        //this->stashRemains(buffer, HEADER_SIZE + header.payloadSize);
+        Serial.print("not enough");
+        continue;
+      }
+
+      Serial.print(">>>>");
+      Serial.println(buffer.size);
+
+      delete this->remains;
+      this->stashRemains(buffer, HEADER_SIZE + header.payloadSize);
+      std::copy(buffer.data + HEADER_SIZE + header.payloadSize, buffer.data + buffer.size, this->remains);
+
+      Serial.print(">>>>");
+      Serial.println(this->remainsSize);
+
+      if(header.opcode==PING_OPCODE){
+        this->sendPong();
+        continue;
+      }
+
+      String payload(buffer.data + HEADER_SIZE, header.payloadSize);
+      int separatorPosition = payload.indexOf(':');
+
+      message.success = true;
+      message.key = payload.substring(0, separatorPosition);
+      message.value = payload.substring(separatorPosition + 1, header.payloadSize);
+
+      delete rawBuffer;
     }
-
-    Serial.print("fin: ");
-    Serial.println(fin);
-    Serial.print("opcode: ");
-    Serial.println(opcode);
-    Serial.print("payloadSize: ");
-    Serial.println(payloadSize); 
-
-    String payload(buffer+HEADER_SIZE, lenght);
-    int separatorPosition = payload.indexOf(':');
-
-    message.success = true;
-    message.key = payload.substring(0, separatorPosition);
-    message.value = payload.substring(separatorPosition + 1, payloadSize);
-
-    delete buffer;
   }
-  else{
+
+  if(maxloops >= 1000){
     Serial.println("client.available() timed out ");
   }
+
   return message;
 }
 
-SharkMessage SharkFrameManager::readHeader(){
+Buffer SharkFrameManager::mergeRemainsWithBuffer(uint8_t *buffer, size_t lenght){
+  int combinedLenght = this->remainsSize + lenght;
+  uint8_t * data = new uint8_t[combinedLenght];
+  std::copy(this->remains, this->remains + remainsSize, data);
+  std::copy(buffer, buffer + lenght, data + this->remainsSize);  
+
+  Buffer merged;
+  merged.size = this->remainsSize + lenght;
+  merged.data = data;
   
+  this->remains = {};
+  this->remainsSize = 0;
+  return merged;
+}
+
+SharkMessageHeader SharkFrameManager::readHeader(Buffer buffer){
+  boolean fin = (buffer.data[0] & 128) >> 7 == 1 ? true : false;  
+  unsigned int opcode = (unsigned int)(buffer.data[0] & 15);
+  unsigned int payloadSize = 0;
+  for(int i=0; i<HEADER_SIZE-1; i++){
+      payloadSize += ((unsigned int)buffer.data[i+1] << (i * 8));
+  }
+
+  Serial.print("fin: ");
+  Serial.println(fin);
+  Serial.print("opcode: ");
+  Serial.println(opcode);
+  Serial.print("payloadSize: ");
+  Serial.println(payloadSize); 
+
+  SharkMessageHeader header;
+  header.fin = fin;
+  header.opcode = opcode;
+  header.payloadSize = payloadSize;
+  return header;
 }
 
 void SharkFrameManager::send(String key, String value){
+    if(!client.connected()){
+      return;
+    }
+
     long payloadSize = key.length() + 1 + value.length();
     if(payloadSize > INT32_MAX){
         Serial.println("Message too big");
         return;
     }
 
-    bool fin = true; //todo
-    short messageType = MSG_OPCODE;
+    bool fin = true;
+    short opcode = MSG_OPCODE;
 
-    char* buffor = new char[HEADER_SIZE + payloadSize]; // ramka = tablica o długości header size + payload size
+    char* buffer = new char[HEADER_SIZE + payloadSize];
+    this->createHeader(buffer, fin, opcode, payloadSize);
 
-    //bajt z fin i opcode
-    buffor[0] = 0;
-    if(fin){
-        buffor[0] += 128; // 10000000
-    }
-    buffor[0] += messageType; // 00000001 => 10000001
-
-    //wyznaczenie bajtów odpowiedzialny za dlugość
-    for(int i=0; i<HEADER_SIZE-1; i++){
-        buffor[HEADER_SIZE-1-i] = (payloadSize >> (i * 8));
-    }
-
-    // String - obiekt (tablicy charów jest niemutowalna)
-
-    // rzutuje string na tablice bytów
     const char* keyBytes = key.c_str();
     const char* valueBytes = value.c_str();  
 
-    // kopiowanie klucza do ramki
-    // odkąd, dokąd, gdzie zacząć zapisywać
-    std::copy(keyBytes, keyBytes + key.length(), buffor + HEADER_SIZE);
-
-    // wstawienie separatora
-    buffor[HEADER_SIZE + key.length()] = 58; // 58 = ":"
-
-    // kopiowanie wartości do ramki
-    std::copy(valueBytes, valueBytes + value.length(), buffor + HEADER_SIZE + 1 + key.length());
+    std::copy(keyBytes, keyBytes + key.length(), buffer + HEADER_SIZE);
+    buffer[HEADER_SIZE + key.length()] = 58;
+    std::copy(valueBytes, valueBytes + value.length(), buffer + HEADER_SIZE + 1 + key.length());
     
-    // wysyłanie
-    String frame(buffor, HEADER_SIZE+payloadSize);
+    String frame(buffer, HEADER_SIZE+payloadSize);
     this->client.print(frame);
-    delete buffor;
+    delete buffer;
+}
+
+void SharkFrameManager::sendPong(){
+  Serial.println("sending pong");
+  char* buffer = new char[HEADER_SIZE];
+  this->createHeader(buffer, true, PONG_OPCODE, 0);
+  String frame(buffer, HEADER_SIZE);
+  this->client.print(frame);
+  delete buffer;
+}
+
+void SharkFrameManager::createHeader(char *frame, boolean fin, short opcode, int payloadSize){
+  frame[0] = 0;
+  if(fin){
+      frame[0] += 128;
+  }
+  frame[0] += opcode;
+  for(int i=0; i<HEADER_SIZE-1; i++){
+      frame[HEADER_SIZE-1-i] = (payloadSize >> (i * 8));
+  }
 }
