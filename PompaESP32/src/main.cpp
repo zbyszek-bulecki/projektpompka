@@ -41,8 +41,8 @@ const uint16_t port = 1234; // port TCP server
       voltage += analogRead(32);
     }
     voltage /=32;
-    voltage = voltage * (3.3/4096);
-    voltage = voltage * 2.1;
+    voltage = voltage * (3.5/4096);
+    voltage = voltage * 2.0;
     doc["voltage"] = String(voltage, 2);
 
 
