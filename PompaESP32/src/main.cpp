@@ -29,7 +29,7 @@ const uint16_t port = 1234; // port TCP server
     digitalWrite(LED_BUILTIN, HIGH);
 
     DynamicJsonDocument doc(1024);
-    doc["address"] = "0";//WiFi.macAddress();
+    doc["address"] = WiFi.macAddress();
     doc["soil"] = sensors.getValueSoilMoisture();
     doc["light"] = String(sensors.getLuxValueLightSensor(), 2);
     doc["temp"] = String(sensors.getTemperature(), 2);
