@@ -71,9 +71,8 @@ void sendSensorsValue()
   }
 
   readFile(SD, "/logs/sensorData.txt");
-}
 
-SharkMessage msg = manager.read();
+  SharkMessage msg = manager.read();
 
 if (msg.success)
 {
