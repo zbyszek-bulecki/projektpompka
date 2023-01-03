@@ -5,11 +5,10 @@
 #include "SharkFrameManager.h"
 #include "FS.h"
 #include "SD.h"
-#include "SPI.h"
 #include "FileOperations.h"
 
-const char *SSID = "HUAWEI_B818_8EB9";
-const char *PASSWORD = "R6AAQ903L9E";
+const char *SSID = "Pancernik";
+const char *PASSWORD = "KawkaKawusia@2k21";
 
 Sensors sensors(34, 2700, 1000, 0x4A, 0x76, 0x20, 7);
 uint32_t interval = 600000;
@@ -22,15 +21,15 @@ void sendSensorsValue()
   Serial.print("Connecting to ");
   Serial.println(host);
 
-  WiFiClient client;
-  if (!client.connect(host, port))
-  {
-    Serial.println("Connection failed.");
-    Serial.println("Waiting 5 seconds before retrying...");
-    delay(5000);
-    return;
-  }
-  digitalWrite(LED_BUILTIN, HIGH);
+  // WiFiClient client;
+  // if (!client.connect(host, port))
+  // {
+  //   Serial.println("Connection failed.");
+  //   Serial.println("Waiting 5 seconds before retrying...");
+  //   delay(5000);
+  //   return;
+  // }
+  // digitalWrite(LED_BUILTIN, HIGH);
 
   DynamicJsonDocument doc(1024);
   doc["address"] = "0"; // WiFi.macAddress();
@@ -50,11 +49,11 @@ void sendSensorsValue()
   voltage = voltage * 2.1;
   doc["voltage"] = String(voltage, 2);
 
-  SharkFrameManager manager = SharkFrameManager(client);
+  // SharkFrameManager manager = SharkFrameManager(client);
   String outJson;
   serializeJson(doc, outJson);
   Serial.println(outJson);
-  manager.send("sensors", outJson);
+  // manager.send("sensors", outJson);
 
   String data;
   serializeJson(doc, data);
@@ -72,27 +71,52 @@ void sendSensorsValue()
 
   readFile(SD, "/logs/sensorData.txt");
 
-  SharkMessage msg = manager.read();
+//  SharkMessage msg = manager.read();
 
-if (msg.success)
-{
-  Serial.print("key: ");
-  Serial.println(msg.key.c_str());
-  Serial.print("value: ");
-  Serial.println(msg.value.c_str());
-}
+// if (msg.success)
+// {
+//   Serial.print("key: ");
+//   Serial.println(msg.key.c_str());
+//   Serial.print("value: ");
+//   Serial.println(msg.value.c_str());
+// }
 
-Serial.println("Closing connection.");
-client.stop();
-digitalWrite(LED_BUILTIN, LOW);
+// Serial.println("Closing connection.");
+// client.stop();
+// digitalWrite(LED_BUILTIN, LOW);
 }
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(32, INPUT);
   sensors.begin();
+
+  if(!SD.begin()){
+        Serial.println("Card Mount Failed");
+        return;
+    }
+    uint8_t cardType = SD.cardType();
+
+    if(cardType == CARD_NONE){
+        Serial.println("No SD card attached");
+        return;
+    }
+
+    Serial.print("SD Card Type: ");
+    if(cardType == CARD_MMC){
+        Serial.println("MMC");
+    } else if(cardType == CARD_SD){
+        Serial.println("SDSC");
+    } else if(cardType == CARD_SDHC){
+        Serial.println("SDHC");
+    } else {
+        Serial.println("UNKNOWN");
+    }
+
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
   WiFi.begin(SSID, PASSWORD);
   while (WiFi.status() != WL_CONNECTED)
