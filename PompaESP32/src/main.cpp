@@ -8,6 +8,9 @@
 #include "SPI.h"
 #include "FileOperations.h"
 
+#define uS_TO_S_FACTOR 1000000
+#define TIME_TO_SLEEP 5
+
 const char *WIFI_CONFIG_PATH = "/config/wifi.txt";
 
 Sensors sensors(34, 2700, 1000, 0x4A, 0x76, 0x20, 7);
@@ -154,14 +157,20 @@ void setup()
   Serial.println(WiFi.localIP());
 
   sendSensorsValue();
+
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+  Serial.println("ESP32 is going to sleep now ;-)");
+  Serial.flush();
+  esp_deep_sleep_start();
 }
 
 void loop()
 {
+  // Code in this loop is never executed.
 
-  if (millis() - lastDisplay >= interval)
-  {
-    lastDisplay += interval;
-    sendSensorsValue();
-  }
+  // if (millis() - lastDisplay >= interval)
+  // {
+  //   lastDisplay += interval;
+  //   sendSensorsValue();
+  // }
 }
