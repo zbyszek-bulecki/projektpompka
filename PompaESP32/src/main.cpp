@@ -2,7 +2,7 @@
 #include <WiFiMulti.h>
 
 #define uS_TO_S_FACTOR 1000000
-#define TIME_TO_SLEEP 5
+#define TIME_TO_SLEEP 15
 
 WiFiMulti WiFiMulti;
 
@@ -46,14 +46,7 @@ void setup() {
   Serial.println("Server connected, sending message.");
   client.flush();
   client.println(call);
-  Serial.println("Message sent:" + call);
-
-  // // long millis = millis();
-
-  // while (client.available() <= 0) {
-  //   Serial.print('.');
-  //   delay(1);
-  // }
+  Serial.println("Message sent: " + call);
 
   Serial.println("Reading response from server.");
   String response = client.readStringUntil('\n');
@@ -73,5 +66,6 @@ void setup() {
 }
 
 void loop() {
-  //This is not going to be called
+  //Code put here will never be exectued, because after waking up from sleep the ESP32 will run the setup() function
+  // and go to sleep at the end of it until it wakes up and runs the setup() function again. It never reaches loop().
 }
