@@ -2,6 +2,19 @@
 #include "SD.h"
 #include "SPI.h"
 
+struct config {
+    String ssid;
+    String pwd;
+    String host;
+    uint16_t port;
+    uint16_t sleep_time;
+};
+
+config myConfig;
+myConfig.ssid = "kotek";
+
+
+
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\n", dirname);
 

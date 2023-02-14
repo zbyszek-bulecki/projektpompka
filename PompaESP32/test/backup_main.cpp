@@ -154,19 +154,6 @@ void setup()
   Serial.println(WiFi.localIP());
 
   sendSensorsValue();
-
-  struct esp32config
-  {
-    String ssid;
-    String wifPwd;
-    String server_name;
-    uint16_t server_ip_address;
-    uint16_t server_port;
-    uint16_t sleepTime;
-  };
-  
-  esp32config config;
-  config.server_ip_address = 
 }
 
 void loop()
