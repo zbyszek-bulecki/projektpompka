@@ -3,18 +3,16 @@
 #include "SPI.h"
 
 const char *WIFI_CONFIG_PATH = "/config/config.txt";
+std::string wifiConfig;
 
-    struct esp32config
+    struct
   {
-    String ssid;
-    String wifPwd;
+    std::string ssid;
+    std::string wifPwd;
     uint16_t server_ip_address;
     uint16_t server_port;
     uint16_t sleepTime;
-  };
-
-esp32config.ssid = "kokoszka";
-
+  } esp32config;
 
 void loadConfiguration()
 {
@@ -25,6 +23,7 @@ void loadConfiguration()
   }
     File myfile = SD.open(WIFI_CONFIG_PATH);
     std::string wifiConfig;
+    std::string tmpString;
 
     if (myfile)
     {
@@ -43,17 +42,16 @@ void loadConfiguration()
 
     char *p;
     p = strchr(wifiConfig.c_str(), '=');
-    esp32config.
-    wifiPwd.append(p + 1);
-    Serial.println(wifiPwd.c_str());
+    esp32config.ssid.append(p + 1);
+    Serial.println(esp32config.wifPwd.c_str());
 
     int b;
-    b = (wifiConfig.length() - wifiPwd.length() - 1);
+    b = (wifiConfig.length() - esp32config.wifPwd.length() - 1);
     
     for (int i = 0; i < b; i++)
     {
-        ssid += wifiConfig[i];
+        esp32config.ssid += wifiConfig[i];
     }
 
-    Serial.println(ssid.c_str());
+    Serial.println(esp32config.ssid.c_str());
 }
