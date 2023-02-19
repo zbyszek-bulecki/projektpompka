@@ -3,54 +3,73 @@
 #include "SPI.h"
 
 const char *WIFI_CONFIG_PATH = "/config/config.txt";
-std::string wifiConfig;
+std::string config;
 
-    struct
-  {
+struct
+{
     std::string ssid;
     std::string wifPwd;
     uint16_t server_ip_address;
     uint16_t server_port;
     uint16_t sleepTime;
-  } esp32config;
+} esp32config;
 
-void loadConfiguration()
+unsigned int lineCounter()
 {
-      if (!SD.begin())
-  {
-    Serial.println("Card Mount Failed");
-    return;
-  }
+    unsigned int number_of_lines = 0;
+    FILE *infile = fopen(WIFI_CONFIG_PATH, "r"); //otwiera plik w trybie odczytu
+    int ch;
+
+    while (EOF != (ch = getc(infile)))
+        if ('\n' == ch)
+            ++number_of_lines;
+    return number_of_lines;
+}
+
+std::string loadConfiguration()
+{
+    if (!SD.begin())
+    {
+        Serial.println("Card Mount Failed");
+        return; //powinno być 'return' czy 'return 0'?
+        //FIXME write correct return statement
+    }
     File myfile = SD.open(WIFI_CONFIG_PATH);
-    std::string wifiConfig;
-    std::string tmpString;
 
     if (myfile)
     {
         while (myfile.available())
         {
-            wifiConfig += (myfile.read());
+            config += (myfile.read());
         }
         myfile.close();
     }
     else
     {
-        Serial.println("Error opening WiFi config file.");
+        Serial.println("Error opening config file.");
     }
+    return config;
+}
 
-    Serial.println(wifiConfig.c_str());
+void parseConfiguration()
+{
+
+    Serial.println(config.c_str());
 
     char *p;
-    p = strchr(wifiConfig.c_str(), '=');
-    esp32config.ssid.append(p + 1);
+    p = strchr(config.c_str(), '='); // tniemy config az napotkamy '='
+    esp32config.ssid.append(p + 1);  // dopisujemy do esp32config.ssid wszystko co jest po '='
+    // if (strcmp(esp32config.ssid, "ssid") = 0)
+    {
+    }
     Serial.println(esp32config.wifPwd.c_str());
 
     int b;
-    b = (wifiConfig.length() - esp32config.wifPwd.length() - 1);
-    
+    b = (config.length() - esp32config.wifPwd.length() - 1);
+
     for (int i = 0; i < b; i++)
     {
-        esp32config.ssid += wifiConfig[i];
+        esp32config.ssid += config[i];
     }
 
     Serial.println(esp32config.ssid.c_str());
