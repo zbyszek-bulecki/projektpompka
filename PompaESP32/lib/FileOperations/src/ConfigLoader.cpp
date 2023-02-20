@@ -2,7 +2,6 @@
 #include "SD.h"
 #include "SPI.h"
 
-const char *WIFI_CONFIG_PATH = "/config/config.txt";
 std::string config;
 
 struct
@@ -14,10 +13,10 @@ struct
     uint16_t sleepTime;
 } esp32config;
 
-unsigned int lineCounter()
+unsigned int lineCounter(const char *configFilePath)
 {
     unsigned int number_of_lines = 0;
-    FILE *infile = fopen(WIFI_CONFIG_PATH, "r"); //otwiera plik w trybie odczytu
+    FILE *infile = fopen(configFilePath, "r"); //otwiera plik w trybie odczytu
     int ch;
 
     while (EOF != (ch = getc(infile)))
@@ -26,15 +25,15 @@ unsigned int lineCounter()
     return number_of_lines;
 }
 
-std::string loadConfiguration()
+std::string loadConfiguration(const char *configFilePath)
 {
     if (!SD.begin())
     {
         Serial.println("Card Mount Failed");
-        return; //powinno być 'return' czy 'return 0'?
+        //powinno być 'return' czy 'return 0'?
         //FIXME write correct return statement
     }
-    File myfile = SD.open(WIFI_CONFIG_PATH);
+    File myfile = SD.open(configFilePath);
 
     if (myfile)
     {

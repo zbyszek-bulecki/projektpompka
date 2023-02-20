@@ -7,10 +7,12 @@
 
 void setup(){
 
+  const char *CONFIG_PATH = "/config/config.txt";
+
   Serial.begin(115200);
   delay(1000);
   Serial.println("Hello from setup BEFORE the loadConfiguration function is activated.");
-  loadConfiguration();
+  loadConfiguration(CONFIG_PATH);
   delay(1000);
   Serial.println("Hello from setup AFTER the loadConfiguration fuction is activated");
   

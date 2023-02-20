@@ -5,5 +5,8 @@
 #include "SD.h"
 #include "SPI.h"
 
-void loadConfiguration();
+std::string loadConfiguration(const char *configFilePath);
+
+unsigned int lineCounter(const char *configFilePath);
+
 #endif
