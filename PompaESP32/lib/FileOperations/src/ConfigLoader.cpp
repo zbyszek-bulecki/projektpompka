@@ -19,13 +19,15 @@ unsigned int lineCounter(const char *configFilePath)
         Serial.println("Card Mount Failed");
 
     unsigned int number_of_lines = 0;
-    FILE *infile = fopen(configFilePath, "r"); // opens file in read-only mode
+    FILE *infile = fopen(configFilePath, "r"); // Opens file in read-only mode.
     int ch;
 
     while (EOF != (ch = getc(infile)))
         if ('\n' == ch)
             ++number_of_lines;
     return number_of_lines;
+
+    //FIXME: Exception handling when reading from SD card.
 }
 
 std::string loadConfiguration(const char *configFilePath)
@@ -45,6 +47,8 @@ std::string loadConfiguration(const char *configFilePath)
         Serial.println("Error opening config file.");
     }
     return config;
+
+    //FIXME: Exception handling when reading from SD card.
 }
 
 void parseConfiguration(const char *configFilePath)
@@ -58,6 +62,7 @@ void parseConfiguration(const char *configFilePath)
     {
         configLines[i] = config.substr(0,config.find(endOfLine));
         config = config.erase(configLines[i].size());
-        Serial.println(configLines[i].c_str());        
+        Serial.println(configLines[i].c_str());
+        //TODO: Parsing single config lines and writing them to struct.
     }
 }
