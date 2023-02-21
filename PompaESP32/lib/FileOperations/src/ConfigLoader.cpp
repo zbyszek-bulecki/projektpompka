@@ -15,8 +15,11 @@ struct
 
 unsigned int lineCounter(const char *configFilePath)
 {
+    if (!SD.begin())
+        Serial.println("Card Mount Failed");
+
     unsigned int number_of_lines = 0;
-    FILE *infile = fopen(configFilePath, "r"); //otwiera plik w trybie odczytu
+    FILE *infile = fopen(configFilePath, "r"); // opens file in read-only mode
     int ch;
 
     while (EOF != (ch = getc(infile)))
@@ -27,21 +30,15 @@ unsigned int lineCounter(const char *configFilePath)
 
 std::string loadConfiguration(const char *configFilePath)
 {
-    if (!SD.begin())
-    {
-        Serial.println("Card Mount Failed");
-        //powinno być 'return' czy 'return 0'?
-        //FIXME write correct return statement
-    }
-    File myfile = SD.open(configFilePath);
+    File file = SD.open(configFilePath);
 
-    if (myfile)
+    if (file)
     {
-        while (myfile.available())
+        while (file.available())
         {
-            config += (myfile.read());
+            config += (file.read());
         }
-        myfile.close();
+        file.close();
     }
     else
     {
@@ -50,26 +47,17 @@ std::string loadConfiguration(const char *configFilePath)
     return config;
 }
 
-void parseConfiguration()
+void parseConfiguration(const char *configFilePath)
 {
+    unsigned int numberOfLines = lineCounter(configFilePath);
+    loadConfiguration(configFilePath);
+    std::string configLines[numberOfLines];
+    char endOfLine[2] = {'/', 'n'};
 
-    Serial.println(config.c_str());
-
-    char *p;
-    p = strchr(config.c_str(), '='); // tniemy config az napotkamy '='
-    esp32config.ssid.append(p + 1);  // dopisujemy do esp32config.ssid wszystko co jest po '='
-    // if (strcmp(esp32config.ssid, "ssid") = 0)
+    for (size_t i = 0; i < numberOfLines; i++)
     {
+        configLines[i] = config.substr(0,config.find(endOfLine));
+        config = config.erase(configLines[i].size());
+        Serial.println(configLines[i].c_str());        
     }
-    Serial.println(esp32config.wifPwd.c_str());
-
-    int b;
-    b = (config.length() - esp32config.wifPwd.length() - 1);
-
-    for (int i = 0; i < b; i++)
-    {
-        esp32config.ssid += config[i];
-    }
-
-    Serial.println(esp32config.ssid.c_str());
 }

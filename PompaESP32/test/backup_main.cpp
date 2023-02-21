@@ -49,7 +49,7 @@ void sendSensorsValue()
   voltage = voltage * 2.1;
   doc["voltage"] = String(voltage, 2);
 
-  SharkFrameManager manager = SharkFrameManager(client);
+  xFrameManager manager = SharkFrameManager(client);
   String outJson;
   serializeJson(doc, outJson);
   Serial.println(outJson);
