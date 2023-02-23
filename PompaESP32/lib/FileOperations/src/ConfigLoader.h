@@ -7,7 +7,7 @@
 
 std::string loadConfiguration(const char *configFilePath);
 
-unsigned int lineCounter(const char *configFilePath);
+int lineCounter(const char *configFilePath);
 
 void parseConfiguration(const char *configFilePath);
 
