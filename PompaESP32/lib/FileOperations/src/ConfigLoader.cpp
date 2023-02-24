@@ -2,7 +2,7 @@
 #include <SD.h>
 #include <SPI.h>
 
-std::string config;
+char config[500];
 
 struct
 {
@@ -16,58 +16,61 @@ struct
 
 int lineCounter(const char *configFilePath)
 {
-    // if (!SD.begin())
-    // {
-    //     Serial.println("Card mount failed.");
-    //     return -1;
-    // }
-
     int numberOfLines = 0;
-    File myfile = SD.open("/config/config.txt");
-    while(myfile.available()){
-        if(myfile.read() == '\n'){
+    File myfile = SD.open(configFilePath);
+    while (myfile.available())
+    {
+        if (myfile.read() == '\n')
+        {
             numberOfLines++;
         }
-        }
-    Serial.println(numberOfLines);
+    }
     return numberOfLines;
-    }
+}
 
-    std::string loadConfiguration(const char *configFilePath)
+char *loadConfiguration(const char *configFilePath)
+{
+    if (!SD.begin())
     {
-        File file = SD.open(configFilePath);
+        Serial.println("Card Mount Failed");
+        return 0;
+    }
+    File file = SD.open(configFilePath);
 
-        if (file)
+    if (file)
+    {
+        while (file.available())
         {
-            while (file.available())
+            for (size_t i = 0; i < 500; i++)
             {
-                config += (file.read());
+                config[i] = file.read();
             }
-            file.close();
         }
-        else
-        {
-            Serial.println("Error opening config file.");
-        }
-        return config;
-
-        // FIXME: Exception handling when reading from SD card.
+        file.close();
     }
-
-    void parseConfiguration(const char *configFilePath)
+    else
     {
-        unsigned int numberOfLines = lineCounter(configFilePath);
-        loadConfiguration(configFilePath);
-        std::string configLines[numberOfLines];
-        char endOfLine[2] = {'/', 'n'};
-
-        for (size_t i = 0; i < numberOfLines; i++)
-        {
-            configLines[i] = config.substr(0, config.find(endOfLine));
-            config = config.erase(configLines[i].size());
-            Serial.println(configLines[i].c_str());
-            // TODO: Parsing single config lines and writing them to struct.
-            // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line
-
-        }
+        Serial.println("Error opening config file.");
     }
+    return config;
+}
+
+void parseConfiguration(const char *configFilePath)
+{
+    loadConfiguration(configFilePath);
+    // int numberOfLines = lineCounter(configFilePath);
+    // char *configLines[numberOfLines];
+    // char endOfLine = '\n';
+
+    Serial.print(config);
+
+    // for (size_t i = 0; i < numberOfLines; i++)
+    // {
+    //     Serial.print(". ");
+    //     // TODO: Parsing single config lines and writing them to struct.
+    //     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
+    //     // TODO: Check for correct encoding of text file (UTF-8).
+    //     // TODO: Check if the characters are from the correct ASCII range.
+    //     // TODO: Check if the number of characters in a line does not exceed a reasonable limit.
+    // }
+}
