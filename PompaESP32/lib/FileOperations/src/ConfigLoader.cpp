@@ -25,7 +25,8 @@ int lineCounter(const char *configFilePath)
             numberOfLines++;
         }
     }
-    return numberOfLines;
+    Serial.println(numberOfLines);
+    return numberOfLines + 1;
 }
 
 char *loadConfiguration(const char *configFilePath)
@@ -44,7 +45,7 @@ char *loadConfiguration(const char *configFilePath)
             for (size_t i = 0; i < 500; i++)
             {
                 config[i] = file.read();
-                if (config[i] == '\0')
+                if (config[i] == -1)
                 {
                     file.close();
                 }
@@ -59,11 +60,11 @@ char *loadConfiguration(const char *configFilePath)
     return config;
 }
 
-// char parseLines(char configKeys[]){
+// char parseLines(char *configKeys[], char *config[]){
 
 // }
 
-// char parseRows( char configRows[]){
+// char parseRows( char *configRows[], char *config[]){
 
 // }
 
@@ -71,12 +72,29 @@ void parseConfiguration(const char *configFilePath)
 {
     Serial.println(loadConfiguration(configFilePath));
 
-    int numberOfLines = lineCounter(configFilePath);
+    int numberOfLines = 8;
+    char configLines[numberOfLines][120];
     char configKeys[numberOfLines][60];
     char configValues[numberOfLines][60];
-    int j = 0;
+    Serial.println(numberOfLines);
+    int row = 0;
+    int character = 0;
 
-    // for (size_t i = 0; i < sizeof(config) / sizeof(config[0]); i++)
+    for (size_t i = 0; i < 500; i++)
+    {
+        configLines[row][character] = config[i];
+        character++;
+        if (character == 119)
+        {
+            break;
+        }
+        
+    }
+    Serial.println("======");
+    Serial.println(configLines[0]);
+    //first divide config into lines, then parse them
+
+    // for (size_t i = 0; i < 500; i++)
     // {
     //     Serial.println("o ");
 
