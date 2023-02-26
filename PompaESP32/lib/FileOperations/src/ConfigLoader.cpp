@@ -59,38 +59,48 @@ char *loadConfiguration(const char *configFilePath)
     return config;
 }
 
+// char parseLines(char configKeys[]){
+
+// }
+
+// char parseRows( char configRows[]){
+
+// }
+
 void parseConfiguration(const char *configFilePath)
 {
-    loadConfiguration(configFilePath);
+    Serial.println(loadConfiguration(configFilePath));
+
     int numberOfLines = lineCounter(configFilePath);
-    String *configLines[numberOfLines];
-    String *configKeys[numberOfLines];
-    String *configValues[numberOfLines];
+    char configKeys[numberOfLines][60];
+    char configValues[numberOfLines][60];
     int j = 0;
 
-    // Serial.println(config);
-    // Serial.println(numberOfLines);
+    // for (size_t i = 0; i < sizeof(config) / sizeof(config[0]); i++)
+    // {
+    //     Serial.println("o ");
 
-    for (size_t i = 0; i < 500; i++)
-    {
-        while (config[i] != '=')
-        {
-            configKeys[j]->concat(config[i]);
-        }
-        while (config[i] != '\n')
-        {
-            configValues[j]->concat(config[i]);
-        }
-        if (config[i] == '\n')
-        {
-            j++;
-        }
-    }
-    for (size_t i = 0; i < numberOfLines; i++)
-    {
-        Serial.println(configKeys[i]->c_str());
-        Serial.println(configValues[i]->c_str());
-    }
+    //     if (config[i] != '=' && config[i] != '\0')
+    //     {
+    //         configKeys[j][i] = config[i];
+    //         Serial.print("1st loop ");
+    //     }
+    //     if (config[i] != '\n' && config[i] != '\0')
+    //     {
+    //         configValues[j][i] = config[i];
+    //         Serial.print("2nd loop ");
+    //     }
+    //     if (config[i] == '\n')
+    //     {
+    //         j++;
+    //         Serial.print("the J-if ");
+    //     }
+    // }
+    // for (size_t l = 0; l < numberOfLines; l++)
+    // {
+    //     Serial.println(configKeys[l]);
+    //     Serial.println(configValues[l]);
+    // }
 
     // TODO: Parsing single config lines and writing them to struct.
     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
