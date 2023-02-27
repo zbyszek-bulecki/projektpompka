@@ -79,11 +79,17 @@ void parseConfiguration(const char *configFilePath)
     Serial.println(numberOfLines);
     int row = 0;
     int character = 0;
+    int lineCounter = 0;
 
     for (size_t i = 0; i < 500; i++)
     {
         configLines[row][character] = config[i];
         character++;
+        if (config[i] == '\n')
+        {
+            row++;
+        }
+        
         if (character == 119)
         {
             break;
@@ -92,6 +98,10 @@ void parseConfiguration(const char *configFilePath)
     }
     Serial.println("======");
     Serial.println(configLines[0]);
+    Serial.println(configLines[1]);
+    Serial.println(configLines[2]);
+    Serial.println(configLines[3]);
+    Serial.println(configLines[4]);
     //first divide config into lines, then parse them
 
     // for (size_t i = 0; i < 500; i++)
