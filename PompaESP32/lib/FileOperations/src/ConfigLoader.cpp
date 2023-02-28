@@ -94,9 +94,14 @@ void parseConfiguration(const char *configFilePath)
         character++;
         if (config[i] == '\n')
         {
+            configLines[row][character + 1] = 0;
             row++;
         }
         
+        if (character == 119)
+        {
+            character = 0;
+        }
         if (character == 119)
         {
             break;
