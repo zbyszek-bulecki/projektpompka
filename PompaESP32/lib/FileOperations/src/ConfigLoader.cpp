@@ -20,9 +20,12 @@ int lineCounter(const char *configFilePath)
     File myfile = SD.open(configFilePath);
     while (myfile.available())
     {
+        if(myfile.read() >= 0x20 && myfile.read() <= 0x7e)
+        {
         if (myfile.read() == '\n')
         {
             numberOfLines++;
+        }
         }
     }
     Serial.println(numberOfLines);
@@ -45,7 +48,7 @@ char *loadConfiguration(const char *configFilePath)
             for (size_t i = 0; i < 500; i++)
             {
                 config[i] = file.read();
-                if (config[i] == -1)
+                if (config[i] == EOF)
                 {
                     file.close();
                 }
@@ -83,7 +86,11 @@ void parseConfiguration(const char *configFilePath)
 
     for (size_t i = 0; i < 500; i++)
     {
+        if(config[i] >= 0x20 && config[i] <= 0x7e)
+        {
         configLines[row][character] = config[i];
+        }
+
         character++;
         if (config[i] == '\n')
         {
