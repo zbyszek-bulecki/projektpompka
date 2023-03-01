@@ -16,20 +16,16 @@ struct
 
 int lineCounter(const char *configFilePath)
 {
-    int numberOfLines = 0;
+    int numberOfLines = 1;
     File myfile = SD.open(configFilePath);
     while (myfile.available())
     {
-        if(myfile.read() >= 0x20 && myfile.read() <= 0x7e)
-        {
         if (myfile.read() == '\n')
         {
             numberOfLines++;
         }
-        }
     }
-    Serial.println(numberOfLines);
-    return numberOfLines + 1;
+    return numberOfLines;
 }
 
 char *loadConfiguration(const char *configFilePath)
@@ -63,84 +59,86 @@ char *loadConfiguration(const char *configFilePath)
     return config;
 }
 
-// char parseLines(char *configKeys[], char *config[]){
-
-// }
-
-// char parseRows( char *configRows[], char *config[]){
-
-// }
-
 void parseConfiguration(const char *configFilePath)
 {
     Serial.println(loadConfiguration(configFilePath));
 
-    int numberOfLines = 8;
-    char configLines[numberOfLines][120];
-    char configKeys[numberOfLines][60];
-    char configValues[numberOfLines][60];
-    Serial.println(numberOfLines);
+    int numberOfLines = lineCounter(configFilePath);
+    char configLines[numberOfLines][120]; // TO DO: dynamiczna alokacja pamięci zamiast statycznej
     int row = 0;
     int character = 0;
-    int lineCounter = 0;
+
+    memset(configLines[row], 0, 120);
 
     for (size_t i = 0; i < 500; i++)
     {
-        if(config[i] >= 0x20 && config[i] <= 0x7e)
-        {
-        configLines[row][character] = config[i];
-        }
-
-        character++;
         if (config[i] == '\n')
         {
-            configLines[row][character + 1] = 0;
+            configLines[row][character + 1] = '\0';
             row++;
-        }
-        
-        if (character == 119)
-        {
             character = 0;
+            memset(configLines[row], 0, 120);
         }
-        if (character == 119)
+        else
+        {
+            configLines[row][character] = config[i];
+            character++;
+        }
+
+        if (character >= 119)
         {
             break;
         }
-        
     }
+
+    row = 0;
+    character = 0;
+    row = 0;
+    char configKeys[numberOfLines][60];
+    char configValues[numberOfLines][60];
+    bool flag = 0;
+    memset(configKeys[row], 0, 60);
+    memset(configValues[row], 0, 60);
+
+    for (size_t character = 0; character < 120; character++)
+    {
+        if (configLines[row][character] == '\n')
+        {
+            configLines[row][character + 1] = '\0';
+            row++;
+            character = 0;
+            memset(configKeys[row], 0, 60);
+            memset(configValues[row], 0, 60);
+        }
+        else
+        {
+            if (configLines[row][character] != '=' && flag == 0)
+            {
+                configKeys[row][character] = configLines[row][character];
+            }
+            if (configLines[row][character] == '=')
+            {
+                flag = 1;
+                // character++;
+            }
+            if (flag == 1)
+            {
+            configValues[row][character] = configLines[row][character];
+            }
+        }
+    }
+
     Serial.println("======");
     Serial.println(configLines[0]);
-    Serial.println(configLines[1]);
-    Serial.println(configLines[2]);
-    Serial.println(configLines[3]);
-    Serial.println(configLines[4]);
-    //first divide config into lines, then parse them
 
-    // for (size_t i = 0; i < 500; i++)
-    // {
-    //     Serial.println("o ");
+    Serial.println("======");
+    Serial.println(configKeys[0]);
 
-    //     if (config[i] != '=' && config[i] != '\0')
-    //     {
-    //         configKeys[j][i] = config[i];
-    //         Serial.print("1st loop ");
-    //     }
-    //     if (config[i] != '\n' && config[i] != '\0')
-    //     {
-    //         configValues[j][i] = config[i];
-    //         Serial.print("2nd loop ");
-    //     }
-    //     if (config[i] == '\n')
-    //     {
-    //         j++;
-    //         Serial.print("the J-if ");
-    //     }
-    // }
-    // for (size_t l = 0; l < numberOfLines; l++)
-    // {
-    //     Serial.println(configKeys[l]);
-    //     Serial.println(configValues[l]);
-    // }
+    Serial.println("======");
+    Serial.println(configValues[0]);
+
+    Serial.println("====== FLAG ======");
+    Serial.println(flag);
 
     // TODO: Parsing single config lines and writing them to struct.
     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
