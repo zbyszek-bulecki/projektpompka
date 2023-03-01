@@ -33,7 +33,7 @@ char *loadConfiguration(const char *configFilePath)
     if (!SD.begin())
     {
         Serial.println("Card Mount Failed");
-        return 0;
+        return NULL;
     }
     File file = SD.open(configFilePath);
 
@@ -55,6 +55,7 @@ char *loadConfiguration(const char *configFilePath)
     else
     {
         Serial.println("Error opening config file.");
+        return NULL;
     }
     return config;
 }
@@ -74,7 +75,7 @@ void parseConfiguration(const char *configFilePath)
     {
         if (config[i] == '\n')
         {
-            configLines[row][character + 1] = '\0';
+            configLines[row][character + 1] = '\0'; // dodajemy znak końca tablicy
             row++;
             character = 0;
             memset(configLines[row], 0, 120);
@@ -91,39 +92,47 @@ void parseConfiguration(const char *configFilePath)
         }
     }
 
-    row = 0;
-    character = 0;
+    int characterWrite = 0;
     row = 0;
     char configKeys[numberOfLines][60];
     char configValues[numberOfLines][60];
     bool flag = 0;
-    memset(configKeys[row], 0, 60);
-    memset(configValues[row], 0, 60);
 
-    for (size_t character = 0; character < 120; character++)
+    for (int row2 = 0; row2 < numberOfLines; row2++)
     {
-        if (configLines[row][character] == '\n')
+        // row = 0;
+        memset(configKeys[row2], 0, 60);
+        memset(configValues[row2], 0, 60);
+        for (int characterRead = 0; characterRead < 120; characterRead++)
         {
-            configLines[row][character + 1] = '\0';
-            row++;
-            character = 0;
-            memset(configKeys[row], 0, 60);
-            memset(configValues[row], 0, 60);
-        }
-        else
-        {
-            if (configLines[row][character] != '=' && flag == 0)
+            if (configLines[row2][characterRead] == '\n')
             {
-                configKeys[row][character] = configLines[row][character];
+                configValues[row2][characterWrite] = '\0';
+                Serial.println(configValues[row2]);
+                characterRead = 0;
+                characterWrite = 0;
+                flag = 0;
+                break;
             }
-            if (configLines[row][character] == '=')
+            else
             {
-                flag = 1;
-                // character++;
-            }
-            if (flag == 1)
-            {
-            configValues[row][character] = configLines[row][character];
+                if (configLines[row2][characterRead] != '=' && flag == 0)
+                {
+                    configKeys[row2][characterWrite] = configLines[row2][characterRead];
+                    characterWrite++;
+                }
+                else if (configLines[row2][characterRead] == '=') // w takim wypadku sprawdza IFy tylko do spełnienia pierwszego warunku
+                {
+                    flag = 1;
+                    characterWrite = 0;
+                    configKeys[row2][characterWrite] = '\0';
+                    Serial.println(configKeys[row2]);
+                }
+                else if (flag == 1)
+                {
+                    configValues[row2][characterWrite] = configLines[row2][characterRead];
+                    characterWrite++;
+                }
             }
         }
     }
@@ -137,8 +146,14 @@ void parseConfiguration(const char *configFilePath)
     Serial.println("======");
     Serial.println(configValues[0]);
 
-    Serial.println("====== FLAG ======");
-    Serial.println(flag);
+    Serial.println("======");
+    Serial.println(configLines[1]);
+
+    Serial.println("======");
+    Serial.println(configKeys[1]);
+
+    Serial.println("======");
+    Serial.println(configValues[1]);
 
     // TODO: Parsing single config lines and writing them to struct.
     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
