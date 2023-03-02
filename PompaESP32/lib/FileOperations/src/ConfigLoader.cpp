@@ -92,23 +92,24 @@ void parseConfiguration(const char *configFilePath)
         }
     }
 
-    int characterWrite = 0;
-    row = 0;
     char configKeys[numberOfLines][60];
     char configValues[numberOfLines][60];
+    int characterWrite = 0;
     bool flag = 0;
 
     for (int row2 = 0; row2 < numberOfLines; row2++)
     {
-        // row = 0;
         memset(configKeys[row2], 0, 60);
         memset(configValues[row2], 0, 60);
+        Serial.println(" - - - - - - - - ");
+        Serial.println(configKeys[row2]);
+        Serial.println(configValues[row2]);
+        Serial.println(" - - - - - - - - ");
         for (int characterRead = 0; characterRead < 120; characterRead++)
         {
             if (configLines[row2][characterRead] == '\n')
             {
                 configValues[row2][characterWrite] = '\0';
-                Serial.println(configValues[row2]);
                 characterRead = 0;
                 characterWrite = 0;
                 flag = 0;
@@ -116,9 +117,10 @@ void parseConfiguration(const char *configFilePath)
             }
             else
             {
-                if (configLines[row2][characterRead] != '=' && flag == 0)
+                if (flag == 0 && configLines[row2][characterRead] != '=')
                 {
                     configKeys[row2][characterWrite] = configLines[row2][characterRead];
+                    Serial.println(configKeys[row2][characterWrite]);
                     characterWrite++;
                 }
                 else if (configLines[row2][characterRead] == '=') // w takim wypadku sprawdza IFy tylko do spełnienia pierwszego warunku
@@ -126,7 +128,6 @@ void parseConfiguration(const char *configFilePath)
                     flag = 1;
                     characterWrite = 0;
                     configKeys[row2][characterWrite] = '\0';
-                    Serial.println(configKeys[row2]);
                 }
                 else if (flag == 1)
                 {
