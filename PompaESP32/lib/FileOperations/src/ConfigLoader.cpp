@@ -44,7 +44,7 @@ char *loadConfiguration(const char *configFilePath)
             for (size_t i = 0; i < 500; i++)
             {
                 config[i] = file.read();
-                if (config[i] == EOF)
+                if (config[i] == '\0')
                 {
                     file.close();
                 }
@@ -85,7 +85,6 @@ void parseConfiguration(const char *configFilePath)
             configLines[row][character] = config[i];
             character++;
         }
-
         if (character >= 119)
         {
             break;
@@ -93,7 +92,10 @@ void parseConfiguration(const char *configFilePath)
     }
 
     char configKeys[numberOfLines][60];
+    memset(configKeys[numberOfLines], 0, 60);
     char configValues[numberOfLines][60];
+
+    memset(configValues[numberOfLines], 0, 60);
     int characterWrite = 0;
     bool flag = 0;
 
@@ -101,10 +103,12 @@ void parseConfiguration(const char *configFilePath)
     {
         memset(configKeys[row2], 0, 60);
         memset(configValues[row2], 0, 60);
+
         Serial.println(" - - - - - - - - ");
         Serial.println(configKeys[row2]);
         Serial.println(configValues[row2]);
         Serial.println(" - - - - - - - - ");
+
         for (int characterRead = 0; characterRead < 120; characterRead++)
         {
             if (configLines[row2][characterRead] == '\n')
