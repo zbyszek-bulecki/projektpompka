@@ -1,8 +1,8 @@
+#include <ConfigLoader.h>
 #include <Arduino.h>
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
-#include <ConfigLoader.h>
 
 const char *CONFIG_PATH = "/config/config.txt";
 

@@ -6,8 +6,8 @@ char config[500];
 
 struct
 {
-    std::string ssid;
-    std::string wifPwd;
+    char ssid[60];
+    char wifPwd[60];
     uint16_t server_ip_address;
     uint16_t server_port;
     uint16_t sleepTime;
@@ -28,7 +28,7 @@ int lineCounter(const char *configFilePath)
     return numberOfLines;
 }
 
-char *loadConfiguration(const char *configFilePath)
+char * loadConfiguration(const char *configFilePath)
 {
     if (!SD.begin())
     {
@@ -60,7 +60,7 @@ char *loadConfiguration(const char *configFilePath)
     return config;
 }
 
-void parseConfiguration(const char *configFilePath)
+struct esp32config *parseConfiguration(const char *configFilePath)
 {
     Serial.println(loadConfiguration(configFilePath));
 
@@ -102,7 +102,7 @@ void parseConfiguration(const char *configFilePath)
         memset(configValues[row2], 0, 60);
         for (int characterRead = 0; characterRead < 120; characterRead++)
         {
-            if (configLines[row2][characterRead] == '\0' || configLines[row2][characterRead] < 1)
+            if (configLines[row2][characterRead] == '\0')
             {
                 configValues[row2][characterWrite] = '\0';
                 characterRead = 0;
@@ -131,18 +131,19 @@ void parseConfiguration(const char *configFilePath)
             }
         }
     }
+    return esp32config;
 
-    for (size_t row3 = 0; row3 < numberOfLines; row3++)
-    {
-        Serial.println("======");
-        Serial.println(configLines[row3]);
+    // for (size_t row3 = 0; row3 < numberOfLines; row3++)
+    // {
+    //     Serial.println("======");
+    //     Serial.println(configLines[row3]);
 
-        Serial.println("======");
-        Serial.println(configKeys[row3]);
+    //     Serial.println("======");
+    //     Serial.println(configKeys[row3]);
 
-        Serial.println("======");
-        Serial.println(configValues[row3]);
-    }
+    //     Serial.println("======");
+    //     Serial.println(configValues[row3]);
+    // }
 
     // TODO: Parsing single config lines and writing them to struct.
     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
