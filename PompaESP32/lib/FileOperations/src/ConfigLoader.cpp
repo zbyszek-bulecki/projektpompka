@@ -92,10 +92,7 @@ void parseConfiguration(const char *configFilePath)
     }
 
     char configKeys[numberOfLines][60];
-    memset(configKeys[numberOfLines], 0, 60);
     char configValues[numberOfLines][60];
-
-    memset(configValues[numberOfLines], 0, 60);
     int characterWrite = 0;
     bool flag = 0;
 
@@ -103,15 +100,9 @@ void parseConfiguration(const char *configFilePath)
     {
         memset(configKeys[row2], 0, 60);
         memset(configValues[row2], 0, 60);
-
-        Serial.println(" - - - - - - - - ");
-        Serial.println(configKeys[row2]);
-        Serial.println(configValues[row2]);
-        Serial.println(" - - - - - - - - ");
-
         for (int characterRead = 0; characterRead < 120; characterRead++)
         {
-            if (configLines[row2][characterRead] == '\n')
+            if (configLines[row2][characterRead] == '\0' || configLines[row2][characterRead] < 1)
             {
                 configValues[row2][characterWrite] = '\0';
                 characterRead = 0;
@@ -121,17 +112,16 @@ void parseConfiguration(const char *configFilePath)
             }
             else
             {
-                if (flag == 0 && configLines[row2][characterRead] != '=')
+                if (configLines[row2][characterRead] != '=' && flag == 0)
                 {
                     configKeys[row2][characterWrite] = configLines[row2][characterRead];
-                    Serial.println(configKeys[row2][characterWrite]);
                     characterWrite++;
                 }
-                else if (configLines[row2][characterRead] == '=') // w takim wypadku sprawdza IFy tylko do spełnienia pierwszego warunku
+                else if (configLines[row2][characterRead] == '=')
                 {
                     flag = 1;
-                    characterWrite = 0;
                     configKeys[row2][characterWrite] = '\0';
+                    characterWrite = 0;
                 }
                 else if (flag == 1)
                 {
@@ -142,23 +132,17 @@ void parseConfiguration(const char *configFilePath)
         }
     }
 
-    Serial.println("======");
-    Serial.println(configLines[0]);
+    for (size_t row3 = 0; row3 < numberOfLines; row3++)
+    {
+        Serial.println("======");
+        Serial.println(configLines[row3]);
 
-    Serial.println("======");
-    Serial.println(configKeys[0]);
+        Serial.println("======");
+        Serial.println(configKeys[row3]);
 
-    Serial.println("======");
-    Serial.println(configValues[0]);
-
-    Serial.println("======");
-    Serial.println(configLines[1]);
-
-    Serial.println("======");
-    Serial.println(configKeys[1]);
-
-    Serial.println("======");
-    Serial.println(configValues[1]);
+        Serial.println("======");
+        Serial.println(configValues[row3]);
+    }
 
     // TODO: Parsing single config lines and writing them to struct.
     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
