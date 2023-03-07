@@ -4,15 +4,15 @@
 
 char config[500];
 
-struct
+struct esp32config
 {
     char ssid[60];
     char wifPwd[60];
-    uint16_t server_ip_address;
+    char server_ip_address;
     uint16_t server_port;
     uint16_t sleepTime;
 
-} esp32config;
+};
 
 int lineCounter(const char *configFilePath)
 {
@@ -60,8 +60,11 @@ char * loadConfiguration(const char *configFilePath)
     return config;
 }
 
-struct esp32config *parseConfiguration(const char *configFilePath)
+struct esp32config parseConfiguration(const char *configFilePath)
 {
+
+    esp32config configContainer;
+
     Serial.println(loadConfiguration(configFilePath));
 
     int numberOfLines = lineCounter(configFilePath);
@@ -130,8 +133,18 @@ struct esp32config *parseConfiguration(const char *configFilePath)
                 }
             }
         }
+
+        if (configKeys[row2] == "ssid")
+        {
+            for (size_t character = 0; character < 60; character++)
+            {
+                *configContainer.ssid = configKeys[row2][character];
+                *configContainer.wifPwd = configValues[row2][character];
+            }
+        }
     }
-    return esp32config;
+
+    return configContainer;
 
     // for (size_t row3 = 0; row3 < numberOfLines; row3++)
     // {
