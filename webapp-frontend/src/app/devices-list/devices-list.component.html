@@ -1,0 +1,13 @@
+<p>
+    <button (click)="onClick()">Refresh</button>
+</p>
+<p>
+    <input type="text" (change)='handleInput($event)' [value]="text"/>
+    <button (click)="onClick()">Update Text</button>
+</p>
+<p>
+    <b>{{text}}</b>
+</p>
+<p *ngFor="let device of deviceList">
+   <b>{{device.adresMac}}</b> [{{device.lastUpdate}}] - {{device.status}}
+</p>
