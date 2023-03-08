@@ -3,6 +3,7 @@
 #include <SPI.h>
 
 char config[500];
+int numberOfLines = 1;
 
 struct esp32config
 {
@@ -15,7 +16,6 @@ struct esp32config
 
 int lineCounter(const char *configFilePath)
 {
-    int numberOfLines = 1;
     if (!SD.begin())
     {
         Serial.println("Card Mount Failed");
@@ -51,7 +51,7 @@ char *loadConfiguration(const char *configFilePath)
                 if (config[i] == '\0')
                 {
                     file.close();
-                }
+                } // TO DO add counting of lines with else..if here
             }
         }
         file.close();
@@ -146,10 +146,8 @@ struct esp32config parseConfiguration(const char *configFilePath)
         if (strcmp(configKeys[row], "pwd") == 0)
         {
             memset(configContainer.wifPwd, 0, 60);
-            memset(configContainer.ssid, 0, 60);
             for (size_t character = 0; character < 60; character++)
             {
-                configContainer.ssid[character] = configKeys[row][character];
                 configContainer.wifPwd[character] = configValues[row][character];
             }
         }
@@ -164,11 +162,9 @@ struct esp32config parseConfiguration(const char *configFilePath)
         else if (strcmp(configKeys[row], "ssid") == 0)
         {
             memset(configContainer.ssid, 0, 60);
-            memset(configContainer.wifPwd, 0, 60);
             for (size_t character = 0; character < 60; character++)
             {
-                configContainer.ssid[character] = configKeys[row][character];
-                configContainer.wifPwd[character] = configValues[row][character];
+                configContainer.ssid[character] = configValues[row][character];
             }
         }
         else if (strcmp(configKeys[row], "port") == 0)
@@ -188,7 +184,8 @@ struct esp32config parseConfiguration(const char *configFilePath)
                 if (configValues[row][character] >= 0x20 && configValues[row][character] <= 0x7e)
                 {
                     configContainer.sleepTime[character] = configValues[row][character];
-                } else
+                }
+                else
                 {
                     configContainer.sleepTime[character] = 'o';
                 }
