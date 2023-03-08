@@ -8,15 +8,19 @@ struct esp32config
 {
     char ssid[60];
     char wifPwd[60];
-    char server_ip_address;
-    uint16_t server_port;
-    uint16_t sleepTime;
-
+    char server_ip_address[60];
+    char server_port[60];
+    char sleepTime[60];
 };
 
 int lineCounter(const char *configFilePath)
 {
     int numberOfLines = 1;
+    if (!SD.begin())
+    {
+        Serial.println("Card Mount Failed");
+        return 0;
+    }
     File myfile = SD.open(configFilePath);
     while (myfile.available())
     {
@@ -28,7 +32,7 @@ int lineCounter(const char *configFilePath)
     return numberOfLines;
 }
 
-char * loadConfiguration(const char *configFilePath)
+char *loadConfiguration(const char *configFilePath)
 {
     if (!SD.begin())
     {
@@ -62,18 +66,20 @@ char * loadConfiguration(const char *configFilePath)
 
 struct esp32config parseConfiguration(const char *configFilePath)
 {
+    loadConfiguration(configFilePath);
+    Serial.println("");
+    Serial.println("+++ CONFIG TABLE CONTENTS START +++");
+    Serial.println(config);
+    Serial.println("+++ CONFIG TABLE CONTENTS END +++");
+    Serial.println("");
 
     esp32config configContainer;
-
-    Serial.println(loadConfiguration(configFilePath));
-
     int numberOfLines = lineCounter(configFilePath);
     char configLines[numberOfLines][120]; // TO DO: dynamiczna alokacja pamięci zamiast statycznej
     int row = 0;
     int character = 0;
 
     memset(configLines[row], 0, 120);
-
     for (size_t i = 0; i < 500; i++)
     {
         if (config[i] == '\n')
@@ -133,34 +139,85 @@ struct esp32config parseConfiguration(const char *configFilePath)
                 }
             }
         }
+    }
 
-        if (configKeys[row2] == "ssid")
+    for (int row = 0; row <= numberOfLines; row++)
+    {
+        if (strcmp(configKeys[row], "pwd") == 0)
         {
+            memset(configContainer.wifPwd, 0, 60);
+            memset(configContainer.ssid, 0, 60);
             for (size_t character = 0; character < 60; character++)
             {
-                *configContainer.ssid = configKeys[row2][character];
-                *configContainer.wifPwd = configValues[row2][character];
+                configContainer.ssid[character] = configKeys[row][character];
+                configContainer.wifPwd[character] = configValues[row][character];
+            }
+        }
+        else if (strcmp(configKeys[row], "ip") == 0)
+        {
+            memset(configContainer.server_ip_address, 0, 60);
+            for (size_t character = 0; character < 60; character++)
+            {
+                configContainer.server_ip_address[character] = configValues[row][character];
+            }
+        }
+        else if (strcmp(configKeys[row], "ssid") == 0)
+        {
+            memset(configContainer.ssid, 0, 60);
+            memset(configContainer.wifPwd, 0, 60);
+            for (size_t character = 0; character < 60; character++)
+            {
+                configContainer.ssid[character] = configKeys[row][character];
+                configContainer.wifPwd[character] = configValues[row][character];
+            }
+        }
+        else if (strcmp(configKeys[row], "port") == 0)
+        {
+            memset(configContainer.server_port, 0, 60);
+            for (size_t character = 0; character < 60; character++)
+            {
+                configContainer.server_port[character] = configValues[row][character];
+            }
+        }
+        else if (strcmp(configKeys[row], "sleepTime") == 0)
+        {
+            memset(configContainer.sleepTime, 0, 60);
+            character = 0;
+            while (configValues[row][character] != '\0' && configValues[row][character] != '\n')
+            {
+                if (configValues[row][character] >= 0x20 && configValues[row][character] <= 0x7e)
+                {
+                    configContainer.sleepTime[character] = configValues[row][character];
+                } else
+                {
+                    configContainer.sleepTime[character] = 'o';
+                }
+                Serial.println("Hello from the sleepTime WHILE loop");
+                character++;
             }
         }
     }
 
+    Serial.println(" * * * TESTING configKeys AND configRows ARRAY * * * ");
+    for (size_t row3 = 0; row3 < numberOfLines; row3++)
+    {
+        Serial.println("======");
+        Serial.println(configLines[row3]);
+
+        Serial.println("======");
+        Serial.println(configKeys[row3]);
+
+        Serial.println("======");
+        Serial.println(configValues[row3]);
+    }
+    Serial.println(" * * * END OF configKeys AND configRows ARRAY TESTING * * * ");
+    Serial.println("");
+
     return configContainer;
 
-    // for (size_t row3 = 0; row3 < numberOfLines; row3++)
-    // {
-    //     Serial.println("======");
-    //     Serial.println(configLines[row3]);
-
-    //     Serial.println("======");
-    //     Serial.println(configKeys[row3]);
-
-    //     Serial.println("======");
-    //     Serial.println(configValues[row3]);
-    // }
-
-    // TODO: Parsing single config lines and writing them to struct.
     // TODO: Implement fixed buffer max size 128 bytes or 2x 64 bytes buffer, if more text than 128 bytes, abort reading the line.
     // TODO: Check for correct encoding of text file (UTF-8).
     // TODO: Check if the characters are from the correct ASCII range.
     // TODO: Check if the number of characters in a line does not exceed a reasonable limit.
+    // TODO: Convert digits from char to int in the class.
 }
