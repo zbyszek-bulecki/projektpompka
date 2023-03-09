@@ -14,24 +14,6 @@ struct esp32config
     char sleepTime[60];
 };
 
-int lineCounter(const char *configFilePath)
-{
-    if (!SD.begin())
-    {
-        Serial.println("Card Mount Failed");
-        return 0;
-    }
-    File myfile = SD.open(configFilePath);
-    while (myfile.available())
-    {
-        if (myfile.read() == '\n')
-        {
-            numberOfLines++;
-        }
-    }
-    return numberOfLines;
-}
-
 char *loadConfiguration(const char *configFilePath)
 {
     if (!SD.begin())
@@ -41,26 +23,22 @@ char *loadConfiguration(const char *configFilePath)
     }
     File file = SD.open(configFilePath);
 
-    if (file)
+    for (size_t i = 0; i < 500; i++)
     {
-        while (file.available())
+        config[i] = file.read();
+        if (config[i] == '\0')
         {
-            for (size_t i = 0; i < 500; i++)
+            file.close();
+        }
+        else
+        {
+            if (file.read() == '\n')
             {
-                config[i] = file.read();
-                if (config[i] == '\0')
-                {
-                    file.close();
-                } // TO DO add counting of lines with else..if here
+                numberOfLines++;
             }
         }
-        file.close();
     }
-    else
-    {
-        Serial.println("Error opening config file.");
-        return NULL;
-    }
+    file.close();
     return config;
 }
 
@@ -74,7 +52,6 @@ struct esp32config parseConfiguration(const char *configFilePath)
     Serial.println("");
 
     esp32config configContainer;
-    int numberOfLines = lineCounter(configFilePath);
     char configLines[numberOfLines][120]; // TO DO: dynamiczna alokacja pamięci zamiast statycznej
     int row = 0;
     int character = 0;
@@ -141,6 +118,8 @@ struct esp32config parseConfiguration(const char *configFilePath)
         }
     }
 
+    char tab1[60];
+
     for (int row = 0; row <= numberOfLines; row++)
     {
         if (strcmp(configKeys[row], "pwd") == 0)
@@ -178,19 +157,9 @@ struct esp32config parseConfiguration(const char *configFilePath)
         else if (strcmp(configKeys[row], "sleepTime") == 0)
         {
             memset(configContainer.sleepTime, 0, 60);
-            character = 0;
-            while (configValues[row][character] != '\0' && configValues[row][character] != '\n')
+            for (size_t character = 0; character < 60; character++)
             {
-                if (configValues[row][character] >= 0x20 && configValues[row][character] <= 0x7e)
-                {
-                    configContainer.sleepTime[character] = configValues[row][character];
-                }
-                else
-                {
-                    configContainer.sleepTime[character] = 'o';
-                }
-                Serial.println("Hello from the sleepTime WHILE loop");
-                character++;
+                configContainer.sleepTime[character] = configValues[row][character];
             }
         }
     }
