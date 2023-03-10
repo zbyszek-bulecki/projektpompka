@@ -2,9 +2,6 @@
 #include <SD.h>
 #include <SPI.h>
 
-char config[500];
-int numberOfLines = 1;
-
 struct esp32config
 {
     char ssid[60];
@@ -14,13 +11,12 @@ struct esp32config
     char sleepTime[60];
 };
 
-char *loadConfiguration(const char *configFilePath)
+struct esp32config parseConfiguration(const char *configFilePath)
 {
-    if (!SD.begin())
-    {
-        Serial.println("Card Mount Failed");
-        return NULL;
-    }
+
+    int numberOfLines = 1;
+    char config[500];
+
     File file = SD.open(configFilePath);
 
     for (size_t i = 0; i < 500; i++)
@@ -39,12 +35,7 @@ char *loadConfiguration(const char *configFilePath)
         }
     }
     file.close();
-    return config;
-}
 
-struct esp32config parseConfiguration(const char *configFilePath)
-{
-    loadConfiguration(configFilePath);
     Serial.println("");
     Serial.println("+++ CONFIG TABLE CONTENTS START +++");
     Serial.println(config);
@@ -117,8 +108,6 @@ struct esp32config parseConfiguration(const char *configFilePath)
             }
         }
     }
-
-    char tab1[60];
 
     for (int row = 0; row <= numberOfLines; row++)
     {
