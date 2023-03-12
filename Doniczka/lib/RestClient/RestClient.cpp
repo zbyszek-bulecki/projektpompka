@@ -4,6 +4,9 @@ RestClient::RestClient(char* ssid, char* password, char* serverUrl){
     this->ssid = ssid;
     this->password = password;
     this->serverUrl = String(serverUrl);
+    if(!this->serverUrl.startsWith("http://")){
+        this->serverUrl = String("http://") + this->serverUrl;
+    }
 }
 
 void RestClient::setup(){

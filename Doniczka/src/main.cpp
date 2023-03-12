@@ -1,19 +1,11 @@
 #include <Arduino.h>
+#include "Config.h"
 #include "RestClient.h"
 
-const char* ssid      = "Mort";
-const char* password  = "ifiWMam014";
-const char * host = "http://192.168.0.206:8080";
 int i = 0;
 
 RestClient* client;
 
-void setup(){
-  Serial.begin(115200); 
-  client = new RestClient((char*)ssid, (char*)password, (char*)host);
-  client->setup();
-}
- 
 void get(){
   Serial.println("***********GET***********");
   Response response = client->sendGet("/sensors");
@@ -44,6 +36,7 @@ void post(){
   (*request)["array"][1] = "va2";
   (*request)["flag"] = true;
 
+  Serial.println("Sending...");
   Response response = client->sendPost("/sensors", request);
   delete request;
 
@@ -65,10 +58,42 @@ void post(){
   client->flushResponse(response);
 }
 
-void loop(){
+void executeProcedure(){
+  Serial.println(ESP.getFreeHeap());
+
+  Config* config = new Config();
+  config->loadConfig();
+  Serial.print("ssid:");
+  Serial.println(config->getSsid());
+  Serial.print("password:");
+  Serial.println(config->getPassword());
+  Serial.print("host:");
+  Serial.println(config->getHost());
+  Serial.print("sleep_time:");
+  Serial.println(config->getSleepTime());
+  
+  char* ssid = config->getSsid();
+  char* password = config->getPassword();
+  char* host = config->getHost();
+  client = new RestClient(ssid, password, host);
+  client->setup();
   get();
   post();
 
-  Serial.println(ESP.getFreeHeap());
+  delete client;
+  delete config;
+  
+  sleep(5);
+}
+
+void setup(){
+  Serial.begin(115200); 
+  sleep(2);
+  executeProcedure();
+  Serial.println("");
+}
+
+void loop(){
+  Serial.print(".");
   sleep(5);
 }
