@@ -1,0 +1,3 @@
+rootProject.name = 'GardenManager'
+
+include 'Doniczka', 'doniczkaSymulator', 'GardenManager', 'webapp'
