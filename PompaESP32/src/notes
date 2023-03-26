@@ -1,0 +1,12 @@
+int photoPin = A0;
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  int light = analogRead(photoPin);
+  float lightIntensity = map(light, 0 ,1023, 0, 100);
+  Serial.println(lightIntensity);
+  delay(100);
+}
