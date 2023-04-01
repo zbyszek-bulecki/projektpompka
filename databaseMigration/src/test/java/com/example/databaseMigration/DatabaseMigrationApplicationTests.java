@@ -1,10 +1,10 @@
-package com.example.doniczkaSymulator;
+package com.example.databaseMigration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DoniczkaSymulatorApplicationTests {
+class DatabaseMigrationApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,4 +1,4 @@
-package com.example.doniczkaSymulator;
+package com.example.planterSimulator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.client.ClientHttpResponse;
