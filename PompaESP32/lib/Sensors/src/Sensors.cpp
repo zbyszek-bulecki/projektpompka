@@ -5,8 +5,9 @@
 Sensors::Sensors()
 {
 }
-Sensors::Sensors(int soilMoisturePin, int minValueSoilMoisture, int maxValueSoilMoisture, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
+Sensors::Sensors(int lightSensorPin, int soilMoisturePin, int minValueSoilMoisture, int maxValueSoilMoisture, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
 {
+    light_Sensor_PIN = lightSensorPin;
     soil_Moisture_PIN = soilMoisturePin;
     setScropeSoilMoisture(minValueSoilMoisture, maxValueSoilMoisture);
     light_Sensor = new Max44009(lightSensorAddress);
@@ -15,8 +16,9 @@ Sensors::Sensors(int soilMoisturePin, int minValueSoilMoisture, int maxValueSoil
     water_level = new Water_level(waterLevelAddress, numberWaterLevel);
 }
 
-Sensors::Sensors(int soilMoisturePin, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
+Sensors::Sensors(int lightSensorPin, int soilMoisturePin, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
 {
+    light_Sensor_PIN = lightSensorPin;
     soil_Moisture_PIN = soilMoisturePin;
     light_Sensor = new Max44009(lightSensorAddress);
     bmp = new Adafruit_BMP280;
@@ -24,8 +26,9 @@ Sensors::Sensors(int soilMoisturePin, uint8_t lightSensorAddress, uint8_t tempSe
     water_level = new Water_level(waterLevelAddress, numberWaterLevel);
 }
 
-Sensors::Sensors(int soilMoisturePin, uint8_t lightSensorAddress)
+Sensors::Sensors(int lightSensorPin, int soilMoisturePin, uint8_t lightSensorAddress)
 {
+    light_Sensor_PIN = lightSensorPin;
     soil_Moisture_PIN = soilMoisturePin;
     light_Sensor = new Max44009(lightSensorAddress);
 }
@@ -43,21 +46,21 @@ Sensors::~Sensors()
 
 void Sensors::begin()
 {
-    if(water_level) 
+    if (water_level)
     {
         water_level->begin();
-    } 
-    if(bmp) 
+    }
+    if (bmp)
     {
         bmp->begin(bmp_Address);
         bmp->setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
                          Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
                          Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
                          Adafruit_BMP280::FILTER_X16,      /* Filtering. */
-                         Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */  
+                         Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
     }
 
-    if(lcd) 
+    if (lcd)
     {
         lcd->init();
         lcd->backlight();
@@ -72,17 +75,24 @@ void Sensors::setScropeSoilMoisture(int minValue, int maxValue)
 
 int Sensors::getValueSoilMoisture()
 {
-    if (soil_Moisture_PIN > 0 && max_Value_Soil_Moisture > -1) {
-        for (int i = 0; i < 64; i++){
+    if (soil_Moisture_PIN > 0 && max_Value_Soil_Moisture > -1)
+    {
+        for (int i = 0; i < 64; i++)
+        {
             value_Soil_Moisture += analogRead(soil_Moisture_PIN);
         }
-        value_Soil_Moisture /=64;
+        value_Soil_Moisture /= 64;
         value_Soil_Moisture = map(value_Soil_Moisture, min_Value_Soil_Moisture, max_Value_Soil_Moisture, 0, 100);
-        if (value_Soil_Moisture > 100) {
+        if (value_Soil_Moisture > 100)
+        {
             return 100;
-        } else if (value_Soil_Moisture < 0) {
+        }
+        else if (value_Soil_Moisture < 0)
+        {
             return 0;
-        } else {
+        }
+        else
+        {
             return value_Soil_Moisture;
         }
     }
@@ -93,13 +103,13 @@ float Sensors::getLuxValueLightSensor()
 {
     if (light_Sensor)
     {
-        if (light_Sensor->getError() != 0) 
+        if (light_Sensor->getError() != 0)
         {
             return -100;
         }
         else
         {
-            return light_Sensor->getLux();
+            return light_Sensor->map(analogRead(light_Sensor_PIN), 0, 4095, 0, 100);
         }
     }
     else
@@ -110,7 +120,7 @@ float Sensors::getLuxValueLightSensor()
 
 float Sensors::getTemperature()
 {
-    if (bmp) 
+    if (bmp)
     {
         return bmp->readTemperature();
     }
@@ -119,16 +129,16 @@ float Sensors::getTemperature()
 
 float Sensors::getPressure()
 {
-    if (bmp) 
+    if (bmp)
     {
-        return bmp->readPressure()/100;
+        return bmp->readPressure() / 100;
     }
     return -100;
 }
 
 int Sensors::getValueWaterLevel()
 {
-    if(water_level)
+    if (water_level)
     {
         return water_level->getWaterLevel();
     }
