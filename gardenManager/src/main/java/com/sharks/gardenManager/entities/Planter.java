@@ -1,10 +1,10 @@
 package com.sharks.gardenManager.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -18,4 +18,12 @@ public class Planter {
     private String name;
     @Column(name = "mac_address")
     private String macAddress;
+    @Column(name = "last_activity")
+    private LocalDateTime lastActivity;
+    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY)
+    private List<PlanterMeasurement> planterMeasurement;
+    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY)
+    private List<PlanterMeasurement> planterSettings;
+    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY)
+    private List<PlanterMeasurement> planterTask;
 }

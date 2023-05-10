@@ -2,6 +2,7 @@ CREATE TABLE Planters (
     id BIGINT,
     name VARCHAR(100),
     mac_address VARCHAR(17),
+    last_activity DATETIME,
 
     PRIMARY KEY (id)
 );
