@@ -1,12 +1,12 @@
 CREATE TABLE Planters (
     id BIGINT,
-    mac_address VARCHAR(17),
     name VARCHAR(100),
+    mac_address VARCHAR(17),
 
     PRIMARY KEY (id)
 );
 
-CREATE TABLE Measurement (
+CREATE TABLE Planter_Measurement (
     id BIGINT,
     soil_moisture DOUBLE,
     light_intensity DOUBLE,
@@ -18,7 +18,7 @@ CREATE TABLE Measurement (
     FOREIGN KEY (planter_id) REFERENCES Planters(id)
 );
 
-CREATE TABLE Tasks (
+CREATE TABLE Planter_Tasks (
     id BIGINT,
     task VARCHAR(50),
     parameters VARCHAR(200),
