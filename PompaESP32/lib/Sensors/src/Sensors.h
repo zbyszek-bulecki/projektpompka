@@ -7,7 +7,6 @@
 #include <Water_level.h>
 #include <SPI.h>             // BMP 280
 #include <Adafruit_BMP280.h> // BMP 280
-#include <Max44009.h>        // GY-49 MAX44009
 
 #include <LiquidCrystal_I2C.h> //LCD
 
@@ -26,13 +25,11 @@
 class Sensors
 {
 private:
-    int light_Sensor_PIN       // light sensor (PIN25)
-        int soil_Moisture_PIN; // soil moisture sensor  (PIN 34)
+    int light_Sensor_PIN;  // light sensor (PIN25)
+    int soil_Moisture_PIN; // soil moisture sensor  (PIN 34)
     int value_Soil_Moisture = 0;
     int min_Value_Soil_Moisture = -1; // 4095;
     int max_Value_Soil_Moisture = -1;
-
-    Max44009 *light_Sensor = NULL; // Light sensor GY-49 MAX44009  (addres 0x4A)
 
     Adafruit_BMP280 *bmp = NULL; // temperature & pressure sensor
     uint8_t bmp_Address = 0;
@@ -45,18 +42,31 @@ private:
 
 public:
     Sensors();
-    Sensors(int lightSensorPin, int soilMoisturePin, int minValueSoilMoisture, int maxValueSoilMoisture, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel);
-    Sensors(int lightSensorPin, int soilMoisturePin, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel);
-    Sensors(int lightSensor Pin, int soilMoisturePin, uint8_t lightSensorAddress);
+
+    Sensors(
+        int lightSensorPin,
+        int soilMoisturePin,
+        int minValueSoilMoisture,
+        int maxValueSoilMoisture,
+        uint8_t tempSensorAddress,
+        uint8_t waterLevelAddress,
+        int numberWaterLevel);
+
+    Sensors(int lightSensorPin, int soilMoisturePin, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel);
+
+    Sensors(int lightSensorPin, int soilMoisturePin);
+
     Sensors(uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel);
+
     ~Sensors();
+
     void begin();
 
     void setScropeSoilMoisture(int minValue, int maxValue);
 
     int getValueSoilMoisture();
 
-    float getLuxValueLightSensor();
+    int getLuxValueLightSensor();
 
     float getTemperature();
 

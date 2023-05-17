@@ -4,8 +4,8 @@
 #include "WiFi.h"
 #include "SharkFrameManager.h"
 
-const char* ssid      = "HUAWEI_B818_8EB9";
-const char* password  = "R6AAQ903L9E";
+const char* ssid      = "Pancernik";
+const char* password  = "KawkaKawusia@2k21";
 
 Sensors sensors(34,2700,1000,0x4A,0x76,0x20,7);
 uint32_t interval = 600000;

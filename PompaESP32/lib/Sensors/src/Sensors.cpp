@@ -5,32 +5,41 @@
 Sensors::Sensors()
 {
 }
-Sensors::Sensors(int lightSensorPin, int soilMoisturePin, int minValueSoilMoisture, int maxValueSoilMoisture, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
+Sensors::Sensors(
+    int lightSensorPin,
+    int soilMoisturePin,
+    int minValueSoilMoisture,
+    int maxValueSoilMoisture,
+    uint8_t tempSensorAddress,
+    uint8_t waterLevelAddress,
+    int numberWaterLevel)
 {
-    light_Sensor_PIN = lightSensorPin;
     soil_Moisture_PIN = soilMoisturePin;
     setScropeSoilMoisture(minValueSoilMoisture, maxValueSoilMoisture);
-    light_Sensor = new Max44009(lightSensorAddress);
+    light_Sensor_PIN = lightSensorPin;
     bmp = new Adafruit_BMP280;
     bmp_Address = tempSensorAddress;
     water_level = new Water_level(waterLevelAddress, numberWaterLevel);
 }
 
-Sensors::Sensors(int lightSensorPin, int soilMoisturePin, uint8_t lightSensorAddress, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
+Sensors::Sensors(
+    int lightSensorPin,
+    int soilMoisturePin,
+    uint8_t tempSensorAddress,
+    uint8_t waterLevelAddress,
+    int numberWaterLevel)
 {
-    light_Sensor_PIN = lightSensorPin;
     soil_Moisture_PIN = soilMoisturePin;
-    light_Sensor = new Max44009(lightSensorAddress);
+    light_Sensor_PIN = lightSensorPin;
     bmp = new Adafruit_BMP280;
     bmp_Address = tempSensorAddress;
     water_level = new Water_level(waterLevelAddress, numberWaterLevel);
 }
 
-Sensors::Sensors(int lightSensorPin, int soilMoisturePin, uint8_t lightSensorAddress)
+Sensors::Sensors(int lightSensorPin, int soilMoisturePin)
 {
-    light_Sensor_PIN = lightSensorPin;
     soil_Moisture_PIN = soilMoisturePin;
-    light_Sensor = new Max44009(lightSensorAddress);
+    light_Sensor_PIN = lightSensorPin;
 }
 
 Sensors::Sensors(uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
@@ -99,23 +108,9 @@ int Sensors::getValueSoilMoisture()
     return -100;
 }
 
-float Sensors::getLuxValueLightSensor()
+int Sensors::getLuxValueLightSensor()
 {
-    if (light_Sensor)
-    {
-        if (light_Sensor->getError() != 0)
-        {
-            return -100;
-        }
-        else
-        {
-            return light_Sensor->map(analogRead(light_Sensor_PIN), 0, 4095, 0, 100);
-        }
-    }
-    else
-    {
-        return -100;
-    }
+    return map(analogRead(light_Sensor_PIN), 0, 1023, 0, 100);
 }
 
 float Sensors::getTemperature()
