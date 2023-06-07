@@ -2,9 +2,6 @@
 
 #include "Sensors.h"
 
-Sensors::Sensors()
-{
-}
 Sensors::Sensors(
     int lightSensorPin,
     int soilMoisturePin,
@@ -15,50 +12,18 @@ Sensors::Sensors(
     int numberWaterLevel)
 {
     soil_Moisture_PIN = soilMoisturePin;
-    setScropeSoilMoisture(minValueSoilMoisture, maxValueSoilMoisture);
     light_Sensor_PIN = lightSensorPin;
     bmp = new Adafruit_BMP280;
     bmp_Address = tempSensorAddress;
     water_level = new Water_level(waterLevelAddress, numberWaterLevel);
-}
-
-Sensors::Sensors(
-    int lightSensorPin,
-    int soilMoisturePin,
-    uint8_t tempSensorAddress,
-    uint8_t waterLevelAddress,
-    int numberWaterLevel)
-{
-    soil_Moisture_PIN = soilMoisturePin;
-    light_Sensor_PIN = lightSensorPin;
-    bmp = new Adafruit_BMP280;
-    bmp_Address = tempSensorAddress;
-    water_level = new Water_level(waterLevelAddress, numberWaterLevel);
-}
-
-Sensors::Sensors(int lightSensorPin, int soilMoisturePin)
-{
-    soil_Moisture_PIN = soilMoisturePin;
-    light_Sensor_PIN = lightSensorPin;
-}
-
-Sensors::Sensors(uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel)
-{
-    bmp = new Adafruit_BMP280;
-    bmp_Address = tempSensorAddress;
-    water_level = new Water_level(waterLevelAddress, numberWaterLevel);
-}
-
-Sensors::~Sensors()
-{
 }
 
 void Sensors::begin()
 {
-    if (water_level)
-    {
-        water_level->begin();
-    }
+    // if (water_level)
+    // {
+    //     water_level->begin();
+    // }
     if (bmp)
     {
         bmp->begin(bmp_Address);
@@ -68,18 +33,6 @@ void Sensors::begin()
                          Adafruit_BMP280::FILTER_X16,      /* Filtering. */
                          Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
     }
-
-    if (lcd)
-    {
-        lcd->init();
-        lcd->backlight();
-    }
-}
-
-void Sensors::setScropeSoilMoisture(int minValue, int maxValue)
-{
-    min_Value_Soil_Moisture = minValue;
-    max_Value_Soil_Moisture = maxValue;
 }
 
 int Sensors::getValueSoilMoisture()
@@ -92,6 +45,7 @@ int Sensors::getValueSoilMoisture()
         }
         value_Soil_Moisture /= 64;
         value_Soil_Moisture = map(value_Soil_Moisture, min_Value_Soil_Moisture, max_Value_Soil_Moisture, 0, 100);
+        // TODO remove max and min parameters once they are no longer needed
         if (value_Soil_Moisture > 100)
         {
             return 100;
@@ -110,7 +64,8 @@ int Sensors::getValueSoilMoisture()
 
 int Sensors::getLuxValueLightSensor()
 {
-    return map(analogRead(light_Sensor_PIN), 0, 1023, 0, 100);
+    short luxValue = analogRead(light_Sensor_PIN);
+    return map(luxValue, 0, 1024, 0, 100);
 }
 
 float Sensors::getTemperature()

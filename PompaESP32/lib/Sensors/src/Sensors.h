@@ -25,7 +25,7 @@
 class Sensors
 {
 private:
-    int light_Sensor_PIN;  // light sensor (PIN25)
+    int light_Sensor_PIN;  // light sensor (PIN33)
     int soil_Moisture_PIN; // soil moisture sensor  (PIN 34)
     int value_Soil_Moisture = 0;
     int min_Value_Soil_Moisture = -1; // 4095;
@@ -41,8 +41,6 @@ private:
     LiquidCrystal_I2C *lcd = NULL; // LCD 16x2 (0x27, 16, 2)
 
 public:
-    Sensors();
-
     Sensors(
         int lightSensorPin,
         int soilMoisturePin,
@@ -51,14 +49,6 @@ public:
         uint8_t tempSensorAddress,
         uint8_t waterLevelAddress,
         int numberWaterLevel);
-
-    Sensors(int lightSensorPin, int soilMoisturePin, uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel);
-
-    Sensors(int lightSensorPin, int soilMoisturePin);
-
-    Sensors(uint8_t tempSensorAddress, uint8_t waterLevelAddress, int numberWaterLevel);
-
-    ~Sensors();
 
     void begin();
 

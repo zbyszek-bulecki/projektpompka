@@ -1,0 +1,487 @@
+cmake_minimum_required(VERSION 3.25)
+project(PompaESP32)
+
+set(CMAKE_CXX_STANDARD 14)
+
+include_directories(lib/Adafruit_BMP280_Library)
+include_directories(lib/Adafruit_BMP280_Library/examples)
+include_directories(lib/Adafruit_BMP280_Library/examples/bmp280_forced)
+include_directories(lib/Adafruit_BMP280_Library/examples/bmp280_sensortest)
+include_directories(lib/Adafruit_BMP280_Library/examples/bmp280test)
+include_directories(lib/Adafruit_BusIO)
+include_directories(lib/Adafruit_BusIO/examples)
+include_directories(lib/Adafruit_BusIO/examples/i2c_address_detect)
+include_directories(lib/Adafruit_BusIO/examples/i2c_readwrite)
+include_directories(lib/Adafruit_BusIO/examples/i2c_registers)
+include_directories(lib/Adafruit_BusIO/examples/i2corspi_register)
+include_directories(lib/Adafruit_BusIO/examples/spi_modetest)
+include_directories(lib/Adafruit_BusIO/examples/spi_readwrite)
+include_directories(lib/Adafruit_BusIO/examples/spi_register_bits)
+include_directories(lib/Adafruit_BusIO/examples/spi_registers)
+include_directories(lib/Adafruit_Unified_Sensor)
+include_directories(lib/Adafruit_Unified_Sensor/examples)
+include_directories(lib/Adafruit_Unified_Sensor/examples/sensortest)
+include_directories(lib/ArduinoJson)
+include_directories(lib/ArduinoJson/examples)
+include_directories(lib/ArduinoJson/examples/JsonConfigFile)
+include_directories(lib/ArduinoJson/examples/JsonFilterExample)
+include_directories(lib/ArduinoJson/examples/JsonGeneratorExample)
+include_directories(lib/ArduinoJson/examples/JsonHttpClient)
+include_directories(lib/ArduinoJson/examples/JsonParserExample)
+include_directories(lib/ArduinoJson/examples/JsonServer)
+include_directories(lib/ArduinoJson/examples/JsonUdpBeacon)
+include_directories(lib/ArduinoJson/examples/MsgPackParser)
+include_directories(lib/ArduinoJson/examples/ProgmemExample)
+include_directories(lib/ArduinoJson/examples/StringExample)
+include_directories(lib/ArduinoJson/extras/particle)
+include_directories(lib/ArduinoJson/extras/particle/src)
+include_directories(lib/ArduinoJson/extras/tests/catch)
+include_directories(lib/ArduinoJson/extras/tests/Helpers)
+include_directories(lib/ArduinoJson/extras/tests/Helpers/api)
+include_directories(lib/ArduinoJson/extras/tests/Misc)
+include_directories(lib/ArduinoJson/src)
+include_directories(lib/ArduinoJson/src/ArduinoJson)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Array)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Collection)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Deserialization)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Document)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Json)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Memory)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Misc)
+include_directories(lib/ArduinoJson/src/ArduinoJson/MsgPack)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Numbers)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Object)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Polyfills)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Polyfills/mpl)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Serialization)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Serialization/Writers)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Strings)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Strings/Adapters)
+include_directories(lib/ArduinoJson/src/ArduinoJson/StringStorage)
+include_directories(lib/ArduinoJson/src/ArduinoJson/Variant)
+include_directories(lib/LiquidCrystal_I2C-master)
+include_directories(lib/Max44009)
+include_directories(lib/Max44009/examples)
+include_directories(lib/Max44009/examples/max44009_interrupt)
+include_directories(lib/Max44009/examples/max44009_setAutomaticMode)
+include_directories(lib/Max44009/examples/max44009_setContinuousMode)
+include_directories(lib/Max44009/examples/max44009_setManualMode)
+include_directories(lib/Max44009/examples/max44009_test01)
+include_directories(lib/Max44009/examples/max44009_test02)
+include_directories(lib/Max44009/examples/max44009_two_sensors)
+include_directories(lib/PCF8574_library)
+include_directories(lib/PCF8574_library/examples)
+include_directories(lib/PCF8574_library/examples/Arduino4Leds4ButtonsWithInterrupt)
+include_directories(lib/PCF8574_library/examples/blinkOnPin0)
+include_directories(lib/PCF8574_library/examples/encoderWithBasicLibraryFunction)
+include_directories(lib/PCF8574_library/examples/encoderWithFullLibraryFunction)
+include_directories(lib/PCF8574_library/examples/interruptWemos)
+include_directories(lib/PCF8574_library/examples/keyPressed_withInterrupt)
+include_directories(lib/PCF8574_library/examples/keyPressedPin1)
+include_directories(lib/PCF8574_library/examples/keyPressedPin1_storedOnBuffer_async)
+include_directories(lib/PCF8574_library/examples/ledEsp32OnTheSecondI2C)
+include_directories(lib/PCF8574_library/examples/ledWemos)
+include_directories(lib/PCF8574_library/examples/readAll_Interrupt)
+include_directories(lib/PCF8574_library/examples/readAll_Interrupt_lowMemory)
+include_directories(lib/PCF8574_library/examples/writeAllEsp8266)
+include_directories(lib/Sensors/src)
+include_directories(lib/Water_level/src)
+include_directories(src)
+
+add_executable(PompaESP32
+        lib/Adafruit_BMP280_Library/examples/bmp280_forced/bmp280_forced.ino
+        lib/Adafruit_BMP280_Library/examples/bmp280_sensortest/bmp280_sensortest.ino
+        lib/Adafruit_BMP280_Library/examples/bmp280test/bmp280test.ino
+        lib/Adafruit_BMP280_Library/Adafruit_BMP280.cpp
+        lib/Adafruit_BMP280_Library/Adafruit_BMP280.h
+        lib/Adafruit_BusIO/examples/i2c_address_detect/i2c_address_detect.ino
+        lib/Adafruit_BusIO/examples/i2c_readwrite/i2c_readwrite.ino
+        lib/Adafruit_BusIO/examples/i2c_registers/i2c_registers.ino
+        lib/Adafruit_BusIO/examples/i2corspi_register/i2corspi_register.ino
+        lib/Adafruit_BusIO/examples/spi_modetest/spi_modetest.ino
+        lib/Adafruit_BusIO/examples/spi_readwrite/spi_readwrite.ino
+        lib/Adafruit_BusIO/examples/spi_register_bits/spi_register_bits.ino
+        lib/Adafruit_BusIO/examples/spi_registers/spi_registers.ino
+        lib/Adafruit_BusIO/Adafruit_BusIO_Register.cpp
+        lib/Adafruit_BusIO/Adafruit_BusIO_Register.h
+        lib/Adafruit_BusIO/Adafruit_I2CDevice.cpp
+        lib/Adafruit_BusIO/Adafruit_I2CDevice.h
+        lib/Adafruit_BusIO/Adafruit_I2CRegister.h
+        lib/Adafruit_BusIO/Adafruit_SPIDevice.cpp
+        lib/Adafruit_BusIO/Adafruit_SPIDevice.h
+        lib/Adafruit_Unified_Sensor/examples/sensortest/sensortest.ino
+        lib/Adafruit_Unified_Sensor/Adafruit_Sensor.cpp
+        lib/Adafruit_Unified_Sensor/Adafruit_Sensor.h
+        lib/ArduinoJson/examples/JsonConfigFile/JsonConfigFile.ino
+        lib/ArduinoJson/examples/JsonFilterExample/JsonFilterExample.ino
+        lib/ArduinoJson/examples/JsonGeneratorExample/JsonGeneratorExample.ino
+        lib/ArduinoJson/examples/JsonHttpClient/JsonHttpClient.ino
+        lib/ArduinoJson/examples/JsonParserExample/JsonParserExample.ino
+        lib/ArduinoJson/examples/JsonServer/JsonServer.ino
+        lib/ArduinoJson/examples/JsonUdpBeacon/JsonUdpBeacon.ino
+        lib/ArduinoJson/examples/MsgPackParser/MsgPackParser.ino
+        lib/ArduinoJson/examples/ProgmemExample/ProgmemExample.ino
+        lib/ArduinoJson/examples/StringExample/StringExample.ino
+        lib/ArduinoJson/extras/ci/espidf/main/main.cpp
+        lib/ArduinoJson/extras/conf_test/avr.cpp
+        lib/ArduinoJson/extras/conf_test/esp8266.cpp
+        lib/ArduinoJson/extras/conf_test/x64.cpp
+        lib/ArduinoJson/extras/conf_test/x86.cpp
+        lib/ArduinoJson/extras/fuzzing/json_fuzzer.cpp
+        lib/ArduinoJson/extras/fuzzing/msgpack_fuzzer.cpp
+        lib/ArduinoJson/extras/fuzzing/reproducer.cpp
+        lib/ArduinoJson/extras/particle/src/smocktest.ino
+        lib/ArduinoJson/extras/scripts/wandbox/JsonGeneratorExample.cpp
+        lib/ArduinoJson/extras/scripts/wandbox/JsonParserExample.cpp
+        lib/ArduinoJson/extras/scripts/wandbox/MsgPackParserExample.cpp
+        lib/ArduinoJson/extras/tests/catch/catch.cpp
+        lib/ArduinoJson/extras/tests/catch/catch.hpp
+        lib/ArduinoJson/extras/tests/Cpp11/issue1120.cpp
+        lib/ArduinoJson/extras/tests/Cpp11/nullptr.cpp
+        lib/ArduinoJson/extras/tests/Cpp11/use_long_long_0.cpp
+        lib/ArduinoJson/extras/tests/Cpp11/use_long_long_1.cpp
+        lib/ArduinoJson/extras/tests/Cpp17/string_view.cpp
+        lib/ArduinoJson/extras/tests/Cpp20/smoke_test.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/assign_char.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/delete_jsondocument.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/Issue1189.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/Issue978.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/read_long_long.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/variant_as_char.cpp
+        lib/ArduinoJson/extras/tests/FailingBuilds/write_long_long.cpp
+        lib/ArduinoJson/extras/tests/Helpers/api/Print.h
+        lib/ArduinoJson/extras/tests/Helpers/api/Stream.h
+        lib/ArduinoJson/extras/tests/Helpers/api/String.h
+        lib/ArduinoJson/extras/tests/Helpers/Arduino.h
+        lib/ArduinoJson/extras/tests/Helpers/CustomReader.hpp
+        lib/ArduinoJson/extras/tests/Helpers/progmem_emulation.hpp
+        lib/ArduinoJson/extras/tests/IntegrationTests/gbathree.cpp
+        lib/ArduinoJson/extras/tests/IntegrationTests/issue772.cpp
+        lib/ArduinoJson/extras/tests/IntegrationTests/openweathermap.cpp
+        lib/ArduinoJson/extras/tests/IntegrationTests/round_trip.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/add.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/clear.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/copyArray.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/createNested.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/equals.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/get.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/isNull.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/iterator.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/memoryUsage.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/nesting.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/remove.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/size.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/std_string.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/subscript.cpp
+        lib/ArduinoJson/extras/tests/JsonArray/unbound.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/array.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/array_static.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/DeserializationError.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/filter.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/incomplete_input.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/input_types.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/invalid_input.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/misc.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/nestingLimit.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/number.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/object.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/object_static.cpp
+        lib/ArduinoJson/extras/tests/JsonDeserializer/string.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/add.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/BasicJsonDocument.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/cast.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/compare.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/containsKey.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/createNested.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/DynamicJsonDocument.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/ElementProxy.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/isNull.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/MemberProxy.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/nesting.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/overflowed.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/remove.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/shrinkToFit.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/size.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/StaticJsonDocument.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/subscript.cpp
+        lib/ArduinoJson/extras/tests/JsonDocument/swap.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/clear.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/containsKey.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/copy.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/createNestedArray.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/createNestedObject.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/equals.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/invalid.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/isNull.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/iterator.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/memoryUsage.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/nesting.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/remove.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/size.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/std_string.cpp
+        lib/ArduinoJson/extras/tests/JsonObject/subscript.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/CustomWriter.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/JsonArray.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/JsonArrayPretty.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/JsonObject.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/JsonObjectPretty.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/JsonVariant.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/misc.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/std_stream.cpp
+        lib/ArduinoJson/extras/tests/JsonSerializer/std_string.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/add.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/as.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/clear.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/compare.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/containsKey.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/converters.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/copy.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/createNested.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/is.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/isnull.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/memoryUsage.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/misc.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/nesting.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/or.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/overflow.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/remove.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/set.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/subscript.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/types.cpp
+        lib/ArduinoJson/extras/tests/JsonVariant/unbound.cpp
+        lib/ArduinoJson/extras/tests/MemoryPool/allocVariant.cpp
+        lib/ArduinoJson/extras/tests/MemoryPool/clear.cpp
+        lib/ArduinoJson/extras/tests/MemoryPool/saveString.cpp
+        lib/ArduinoJson/extras/tests/MemoryPool/size.cpp
+        lib/ArduinoJson/extras/tests/MemoryPool/StringCopier.cpp
+        lib/ArduinoJson/extras/tests/Misc/arithmeticCompare.cpp
+        lib/ArduinoJson/extras/tests/Misc/conflicts.cpp
+        lib/ArduinoJson/extras/tests/Misc/custom_string.hpp
+        lib/ArduinoJson/extras/tests/Misc/deprecated.cpp
+        lib/ArduinoJson/extras/tests/Misc/FloatParts.cpp
+        lib/ArduinoJson/extras/tests/Misc/JsonString.cpp
+        lib/ArduinoJson/extras/tests/Misc/NoArduinoHeader.cpp
+        lib/ArduinoJson/extras/tests/Misc/printable.cpp
+        lib/ArduinoJson/extras/tests/Misc/Readers.cpp
+        lib/ArduinoJson/extras/tests/Misc/StringAdapters.cpp
+        lib/ArduinoJson/extras/tests/Misc/StringWriter.cpp
+        lib/ArduinoJson/extras/tests/Misc/TypeTraits.cpp
+        lib/ArduinoJson/extras/tests/Misc/unsigned_char.cpp
+        lib/ArduinoJson/extras/tests/Misc/Utf16.cpp
+        lib/ArduinoJson/extras/tests/Misc/Utf8.cpp
+        lib/ArduinoJson/extras/tests/Misc/version.cpp
+        lib/ArduinoJson/extras/tests/Misc/weird_strcmp.hpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/decode_unicode_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/decode_unicode_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_alignment_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_alignment_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_comments_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_comments_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_infinity_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_infinity_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_nan_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_nan_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_progmem_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_string_deduplication_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/enable_string_deduplication_1.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/issue1707.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/use_double_0.cpp
+        lib/ArduinoJson/extras/tests/MixedConfiguration/use_double_1.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/deserializeArray.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/deserializeObject.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/deserializeStaticVariant.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/deserializeVariant.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/doubleToFloat.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/filter.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/incompleteInput.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/input_types.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/misc.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/nestingLimit.cpp
+        lib/ArduinoJson/extras/tests/MsgPackDeserializer/notSupported.cpp
+        lib/ArduinoJson/extras/tests/MsgPackSerializer/destination_types.cpp
+        lib/ArduinoJson/extras/tests/MsgPackSerializer/measure.cpp
+        lib/ArduinoJson/extras/tests/MsgPackSerializer/misc.cpp
+        lib/ArduinoJson/extras/tests/MsgPackSerializer/serializeArray.cpp
+        lib/ArduinoJson/extras/tests/MsgPackSerializer/serializeObject.cpp
+        lib/ArduinoJson/extras/tests/MsgPackSerializer/serializeVariant.cpp
+        lib/ArduinoJson/extras/tests/Numbers/convertNumber.cpp
+        lib/ArduinoJson/extras/tests/Numbers/parseDouble.cpp
+        lib/ArduinoJson/extras/tests/Numbers/parseFloat.cpp
+        lib/ArduinoJson/extras/tests/Numbers/parseInteger.cpp
+        lib/ArduinoJson/extras/tests/Numbers/parseNumber.cpp
+        lib/ArduinoJson/extras/tests/TextFormatter/writeFloat.cpp
+        lib/ArduinoJson/extras/tests/TextFormatter/writeInteger.cpp
+        lib/ArduinoJson/extras/tests/TextFormatter/writeString.cpp
+        lib/ArduinoJson/src/ArduinoJson/Array/ArrayFunctions.hpp
+        lib/ArduinoJson/src/ArduinoJson/Array/ArrayImpl.hpp
+        lib/ArduinoJson/src/ArduinoJson/Array/ArrayIterator.hpp
+        lib/ArduinoJson/src/ArduinoJson/Array/ArrayRef.hpp
+        lib/ArduinoJson/src/ArduinoJson/Array/ArrayShortcuts.hpp
+        lib/ArduinoJson/src/ArduinoJson/Array/ElementProxy.hpp
+        lib/ArduinoJson/src/ArduinoJson/Array/Utilities.hpp
+        lib/ArduinoJson/src/ArduinoJson/Collection/CollectionData.hpp
+        lib/ArduinoJson/src/ArduinoJson/Collection/CollectionImpl.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/ArduinoStreamReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/ArduinoStringReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/FlashReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/IteratorReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/RamReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/StdStreamReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Readers/VariantReader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/DeserializationError.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/deserialize.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Filter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/NestingLimit.hpp
+        lib/ArduinoJson/src/ArduinoJson/Deserialization/Reader.hpp
+        lib/ArduinoJson/src/ArduinoJson/Document/BasicJsonDocument.hpp
+        lib/ArduinoJson/src/ArduinoJson/Document/DynamicJsonDocument.hpp
+        lib/ArduinoJson/src/ArduinoJson/Document/JsonDocument.hpp
+        lib/ArduinoJson/src/ArduinoJson/Document/StaticJsonDocument.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/EscapeSequence.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/JsonDeserializer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/JsonSerializer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/Latch.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/PrettyJsonSerializer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/TextFormatter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/Utf16.hpp
+        lib/ArduinoJson/src/ArduinoJson/Json/Utf8.hpp
+        lib/ArduinoJson/src/ArduinoJson/Memory/Alignment.hpp
+        lib/ArduinoJson/src/ArduinoJson/Memory/MemoryPool.hpp
+        lib/ArduinoJson/src/ArduinoJson/Misc/SafeBoolIdiom.hpp
+        lib/ArduinoJson/src/ArduinoJson/Misc/SerializedValue.hpp
+        lib/ArduinoJson/src/ArduinoJson/Misc/Visitable.hpp
+        lib/ArduinoJson/src/ArduinoJson/MsgPack/endianess.hpp
+        lib/ArduinoJson/src/ArduinoJson/MsgPack/ieee754.hpp
+        lib/ArduinoJson/src/ArduinoJson/MsgPack/MsgPackDeserializer.hpp
+        lib/ArduinoJson/src/ArduinoJson/MsgPack/MsgPackSerializer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/arithmeticCompare.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/convertNumber.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/Float.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/FloatParts.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/FloatTraits.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/Integer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Numbers/parseNumber.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/MemberProxy.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/ObjectFunctions.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/ObjectImpl.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/ObjectIterator.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/ObjectRef.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/ObjectShortcuts.hpp
+        lib/ArduinoJson/src/ArduinoJson/Object/Pair.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/mpl/max.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/conditional.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/declval.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/enable_if.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/integral_constant.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_array.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_base_of.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_class.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_const.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_convertible.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_enum.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_floating_point.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_integral.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_pointer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_same.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_signed.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/is_unsigned.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/make_unsigned.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/make_void.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/remove_const.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/remove_cv.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/remove_reference.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits/type_identity.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/alias_cast.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/assert.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/attributes.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/ctype.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/integer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/limits.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/math.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/pgmspace.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/pgmspace_generic.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/preprocessor.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/static_array.hpp
+        lib/ArduinoJson/src/ArduinoJson/Polyfills/type_traits.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writers/ArduinoStringWriter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writers/DummyWriter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writers/PrintWriter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writers/StaticStringWriter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writers/StdStreamWriter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writers/StdStringWriter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/CountingDecorator.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/measure.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/serialize.hpp
+        lib/ArduinoJson/src/ArduinoJson/Serialization/Writer.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/Adapters/ArduinoString.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/Adapters/FlashString.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/Adapters/JsonString.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/Adapters/RamString.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/Adapters/StdString.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/Adapters/StringView.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/IsString.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/StoragePolicy.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/String.hpp
+        lib/ArduinoJson/src/ArduinoJson/Strings/StringAdapters.hpp
+        lib/ArduinoJson/src/ArduinoJson/StringStorage/StringCopier.hpp
+        lib/ArduinoJson/src/ArduinoJson/StringStorage/StringMover.hpp
+        lib/ArduinoJson/src/ArduinoJson/StringStorage/StringStorage.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/Converter.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/ConverterImpl.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/SlotFunctions.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantCompare.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantContent.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantData.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantFunctions.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantImpl.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantOperators.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantRef.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantShortcuts.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantSlot.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantTag.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/VariantTo.hpp
+        lib/ArduinoJson/src/ArduinoJson/Variant/Visitor.hpp
+        lib/ArduinoJson/src/ArduinoJson/compatibility.hpp
+        lib/ArduinoJson/src/ArduinoJson/Configuration.hpp
+        lib/ArduinoJson/src/ArduinoJson/Namespace.hpp
+        lib/ArduinoJson/src/ArduinoJson/version.hpp
+        lib/ArduinoJson/src/ArduinoJson.h
+        lib/ArduinoJson/src/ArduinoJson.hpp
+        lib/ArduinoJson/ArduinoJson.h
+        lib/LiquidCrystal_I2C-master/LiquidCrystal_I2C.cpp
+        lib/LiquidCrystal_I2C-master/LiquidCrystal_I2C.h
+        lib/Max44009/examples/max44009_interrupt/max44009_interrupt.ino
+        lib/Max44009/examples/max44009_setAutomaticMode/max44009_setAutomaticMode.ino
+        lib/Max44009/examples/max44009_setContinuousMode/max44009_setContinuousMode.ino
+        lib/Max44009/examples/max44009_setManualMode/max44009_setManualMode.ino
+        lib/Max44009/examples/max44009_test01/max44009_test01.ino
+        lib/Max44009/examples/max44009_test02/max44009_test02.ino
+        lib/Max44009/examples/max44009_two_sensors/max44009_two_sensors.ino
+        lib/Max44009/test/unit_test_001.cpp
+        lib/Max44009/Max44009.cpp
+        lib/Max44009/Max44009.h
+        lib/PCF8574_library/examples/Arduino4Leds4ButtonsWithInterrupt/Arduino4Leds4ButtonsWithInterrupt.ino
+        lib/PCF8574_library/examples/blinkOnPin0/blinkOnPin0.ino
+        lib/PCF8574_library/examples/encoderWithBasicLibraryFunction/encoderWithBasicLibraryFunction.ino
+        lib/PCF8574_library/examples/encoderWithFullLibraryFunction/encoderWithFullLibraryFunction.ino
+        lib/PCF8574_library/examples/interruptWemos/interruptWemos.ino
+        lib/PCF8574_library/examples/keyPressed_withInterrupt/keyPressed_withInterrupt.ino
+        lib/PCF8574_library/examples/keyPressedPin1/keyPressedPin1.ino
+        lib/PCF8574_library/examples/keyPressedPin1_storedOnBuffer_async/keyPressedPin1_storedOnBuffer_async.ino
+        lib/PCF8574_library/examples/ledEsp32OnTheSecondI2C/ledEsp32OnTheSecondI2C.ino
+        lib/PCF8574_library/examples/ledWemos/ledWemos.ino
+        lib/PCF8574_library/examples/readAll_Interrupt/readAll_Interrupt.ino
+        lib/PCF8574_library/examples/readAll_Interrupt_lowMemory/readAll_Interrupt_lowMemory.ino
+        lib/PCF8574_library/examples/writeAllEsp8266/writeAllEsp8266.ino
+        lib/PCF8574_library/PCF8574.cpp
+        lib/PCF8574_library/PCF8574.h
+        lib/PCF8574_library/PCF8574_library.h
+        lib/Sensors/src/Sensors.cpp
+        lib/Sensors/src/Sensors.h
+        lib/Water_level/src/Water_level.cpp
+        lib/Water_level/src/Water_level.h
+        src/main.cpp
+        src/SharkFrameManager.cpp
+        src/SharkFrameManager.h)

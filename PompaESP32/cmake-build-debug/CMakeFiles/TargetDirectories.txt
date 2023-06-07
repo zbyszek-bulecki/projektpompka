@@ -1,0 +1,3 @@
+/Users/zbyszekbulecki/Downloads/github/projektpompka/PompaESP32/cmake-build-debug/CMakeFiles/PompaESP32.dir
+/Users/zbyszekbulecki/Downloads/github/projektpompka/PompaESP32/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/zbyszekbulecki/Downloads/github/projektpompka/PompaESP32/cmake-build-debug/CMakeFiles/rebuild_cache.dir
