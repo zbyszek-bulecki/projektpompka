@@ -1,29 +1,46 @@
 package com.sharks.gardenManager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 
 @Entity
-@Table(name = "Planters")
-@Data
+@Table(name = Planter.TABLE_NAME)
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Planter {
+    public static final String TABLE_NAME = "Planters";
+    public static final String COLUMN_PREFIX = "planter_";
+
     @Id
-    @Column(name = "id")
-    private Long id;
-    @Column(name = "name")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = COLUMN_PREFIX + "id")
+    private UUID id;
+    @Column(name = COLUMN_PREFIX + "name")
     private String name;
-    @Column(name = "mac_address")
+    @Column(name = COLUMN_PREFIX + "mac_address")
     private String macAddress;
-    @Column(name = "last_activity")
+    @Column(name = COLUMN_PREFIX + "last_activity")
     private LocalDateTime lastActivity;
-    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("planter")
+    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PlanterMeasurement> planterMeasurement;
-    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY)
-    private List<PlanterMeasurement> planterSettings;
-    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY)
-    private List<PlanterMeasurement> planterTask;
+    @JsonIgnoreProperties("planter")
+    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PlanterSettings> planterSettings;
+    @JsonIgnoreProperties("planter")
+    @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PlanterTask> planterTasks;
 }

@@ -30,7 +30,7 @@ void get(){
 void post(){
     Serial.println("***********POST***********");
   DynamicJsonDocument* request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
-  
+
   i = (i + 1)%10;
   (*request)["array"][0] = String("va")+i;
   (*request)["array"][1] = "va2";
