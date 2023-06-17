@@ -13,8 +13,8 @@ public class PlanterSimulatorApplication {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void runThreads() {
-		for(int i=0; i<4; i++){
-			new SimulationThread().start();
+		for(int i=0; i<3; i++){
+			new SimulationThread("planter-"+i, "00:00:00:00:00:0"+i).start();
 		}
 	}
 }
