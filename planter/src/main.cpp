@@ -9,7 +9,7 @@ RestClient *client;
 
 void testSensors()
 {
-  Sensors sensors = Sensors();
+  Sensors sensors = Sensors(33, 34, 2700, 1000, 0x76, 0x20, 7);
 }
 
 void get()

@@ -9,8 +9,8 @@ Sensors::Sensors(
     uint8_t waterLevelAddress,
     int numberWaterLevel)
 {
-    this.minValueSoilMoisture = minValueSoilMoisture;
-    this.maxValueSoilMoisture = maxValueSoilMoisture;
+    minValueSoilMoisture = minValueSoilMoisture;
+    maxValueSoilMoisture = maxValueSoilMoisture;
     soil_Moisture_PIN = soilMoisturePin;
     light_Sensor_PIN = lightSensorPin;
     bmp = new Adafruit_BMP280;
@@ -37,14 +37,14 @@ void Sensors::begin()
 
 int Sensors::getValueSoilMoisture()
 {
-    if (soil_Moisture_PIN > 0 && max_Value_Soil_Moisture > -1)
+    if (soil_Moisture_PIN > 0 && maxValueSoilMoisture > -1)
     {
         for (int i = 0; i < 64; i++)
         {
             value_Soil_Moisture += analogRead(soil_Moisture_PIN);
         }
         value_Soil_Moisture /= 64;
-        value_Soil_Moisture = map(value_Soil_Moisture, min_Value_Soil_Moisture, max_Value_Soil_Moisture, 0, 100);
+        value_Soil_Moisture = map(value_Soil_Moisture, minValueSoilMoisture, maxValueSoilMoisture, 0, 100);
         // TODO remove max and min parameters once they are no longer needed
         if (value_Soil_Moisture > 100)
         {
