@@ -35,7 +35,7 @@ void Sensors::begin()
     }
 }
 
-int Sensors::getValueSoilMoisture()
+float Sensors::getValueSoilMoisture()
 {
     if (soil_Moisture_PIN > 0 && maxValueSoilMoisture > -1)
     {
@@ -56,7 +56,7 @@ int Sensors::getValueSoilMoisture()
         }
         else
         {
-            return value_Soil_Moisture;
+            return static_cast<float>(value_Soil_Moisture);
         }
     }
     return -100;

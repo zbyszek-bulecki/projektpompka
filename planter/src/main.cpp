@@ -10,6 +10,12 @@ RestClient *client;
 void testSensors()
 {
   Sensors sensors = Sensors(33, 34, 2700, 1000, 0x76, 0x20, 7);
+  Serial.println(sensors.getLuxValueLightSensor());
+  Serial.println(sensors.getPressure());
+  Serial.println(sensors.getTemperature());
+  Serial.println(sensors.getValueSoilMoisture());
+  Serial.println(sensors.getValueWaterLevel());
+
 }
 
 void get()
@@ -107,6 +113,7 @@ void setup()
 
 void loop()
 {
+  testSensors();
   Serial.print(".");
   sleep(5);
 }

@@ -43,7 +43,7 @@ public:
 
     void begin();
 
-    int getValueSoilMoisture();
+    float getValueSoilMoisture();
 
     int getLuxValueLightSensor();
 
