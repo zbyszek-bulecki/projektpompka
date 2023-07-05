@@ -10,12 +10,25 @@ RestClient *client;
 void testSensors()
 {
   Sensors sensors = Sensors(33, 34, 2700, 1000, 0x76, 0x20, 7);
-  Serial.println(sensors.getLuxValueLightSensor());
-  Serial.println(sensors.getPressure());
-  Serial.println(sensors.getTemperature());
-  Serial.println(sensors.getValueSoilMoisture());
-  Serial.println(sensors.getValueWaterLevel());
+  sensors.begin();
+  Serial.println("++++++ SENSOR READINGS ++++++");
 
+  // Serial.print("Light value: ");
+  // Serial.println(sensors.getLuxValueLightSensor());
+
+  // Serial.print("Preassure value: ");
+  // Serial.println(sensors.getPressure());
+  
+  // Serial.print("Temperature value: ");
+  // Serial.println(sensors.getTemperature());
+
+  // Serial.print("Soil moisture value: ");
+  // Serial.println(sensors.getValueSoilMoisture());
+
+  // Serial.print("Water level value: ");
+  // Serial.println(sensors.getValueWaterLevel());
+
+  Serial.println("++++++ END OF SENSOR READINGS ++++++");
 }
 
 void get()
@@ -76,6 +89,8 @@ void post()
 
 void executeProcedure()
 {
+  testSensors();
+  
   Serial.println(ESP.getFreeHeap());
 
   Config *config = new Config();
@@ -113,7 +128,6 @@ void setup()
 
 void loop()
 {
-  testSensors();
   Serial.print(".");
   sleep(5);
 }
