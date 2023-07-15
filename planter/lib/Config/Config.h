@@ -9,9 +9,11 @@ class Config {
     size_t memorySize=0;
 	char* memory;
 
-	char* ssid;
-	char* password;
+	char* wifiSsid;
+	char* wifiPassword;
 	char* host;
+	char* username;
+	char* password;
 	int sleepTime;
 	
 	void loadConfigFile();
@@ -21,8 +23,10 @@ public:
 	Config();
 	~Config();
 	void loadConfig();
-	char* getSsid();
-	char* getPassword();
+	char* getWifiSsid();
+	char* getWifiPassword();
 	char* getHost();
+	char* getUsername();
+	char* getPassword();
 	int getSleepTime();
 };

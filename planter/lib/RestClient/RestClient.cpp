@@ -1,18 +1,25 @@
 #include "RestClient.h"
 
 RestClient::RestClient(char* ssid, char* password, char* serverUrl){
-    this->ssid = ssid;
-    this->password = password;
+    this->wifiSsid = ssid;
+    this->wifiPassword = password;
     this->serverUrl = String(serverUrl);
+    useBasicAuthentiction = false;
     if(!this->serverUrl.startsWith("http://")){
         this->serverUrl = String("http://") + this->serverUrl;
     }
 }
 
+void RestClient::withBasicAuthentication(char* username, char* password){
+    useBasicAuthentiction = true;
+    this->username = username;
+    this->password = password;
+}
+
 void RestClient::setup(){
     this->active = true;
 
-    WiFi.begin(this->ssid, this->password);
+    WiFi.begin(this->wifiSsid, this->wifiPassword);
     Serial.println("Connecting");
     while(WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -54,6 +61,10 @@ Response RestClient::sendRequest(int method, String path, DynamicJsonDocument* b
         String serverPath = this->serverUrl + path;
 
         http.begin(serverPath);
+
+        if(useBasicAuthentiction){
+            addCredentials(http);
+        }
         
         String payload;
         switch (method){
@@ -97,6 +108,12 @@ Response RestClient::sendRequest(int method, String path, DynamicJsonDocument* b
       Serial.println("WiFi Disconnected");
     }
     return response;
+}
+
+void RestClient::addCredentials(HTTPClient& http){
+    String user = this->username;
+    String credentials = base64::encode(user + ":" + this->password);
+    http.addHeader("Authorization", "Basic " + credentials);
 }
 
 void RestClient::logRequest(String url, Response response){

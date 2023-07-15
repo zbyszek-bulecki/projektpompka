@@ -70,8 +70,14 @@ void Config::parseConfigFile() {
 }
 
 void Config::setValueBasedOnKey(char* key, char* valuePointer) {
-	if (strcmp(key, "ssid") == 0) {
-		ssid = valuePointer;
+	if (strcmp(key, "wifi_ssid") == 0) {
+		wifiSsid = valuePointer;
+	}
+	else if (strcmp(key, "wifi_password") == 0) {
+		wifiPassword = valuePointer;
+	}
+	if (strcmp(key, "username") == 0) {
+		username = valuePointer;
 	}
 	else if (strcmp(key, "password") == 0) {
 		password = valuePointer;
@@ -83,8 +89,14 @@ void Config::setValueBasedOnKey(char* key, char* valuePointer) {
 		sleepTime = atoi(valuePointer);
 	}
 }
-char* Config::getSsid() {
-	return ssid;
+char* Config::getWifiSsid() {
+	return wifiSsid;
+}
+char* Config::getWifiPassword() {
+	return wifiPassword;
+}
+char* Config::getUsername() {
+	return username;
 }
 char* Config::getPassword() {
 	return password;

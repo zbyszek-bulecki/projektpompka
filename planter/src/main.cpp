@@ -63,8 +63,12 @@ void executeProcedure(){
 
   Config* config = new Config();
   config->loadConfig();
-  Serial.print("ssid:");
-  Serial.println(config->getSsid());
+  Serial.print("wifi_ssid:");
+  Serial.println(config->getWifiSsid());
+  Serial.print("wifi_password:");
+  Serial.println(config->getWifiPassword());
+  Serial.print("username:");
+  Serial.println(config->getUsername());
   Serial.print("password:");
   Serial.println(config->getPassword());
   Serial.print("host:");
@@ -72,10 +76,13 @@ void executeProcedure(){
   Serial.print("sleep_time:");
   Serial.println(config->getSleepTime());
   
-  char* ssid = config->getSsid();
-  char* password = config->getPassword();
+  char* wifiSsid = config->getWifiSsid();
+  char* wifiPassword = config->getWifiPassword();
   char* host = config->getHost();
-  client = new RestClient(ssid, password, host);
+  char* username = config->getUsername();
+  char* password = config->getPassword();
+  client = new RestClient(wifiSsid, wifiPassword, host);
+  client->withBasicAuthentication(username, password);
   client->setup();
   get();
   post();

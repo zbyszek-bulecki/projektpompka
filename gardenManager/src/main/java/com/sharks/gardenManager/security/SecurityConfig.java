@@ -57,7 +57,9 @@ public class SecurityConfig {
         http
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling()
-            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            .and()
+            .httpBasic();
         return http.build();
     }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "ArduinoJson.h"
+#include <Base64.h>
 #include "WiFi.h"
 #include "HTTPClient.h"
 
@@ -18,18 +19,23 @@ struct Response{
 };
 
 class RestClient{
-    const char* ssid;
-    const char* password;
+    const char* wifiSsid;
+    const char* wifiPassword;
     String serverUrl;
+    bool useBasicAuthentiction;
+    char* username;
+    char* password;
 
     bool active = false;
 
     void logRequest(String url, Response response);
     DynamicJsonDocument* deserializeResponsePayload(String rawPayload);
     Response sendRequest(int method, String url, DynamicJsonDocument* body);
+    void addCredentials(HTTPClient& http);
     
     public:
-    RestClient(char* ssid, char* password, char* serverUrl);
+    RestClient(char* wifiSsid, char* wifiPassword, char* serverUrl);
+    void withBasicAuthentication(char* username, char* password);
     void setup();
     Response sendGet(String url);
     Response sendDelete(String url);
