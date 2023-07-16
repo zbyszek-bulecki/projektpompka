@@ -11,13 +11,6 @@ class Config {
 	char* memory;
 	std::map<char*, char*> configs;
 
-	char* wifiSsid;
-	char* wifiPassword;
-	char* host;
-	char* username;
-	char* password;
-	int sleepTime;
-	
 	void loadConfigFile();
     void parseConfigFile();
 	void setValueBasedOnKey(char* key, char* valuePointer);
