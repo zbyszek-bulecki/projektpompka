@@ -4,10 +4,12 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
+#include <map>
 
 class Config {
     size_t memorySize=0;
 	char* memory;
+	std::map<char*, char*> configs;
 
 	char* wifiSsid;
 	char* wifiPassword;
@@ -23,10 +25,10 @@ public:
 	Config();
 	~Config();
 	void loadConfig();
-	char* getWifiSsid();
-	char* getWifiPassword();
-	char* getHost();
-	char* getUsername();
-	char* getPassword();
-	int getSleepTime();
+	char* get(const char* key);
+	char* get(char* key);
+	int getInt(char* key);
+	int getInt(const char* key);
+	float getFloat(char* key);
+	float getFloat(const char* key);
 };

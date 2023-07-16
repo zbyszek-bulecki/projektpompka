@@ -70,40 +70,23 @@ void Config::parseConfigFile() {
 }
 
 void Config::setValueBasedOnKey(char* key, char* valuePointer) {
-	if (strcmp(key, "wifi_ssid") == 0) {
-		wifiSsid = valuePointer;
-	}
-	else if (strcmp(key, "wifi_password") == 0) {
-		wifiPassword = valuePointer;
-	}
-	if (strcmp(key, "username") == 0) {
-		username = valuePointer;
-	}
-	else if (strcmp(key, "password") == 0) {
-		password = valuePointer;
-	}
-	else if (strcmp(key, "host") == 0) {
-		host = valuePointer;
-	}
-	else if (strcmp(key, "sleep_time") == 0) {
-		sleepTime = atoi(valuePointer);
-	}
+	configs[key] = valuePointer;
 }
-char* Config::getWifiSsid() {
-	return wifiSsid;
+char* Config::get(char* key) {
+	return configs[key];
 }
-char* Config::getWifiPassword() {
-	return wifiPassword;
+char* Config::get(const char* key) {
+	return get(strdup(key));
 }
-char* Config::getUsername() {
-	return username;
+int Config::getInt(char* key) {
+	return atoi(get(key));
 }
-char* Config::getPassword() {
-	return password;
+int Config::getInt(const char* key) {
+	return getInt(strdup(key));
 }
-char* Config::getHost() {
-	return host;
+float Config::getFloat(char* key) {
+	return atof(get(key));
 }
-int Config::getSleepTime() {
-	return sleepTime;
+float Config::getFloat(const char* key) {
+	return getFloat(strdup(key));
 }
