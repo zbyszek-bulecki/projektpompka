@@ -2,9 +2,12 @@
 #include "Config.h"
 #include "RestClient.h"
 
-int i = 0;
+
 
 RestClient* client;
+
+/*
+GET EXAMPLE
 
 void get(){
   Serial.println("***********GET***********");
@@ -27,6 +30,9 @@ void get(){
   client->flushResponse(response);
 }
 
+POST EXAMPLE
+
+int i = 0;
 void post(){
     Serial.println("***********POST***********");
   DynamicJsonDocument* request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
@@ -57,6 +63,33 @@ void post(){
 
   client->flushResponse(response);
 }
+*/
+
+void postMeasurements(){
+  Serial.println("***********POST***********");
+  DynamicJsonDocument* request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
+
+  (*request)["name"] = "dev1";
+  (*request)["macAddress"] = "213344";
+  (*request)["soilMoisture"] = 0;
+  (*request)["lightIntensity"] = 0;
+  (*request)["temperature"] = 0;
+  (*request)["pressure"] = 0;
+  (*request)["waterLevel"] = 0;
+
+  Serial.println("Sending...");
+  Response response = client->sendPost("/planters/measurements", request);
+  delete request;
+
+  if(response.statusCode==200){
+    Serial.println("Data send successfully!");
+  }
+  else{
+    Serial.print("Failed to send data with status code: ");
+    Serial.println(response.statusCode);
+  }
+  client->flushResponse(response);
+}
 
 void executeProcedure(){
   Serial.println(ESP.getFreeHeap());
@@ -79,8 +112,7 @@ void executeProcedure(){
   client = new RestClient(config->get("wifi_ssid"), config->get("wifi_password"), config->get("host"));
   client->withBasicAuthentication(config->get("username"), config->get("password"));
   client->setup();
-  get();
-  post();
+  postMeasurements();
 
   delete client;
   delete config;

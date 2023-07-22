@@ -32,45 +32,40 @@ void Config::loadConfig() {
 }
 void Config::parseConfigFile() {
 	bool readingKey = true;
-	char keyBuffer[KEY_BUFFOR];
+	char* keyPointer = memory;
 	char* valuePointer = NULL;
-	memset(keyBuffer, 0, KEY_BUFFOR);
-	int keyBufferPointer = 0;
 
 	for (int i = 0; i < memorySize; i++) {		
 		if (readingKey) {			
 			if (memory[i] == '=') {
+				memory[i] = '\0';
 				readingKey = !readingKey;
-				keyBufferPointer = 0;
 				valuePointer = memory + i + 1;
 			}
 			else if (memory[i] == '\0') {
 				break;
 			}				
-			else {
-				keyBuffer[keyBufferPointer++] = memory[i];
-			}
 		}
 		else {
 			if (memory[i] == '\n' || memory[i] == '\0') {
 				readingKey = !readingKey;
 				memory[i] = '\0';
-				setValueBasedOnKey(keyBuffer, valuePointer);
-				memset(keyBuffer, 0, KEY_BUFFOR);
+				setValueBasedOnKey(keyPointer, valuePointer);
+				keyPointer = memory + i + 1;
 			}
             if(memory[i] == '\r' && memory[i+1] == '\n'){
                 readingKey = !readingKey;
 				memory[i++] = '\0';
                 memory[i] = '\0';
-				setValueBasedOnKey(keyBuffer, valuePointer);
-				memset(keyBuffer, 0, KEY_BUFFOR);
+				setValueBasedOnKey(keyPointer, valuePointer);
+				keyPointer = memory + i + 1;				
             }
 		}
 	}
 }
 
 void Config::setValueBasedOnKey(char* key, char* valuePointer) {
-	configs[key] = valuePointer;
+	configs.insert(std::pair<char*, char*>(key, valuePointer));
 }
 char* Config::get(char* key) {
 	return configs[key];

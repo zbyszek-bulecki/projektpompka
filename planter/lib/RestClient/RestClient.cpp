@@ -98,8 +98,9 @@ Response RestClient::sendRequest(int method, String path, DynamicJsonDocument* b
             default:
                 break;
         }
-
-        response.payload = deserializeResponsePayload(http.getString());
+        String responseBody = http.getString();
+        Serial.print(responseBody);
+        response.payload = deserializeResponsePayload(responseBody);
         
         logRequest(serverPath, response);
         http.end();
@@ -126,6 +127,9 @@ void RestClient::logRequest(String url, Response response){
 DynamicJsonDocument* RestClient::deserializeResponsePayload(String rawResponse){
     Serial.println(rawResponse);
     DynamicJsonDocument* doc = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
+    if(rawResponse.length()==0){
+        return doc;
+    }
     DeserializationError error = deserializeJson(*doc, rawResponse);
     if(error){
         Serial.print("Couldn't parse: ");

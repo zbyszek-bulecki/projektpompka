@@ -22,9 +22,4 @@ public class PlanterController {
         measurementService.registerMeasurements(measurementsDTO);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping
-    public String test() {
-        return "test";
-    }
 }
