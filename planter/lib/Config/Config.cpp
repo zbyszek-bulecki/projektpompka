@@ -67,6 +67,12 @@ void Config::parseConfigFile() {
 void Config::setValueBasedOnKey(char* key, char* valuePointer) {
 	configs.insert(std::pair<char*, char*>(key, valuePointer));
 }
+bool Config::has(char* key) {
+	return configs.find(key) == configs.end() ? false : true;
+}
+bool Config::has(const char* key) {
+	return has(strdup(key));
+}
 char* Config::get(char* key) {
 	return configs[key];
 }

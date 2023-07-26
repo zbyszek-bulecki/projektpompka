@@ -22,7 +22,6 @@ struct keyComparator {
     }
 };
 
-
 class Config {
     size_t memorySize=0;
 	char* memory;
@@ -35,6 +34,8 @@ public:
 	Config();
 	~Config();
 	void loadConfig();
+	bool has(const char* key);
+	bool has(char* key);
 	char* get(const char* key);
 	char* get(char* key);
 	int getInt(char* key);

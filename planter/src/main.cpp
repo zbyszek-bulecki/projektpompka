@@ -91,11 +91,30 @@ void postMeasurements(){
   client->flushResponse(response);
 }
 
+bool isMandatoryParametersMissing(Config* configs){
+  bool isMissing = false;
+
+  const char* mandatoryParameters[] = {"wifi_ssid", "wifi_password", "username", "password", "host"};
+  for(int i=0; i<sizeof(mandatoryParameters)/sizeof(const char*); i++){
+    if(!configs->has(mandatoryParameters[i])){
+      isMissing = true;
+      Serial.print("Parameter is missing: ");
+      Serial.println(mandatoryParameters[i]);
+    }
+  }
+  return isMissing;
+}
+
 void executeProcedure(){
   Serial.println(ESP.getFreeHeap());
 
   Config* config = new Config();
   config->loadConfig();
+
+  if(isMandatoryParametersMissing(config)){
+    return;
+  }
+
   Serial.print("wifi_ssid:");
   Serial.println(config->get("wifi_ssid"));
   Serial.print("wifi_password:");
