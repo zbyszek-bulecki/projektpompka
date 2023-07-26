@@ -9,8 +9,8 @@ Sensors::Sensors(
     uint8_t waterLevelAddress,
     int numberWaterLevel)
 {
-    minValueSoilMoisture = minValueSoilMoisture;
-    maxValueSoilMoisture = maxValueSoilMoisture;
+    this->minValueSoilMoisture = minValueSoilMoisture;
+    this->maxValueSoilMoisture = maxValueSoilMoisture;
     soil_Moisture_PIN = soilMoisturePin;
     light_Sensor_PIN = lightSensorPin;
     bmp = new Adafruit_BMP280;
@@ -20,10 +20,10 @@ Sensors::Sensors(
 
 void Sensors::begin()
 {
-    // if (water_level)
-    // {
-    //     water_level->begin();
-    // }
+    if (water_level)
+    {
+        water_level->begin();
+    }
     if (bmp)
     {
         bmp->begin(bmp_Address);

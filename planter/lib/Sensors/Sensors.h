@@ -7,13 +7,8 @@
 #include <SPI.h>             // BMP 280
 #include <Adafruit_BMP280.h> // BMP 280
 
-// 0x4A  GY-49 MAX44009
 // 0x76  BMP280
 // 0x20  water level
-
-#define MAX44009_ADDRESS (0x4A)
-#define BMP280_ADDRESS (0x77)
-#define WATER_LEVEL_ADDRESS (0x20)
 
 class Sensors
 {

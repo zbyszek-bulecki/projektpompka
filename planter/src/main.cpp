@@ -13,20 +13,20 @@ void testSensors()
   sensors.begin();
   Serial.println("++++++ SENSOR READINGS ++++++");
 
-  // Serial.print("Light value: ");
-  // Serial.println(sensors.getLuxValueLightSensor());
+  Serial.print("Light value: ");
+  Serial.println(sensors.getLuxValueLightSensor());
 
-  // Serial.print("Preassure value: ");
-  // Serial.println(sensors.getPressure());
+  Serial.print("Preassure value: ");
+  Serial.println(sensors.getPressure());
   
-  // Serial.print("Temperature value: ");
-  // Serial.println(sensors.getTemperature());
+  Serial.print("Temperature value: ");
+  Serial.println(sensors.getTemperature());
 
-  // Serial.print("Soil moisture value: ");
-  // Serial.println(sensors.getValueSoilMoisture());
+  Serial.print("Soil moisture value: ");
+  Serial.println(sensors.getValueSoilMoisture());
 
-  // Serial.print("Water level value: ");
-  // Serial.println(sensors.getValueWaterLevel());
+  Serial.print("Water level value: ");
+  Serial.println(sensors.getValueWaterLevel());
 
   Serial.println("++++++ END OF SENSOR READINGS ++++++");
 }
@@ -123,11 +123,11 @@ void setup()
   Serial.begin(115200);
   sleep(2);
   executeProcedure();
-  Serial.println("");
+  Serial.println("Hello from setup!");
 }
 
 void loop()
 {
-  Serial.print(".");
+  Serial.println("Hello from loop!");
   sleep(5);
 }
