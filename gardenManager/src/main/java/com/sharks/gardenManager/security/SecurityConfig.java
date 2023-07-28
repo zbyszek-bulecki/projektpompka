@@ -27,13 +27,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder bCryptPasswordEncoder) {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user")
-                .password(bCryptPasswordEncoder.encode("password"))
-                .roles("USER")
-                .build());
-        return manager;
+    public UserDetailsService userDetailsService(GardenUserDetailService gardenUserDetailService) {
+        return gardenUserDetailService;
     }
 
     @Bean
