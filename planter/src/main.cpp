@@ -2,9 +2,12 @@
 #include "Config.h"
 #include "RestClient.h"
 
-int i = 0;
+
 
 RestClient* client;
+
+/*
+GET EXAMPLE
 
 void get(){
   Serial.println("***********GET***********");
@@ -27,6 +30,9 @@ void get(){
   client->flushResponse(response);
 }
 
+POST EXAMPLE
+
+int i = 0;
 void post(){
     Serial.println("***********POST***********");
   DynamicJsonDocument* request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
@@ -57,28 +63,75 @@ void post(){
 
   client->flushResponse(response);
 }
+*/
+
+void postMeasurements(){
+  Serial.println("***********POST***********");
+  DynamicJsonDocument* request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
+
+  (*request)["name"] = "dev1";
+  (*request)["macAddress"] = "213344";
+  (*request)["soilMoisture"] = 0;
+  (*request)["lightIntensity"] = 0;
+  (*request)["temperature"] = 0;
+  (*request)["pressure"] = 0;
+  (*request)["waterLevel"] = 0;
+
+  Serial.println("Sending...");
+  Response response = client->sendPost("/planters/measurements", request);
+  delete request;
+
+  if(response.statusCode==200){
+    Serial.println("Data send successfully!");
+  }
+  else{
+    Serial.print("Failed to send data with status code: ");
+    Serial.println(response.statusCode);
+  }
+  client->flushResponse(response);
+}
+
+bool isMandatoryParametersMissing(Config* configs){
+  bool isMissing = false;
+
+  const char* mandatoryParameters[] = {"wifi_ssid", "wifi_password", "username", "password", "host"};
+  for(int i=0; i<sizeof(mandatoryParameters)/sizeof(const char*); i++){
+    if(!configs->has(mandatoryParameters[i])){
+      isMissing = true;
+      Serial.print("Parameter is missing: ");
+      Serial.println(mandatoryParameters[i]);
+    }
+  }
+  return isMissing;
+}
 
 void executeProcedure(){
   Serial.println(ESP.getFreeHeap());
 
   Config* config = new Config();
   config->loadConfig();
-  Serial.print("ssid:");
-  Serial.println(config->getSsid());
+
+  if(isMandatoryParametersMissing(config)){
+    return;
+  }
+
+  Serial.print("wifi_ssid:");
+  Serial.println(config->get("wifi_ssid"));
+  Serial.print("wifi_password:");
+  Serial.println(config->get("wifi_password"));
+  Serial.print("username:");
+  Serial.println(config->get("username"));
   Serial.print("password:");
-  Serial.println(config->getPassword());
+  Serial.println(config->get("password"));
   Serial.print("host:");
-  Serial.println(config->getHost());
+  Serial.println(config->get("host"));
   Serial.print("sleep_time:");
-  Serial.println(config->getSleepTime());
+  Serial.println(config->getInt("sleep_time"));
   
-  char* ssid = config->getSsid();
-  char* password = config->getPassword();
-  char* host = config->getHost();
-  client = new RestClient(ssid, password, host);
+  client = new RestClient(config->get("wifi_ssid"), config->get("wifi_password"), config->get("host"));
+  client->withBasicAuthentication(config->get("username"), config->get("password"));
   client->setup();
-  get();
-  post();
+  postMeasurements();
 
   delete client;
   delete config;

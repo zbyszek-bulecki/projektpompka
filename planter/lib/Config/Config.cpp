@@ -32,66 +32,62 @@ void Config::loadConfig() {
 }
 void Config::parseConfigFile() {
 	bool readingKey = true;
-	char keyBuffer[KEY_BUFFOR];
+	char* keyPointer = memory;
 	char* valuePointer = NULL;
-	memset(keyBuffer, 0, KEY_BUFFOR);
-	int keyBufferPointer = 0;
 
 	for (int i = 0; i < memorySize; i++) {		
 		if (readingKey) {			
 			if (memory[i] == '=') {
+				memory[i] = '\0';
 				readingKey = !readingKey;
-				keyBufferPointer = 0;
 				valuePointer = memory + i + 1;
 			}
 			else if (memory[i] == '\0') {
 				break;
 			}				
-			else {
-				keyBuffer[keyBufferPointer++] = memory[i];
-			}
 		}
 		else {
 			if (memory[i] == '\n' || memory[i] == '\0') {
 				readingKey = !readingKey;
 				memory[i] = '\0';
-				setValueBasedOnKey(keyBuffer, valuePointer);
-				memset(keyBuffer, 0, KEY_BUFFOR);
+				setValueBasedOnKey(keyPointer, valuePointer);
+				keyPointer = memory + i + 1;
 			}
             if(memory[i] == '\r' && memory[i+1] == '\n'){
                 readingKey = !readingKey;
 				memory[i++] = '\0';
                 memory[i] = '\0';
-				setValueBasedOnKey(keyBuffer, valuePointer);
-				memset(keyBuffer, 0, KEY_BUFFOR);
+				setValueBasedOnKey(keyPointer, valuePointer);
+				keyPointer = memory + i + 1;				
             }
 		}
 	}
 }
 
 void Config::setValueBasedOnKey(char* key, char* valuePointer) {
-	if (strcmp(key, "ssid") == 0) {
-		ssid = valuePointer;
-	}
-	else if (strcmp(key, "password") == 0) {
-		password = valuePointer;
-	}
-	else if (strcmp(key, "host") == 0) {
-		host = valuePointer;
-	}
-	else if (strcmp(key, "sleep_time") == 0) {
-		sleepTime = atoi(valuePointer);
-	}
+	configs.insert(std::pair<char*, char*>(key, valuePointer));
 }
-char* Config::getSsid() {
-	return ssid;
+bool Config::has(char* key) {
+	return configs.find(key) == configs.end() ? false : true;
 }
-char* Config::getPassword() {
-	return password;
+bool Config::has(const char* key) {
+	return has(strdup(key));
 }
-char* Config::getHost() {
-	return host;
+char* Config::get(char* key) {
+	return configs[key];
 }
-int Config::getSleepTime() {
-	return sleepTime;
+char* Config::get(const char* key) {
+	return get(strdup(key));
+}
+int Config::getInt(char* key) {
+	return atoi(get(key));
+}
+int Config::getInt(const char* key) {
+	return getInt(strdup(key));
+}
+float Config::getFloat(char* key) {
+	return atof(get(key));
+}
+float Config::getFloat(const char* key) {
+	return getFloat(strdup(key));
 }
