@@ -7,17 +7,21 @@ import { NavigationBarComponent } from './navigation-bar/navigation-bar.componen
 import { DevicesListComponent } from './devices-list/devices-list.component';
 import { DeviceStatusComponent } from './device-status/device-status.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavigationBarComponent,
     DevicesListComponent,
-    DeviceStatusComponent
+    DeviceStatusComponent,
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     HttpClientModule
   ],
   providers: [],

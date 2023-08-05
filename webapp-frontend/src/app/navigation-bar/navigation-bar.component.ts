@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserInfoService } from '../services/user-info.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavigationBarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private userInfoService: UserInfoService) { }
 
   ngOnInit(): void {
   }
 
+  logout(){
+    this.userInfoService.logout();
+  }
 }

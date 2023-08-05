@@ -22,4 +22,10 @@ public class PlantersPreviewService {
                 .map(planter -> objectMapper.convertValue(planter, PlanterDTO.class))
                 .toList();
     }
+
+    public PlanterDTO getPlanterByNameAndMacAddress(String name, String macAddress) {
+        return planterRepository.findByNameAndMacAddress(name, macAddress)
+                .map(planter -> objectMapper.convertValue(planter, PlanterDTO.class))
+                .orElseThrow();
+    }
 }

@@ -78,7 +78,7 @@ void postMeasurements(){
   (*request)["waterLevel"] = 0;
 
   Serial.println("Sending...");
-  Response response = client->sendPost("/planters/measurements", request);
+  Response response = client->sendPost("/planter/measurements", request);
   delete request;
 
   if(response.statusCode==200){
