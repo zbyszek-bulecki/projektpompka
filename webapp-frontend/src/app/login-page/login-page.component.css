@@ -1,0 +1,14 @@
+.wrapper{
+    height: 100%;
+}
+.column_wrapper{
+    display: flex;
+    flex-flow: column wrap;
+    height: 100%;
+}
+.main{
+    flex: 1 1 auto;
+}
+.footer{
+    flex: 0 1 auto;
+}
