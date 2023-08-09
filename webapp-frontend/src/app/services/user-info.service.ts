@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { RestClientService } from './rest-client.service';
 import { Observable, catchError, map, of } from 'rxjs';
+import { HttpStatusCode } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -37,15 +38,10 @@ export class UserInfoService{
 
   requestUserInfo(): Observable<boolean>{
     return this.restClient.get('/auth/info').pipe(
-      map(data => {
-        if(data.status==200){
+      map(response => {
+        if(response.status==200){
           this.status = 'authenticated';
-          if(data.role && data.username){
-            this.userInfo = {
-              username: data.username,
-              role: data.role
-            }
-          }
+          this.setupUserData(response.body);
         }
         else{
           this.status = 'unauthenticated';
@@ -57,6 +53,25 @@ export class UserInfoService{
         return of(false);
       })
     )
+  }
+
+  public login(credentials: {username: string, password: string}){
+    this.restClient.post('auth/login', credentials).subscribe(response => {  
+      if(response.status === HttpStatusCode.Ok){
+        this.setupUserData(response.body);          
+      }
+    });
+  }
+
+  private setupUserData(data: any){
+    this.status = 'authenticated';
+    if(data.role && data.username){
+      this.userInfo = {
+        username: data.username,
+        role: data.role
+      }
+      this.router.navigate(["/devices"]);
+    }
   }
 
   public logout(){
@@ -74,4 +89,6 @@ export class UserInfoService{
   public setUnauthenticated(){
     this.status = "unauthenticated";
   }
+
+  
 }

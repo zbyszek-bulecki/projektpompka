@@ -21,7 +21,7 @@ export class LoginPageComponent implements OnInit {
     password: ''
   }
 
-  constructor(private userInfoService: UserInfoService, private restClient: RestClientService, private router: Router) { }
+  constructor(private userInfoService: UserInfoService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -31,10 +31,6 @@ export class LoginPageComponent implements OnInit {
   }
 
   performLoginAttempt(){
-    this.restClient.post('auth/login', this.credentials).subscribe(response => {
-      if(response.status === HttpStatusCode.Ok){
-        this.userInfoService.requestUserInfo().subscribe(data => this.router.navigate(["/devices"]));
-      }
-    });
+    this.userInfoService.login(this.credentials);
   }
 }
