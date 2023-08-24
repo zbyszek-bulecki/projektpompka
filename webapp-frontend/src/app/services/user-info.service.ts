@@ -89,6 +89,4 @@ export class UserInfoService{
   public setUnauthenticated(){
     this.status = "unauthenticated";
   }
-
-  
 }
