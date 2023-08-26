@@ -94,3 +94,4 @@ hs_err_pid*
 */Thumbs.db
 
 dbdata
+gardenManager/src/main/resources/static/app/*

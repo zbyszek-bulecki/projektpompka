@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/planter/**", "/planter").hasAuthority(DEVICE.name())
                     .requestMatchers("/manager/**").hasAuthority(ADMIN.name())
-                    .requestMatchers("/auth/**").permitAll()
+                    .requestMatchers("/", "/auth/**", "/app", "/app/**").permitAll()
                     .anyRequest().authenticated())
                 .httpBasic()
                 .and()

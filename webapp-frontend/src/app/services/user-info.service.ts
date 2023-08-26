@@ -20,11 +20,11 @@ export class UserInfoService{
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.isUserLogged().pipe(map(isLogged => {
-      console.log(isLogged);   
+      console.log(isLogged);
       if(!isLogged){
         this.router.navigate(["/"]);
-      }  
-      console.log(isLogged);    
+      }
+      console.log(isLogged);
       return isLogged;
     }));
   }
@@ -56,9 +56,9 @@ export class UserInfoService{
   }
 
   public login(credentials: {username: string, password: string}){
-    this.restClient.post('auth/login', credentials).subscribe(response => {  
+    this.restClient.post('/auth/login', credentials).subscribe(response => {
       if(response.status === HttpStatusCode.Ok){
-        this.setupUserData(response.body);          
+        this.setupUserData(response.body);
       }
     });
   }
