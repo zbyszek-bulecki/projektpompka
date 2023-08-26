@@ -33,6 +33,19 @@ dependencies {
 	testImplementation "org.testcontainers:mariadb:1.18.3"
 }
 
+task cleanStatic(type: Delete) {
+	dependsOn ':webapp-frontend:ngBuild'
+	delete 'src/main/resources/static/app'
+}
+
+task copyAngular(type: Copy) {
+	dependsOn 'cleanStatic'
+	from '../webapp-frontend/dist/webapp-frontend'
+	into 'src/main/resources/static/app'
+}
+
+compileJava.dependsOn copyAngular
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

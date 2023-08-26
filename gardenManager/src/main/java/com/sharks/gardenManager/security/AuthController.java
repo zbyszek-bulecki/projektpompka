@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginForm form, BindingResult bindingResult, HttpServletRequest request) {
+    public ResponseEntity<UserInfoDTO> login(@Valid @RequestBody LoginForm form, BindingResult bindingResult, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -43,7 +43,7 @@ public class AuthController {
         var user = (GardenUserDetails) auth.getPrincipal();
         log.info("User {} logged in.", user.getUsername());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userInfoService.getUserInfo(user.getUsername()));
     }
 
     @GetMapping("/logout")

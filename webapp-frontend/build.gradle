@@ -1,0 +1,9 @@
+task cleanDist(type: Delete) {
+  buildDir = 'dist'
+  delete "${buildDir}"
+}
+
+task ngBuild(type:Exec, dependsOn: cleanDist) {
+    workingDir = file('../webapp-frontend')
+    commandLine 'cmd', '/c', 'ng', 'build', '--base-href', '/app/'
+}

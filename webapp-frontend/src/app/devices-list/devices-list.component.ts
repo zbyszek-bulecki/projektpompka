@@ -1,6 +1,7 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Device } from 'src/domain/device';
+import { UserInfoService } from '../services/user-info.service';
 
 @Component({
   selector: 'app-devices-list',
@@ -9,9 +10,15 @@ import { Device } from 'src/domain/device';
 })
 export class DevicesListComponent implements OnInit {
 
-  constructor(private httpClient: HttpClient) { }
+  username: string;
+
+  constructor(private httpClient: HttpClient, private userInfoService: UserInfoService) {
+    this.username = userInfoService.userInfo!.username;
+  }
+
 
   ngOnInit(): void {
+
   }
   
 }
