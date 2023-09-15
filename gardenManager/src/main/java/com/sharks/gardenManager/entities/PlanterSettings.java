@@ -1,6 +1,7 @@
 package com.sharks.gardenManager.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -33,6 +34,7 @@ public class PlanterSettings {
     private boolean updated;
 
     @JsonIgnoreProperties("planterSettings")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ManyToOne(targetEntity = Planter.class, fetch = FetchType.LAZY)
     @JoinColumn(name=COLUMN_PREFIX + Planter.COLUMN_PREFIX + "id", nullable=false)
     private Planter planter;

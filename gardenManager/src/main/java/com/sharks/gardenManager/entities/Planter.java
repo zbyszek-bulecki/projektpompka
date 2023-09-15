@@ -1,6 +1,7 @@
 package com.sharks.gardenManager.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -35,12 +36,15 @@ public class Planter {
     @Column(name = COLUMN_PREFIX + "last_activity")
     private LocalDateTime lastActivity;
     @JsonIgnoreProperties("planter")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PlanterMeasurement> planterMeasurement;
     @JsonIgnoreProperties("planter")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PlanterSettings> planterSettings;
     @JsonIgnoreProperties("planter")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PlanterTask> planterTasks;
 }

@@ -1,6 +1,7 @@
 package com.sharks.gardenManager.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -41,6 +42,7 @@ public class PlanterMeasurement {
     private LocalDateTime createdAt;
 
     @JsonIgnoreProperties("planterMeasurement")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name= COLUMN_PREFIX + Planter.COLUMN_PREFIX + "id", nullable=false)
     private Planter planter;
