@@ -1,0 +1,22 @@
+<p>
+    <select [(ngModel)]="config.pageSize" convert-to-number (change)="onChangeSize()">
+        <option *ngFor="let size of getAllowedPageSizes()" [value]="size">{{size}}</option>
+    </select>
+</p>
+<div *ngIf="table!=null">
+    <table>
+        <tr>
+            <th *ngFor="let headerColumn of table.header.getHeaders()">{{headerColumn}}</th>
+        </tr>
+        <tr *ngFor="let row of table.rows">
+            <td *ngFor="let column of row.getColumns()">
+                <a *ngIf="column.link && column.isLinkArray()" [routerLink]="column.link">{{column.value}}</a>
+                <a *ngIf="column.link && column.isLinkText()" [routerLink]="[column.link]">{{column.value}}</a>
+                <span *ngIf="!column.link">{{column.value}}</span>
+            </td>
+        </tr>
+    </table>
+    <button *ngFor="let i of pageButtons()" [ngClass]="{'selected': i === config.page}" (click)="openPage(i)" >
+        {{i+1}}
+    </button>
+</div>

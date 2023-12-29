@@ -20,11 +20,9 @@ export class UserInfoService{
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.isUserLogged().pipe(map(isLogged => {
-      console.log(isLogged);
       if(!isLogged){
-        this.router.navigate(["/"]);
+        this.router.navigate(["/login"]);
       }
-      console.log(isLogged);
       return isLogged;
     }));
   }
@@ -70,7 +68,7 @@ export class UserInfoService{
         username: data.username,
         role: data.role
       }
-      this.router.navigate(["/devices"]);
+      this.router.navigate(["/"]);
     }
   }
 
@@ -78,7 +76,7 @@ export class UserInfoService{
     this.status = 'unknown';
     this.userInfo = null;
     this.restClient.get('/auth/logout').subscribe(response => {
-      this.router.navigate(["/"]);
+      this.router.navigate(["/login"]);
     });
   }
 

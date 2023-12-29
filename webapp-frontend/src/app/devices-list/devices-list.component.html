@@ -1,3 +1,3 @@
-{{username}}
-<app-navigation-bar></app-navigation-bar>
-<p>device-list works!</p>
+<button (click)="loadDevices(tableConfig.page,tableConfig.pageSize)">Reload page</button>
+
+<app-pageable-table [table]="table" [config]="tableConfig" (openPageEvent)="openPage($event)"></app-pageable-table>

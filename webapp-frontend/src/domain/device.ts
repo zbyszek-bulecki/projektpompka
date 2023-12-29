@@ -1,11 +1,11 @@
 export class Device{
     adresMac: String;
     status: String;
-    lastUpdate: String;
+    lastActivity: String;
 
-    constructor(adresMac: String, status: String, lastUpdate: String){
+    constructor(adresMac: String, status: String, lastActivity: String){
         this.adresMac = adresMac;
         this.status = status;
-        this.lastUpdate = lastUpdate;
+        this.lastActivity = lastActivity;
     }
 }

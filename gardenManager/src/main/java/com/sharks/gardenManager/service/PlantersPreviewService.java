@@ -2,6 +2,7 @@ package com.sharks.gardenManager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sharks.gardenManager.DTO.MeasurementsDTO;
+import com.sharks.gardenManager.DTO.PageDTO;
 import com.sharks.gardenManager.DTO.PlanterDTO;
 import com.sharks.gardenManager.DTO.PlanterWithLatestMeasurementDTO;
 import com.sharks.gardenManager.entities.Planter;
@@ -29,12 +30,13 @@ public class PlantersPreviewService {
         this.objectMapper = objectMapper;
     }
 
-    public List<PlanterWithLatestMeasurementDTO> getPlantersList() {
-        List<Planter> planters = planterRepository.findAll();
+    public PageDTO<List<PlanterWithLatestMeasurementDTO>> getPlantersList(int page, int size) {
+        long totalElements = planterRepository.count();
+        List<Planter> planters = planterRepository.findAll(Pageable.ofSize(size).withPage(page)).toList();
         Map<Planter, PlanterMeasurement> plantersWithLatestMeasurements = getLatestMeasurements(planters);
         List<PlanterWithLatestMeasurementDTO> plantersWithMeasurements = mapToPlanterWithLatestMeasurementDTO(planters, plantersWithLatestMeasurements);
         addPlantersWithoutMeasurements(planters, plantersWithLatestMeasurements, plantersWithMeasurements);
-        return plantersWithMeasurements;
+        return PageDTO.of(page, totalElements, size, plantersWithMeasurements);
     }
 
     private Map<Planter, PlanterMeasurement> getLatestMeasurements(List<Planter> planters) {
@@ -66,10 +68,12 @@ public class PlantersPreviewService {
                 .orElseThrow();
     }
 
-    public List<MeasurementsDTO> getMeasurementsByPlanterNameAndMacAddress(String name, String macAddress, int page, int size) {
-        return planterMeasurementRepository.findAllByPlanterNameAndMacAddress(name, macAddress, Pageable.ofSize(size).withPage(page))
+    public PageDTO<List<MeasurementsDTO>> getMeasurementsByPlanterNameAndMacAddress(String name, String macAddress, int page, int size) {
+        long totalElements = planterMeasurementRepository.countAllByPlanterNameAndMacAddress(name, macAddress);
+        List<MeasurementsDTO> measurementsDTO =  planterMeasurementRepository.findAllByPlanterNameAndMacAddress(name, macAddress, Pageable.ofSize(size).withPage(page))
                 .stream()
                 .map(MeasurementsDTO::mapToDTO)
                 .collect(Collectors.toList());
+        return PageDTO.of(page, totalElements, size, measurementsDTO);
     }
 }

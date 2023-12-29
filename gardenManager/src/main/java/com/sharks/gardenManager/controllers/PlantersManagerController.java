@@ -1,6 +1,7 @@
 package com.sharks.gardenManager.controllers;
 
 import com.sharks.gardenManager.DTO.MeasurementsDTO;
+import com.sharks.gardenManager.DTO.PageDTO;
 import com.sharks.gardenManager.DTO.PlanterDTO;
 import com.sharks.gardenManager.DTO.PlanterWithLatestMeasurementDTO;
 import com.sharks.gardenManager.service.PlantersPreviewService;
@@ -20,8 +21,8 @@ public class PlantersManagerController {
     }
 
     @GetMapping
-    public List<PlanterWithLatestMeasurementDTO> getPlantersList() {
-        return plantersPreviewService.getPlantersList();
+    public PageDTO<List<PlanterWithLatestMeasurementDTO>> getPlantersList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return plantersPreviewService.getPlantersList(page, size);
     }
 
     @GetMapping("/{name}/{macAddress}")
@@ -36,10 +37,10 @@ public class PlantersManagerController {
     }
 
     @GetMapping("/{name}/{macAddress}/measurements")
-    public ResponseEntity<List<MeasurementsDTO>> getMeasurementsByPlanterId(@PathVariable String name, @PathVariable String macAddress,
-                                                                            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<PageDTO<List<MeasurementsDTO>>> getMeasurementsByPlanterId(@PathVariable String name, @PathVariable String macAddress,
+                                                                                    @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         try {
-            List<MeasurementsDTO> measurementsDTO = plantersPreviewService.getMeasurementsByPlanterNameAndMacAddress(name, macAddress, page, size);
+            PageDTO<List<MeasurementsDTO>> measurementsDTO = plantersPreviewService.getMeasurementsByPlanterNameAndMacAddress(name, macAddress, page, size);
             return ResponseEntity.ok(measurementsDTO);
         }
         catch (NoSuchElementException e) {

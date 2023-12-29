@@ -14,11 +14,16 @@ import java.util.UUID;
 
 @Repository
 public interface PlanterMeasurementRepository extends JpaRepository<PlanterMeasurement, UUID> {
+
     @Query(value = "SELECT m FROM PlanterMeasurement m " +
             "LEFT JOIN (SELECT MAX(ma.createdAt) date, ma.planter planter " +
             "FROM PlanterMeasurement ma GROUP BY ma.planter) lm " +
             "WHERE m.createdAt=lm.date AND lm.planter IN :ids")
     List<PlanterMeasurement> findLastMeasurementForEachDevice(@Param("ids") List<Planter> idList);
+
+    @Query(value = "SELECT COUNT(*) FROM PlanterMeasurement m " +
+            "WHERE m.planter.name = :name AND m.planter.macAddress = :macAddress")
+    long countAllByPlanterNameAndMacAddress(String name, String macAddress);
 
     @Query(value = "SELECT m FROM PlanterMeasurement m " +
             "WHERE m.planter.name = :name AND m.planter.macAddress = :macAddress " +

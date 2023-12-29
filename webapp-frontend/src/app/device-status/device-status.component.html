@@ -1,2 +1,7 @@
-<app-navigation-bar></app-navigation-bar>
-<p>device-status works!</p>
+<div>
+    <b>{{name}}:{{macAddress}}</b>
+    <br/>
+    last activity: <b>{{lastActivity}}</b>
+</div>
+<button (click)="loadMeasurements(tableConfig.page,tableConfig.pageSize)">Reload page</button>
+<app-pageable-table [table]="table" [config]="tableConfig" (openPageEvent)="openPage($event)"></app-pageable-table>

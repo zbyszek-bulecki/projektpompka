@@ -8,10 +8,13 @@ import { UserInfoService } from '../services/user-info.service';
 })
 export class NavigationBarComponent implements OnInit {
 
-  constructor(private userInfoService: UserInfoService) { }
+  username: string | null = null;
 
-  ngOnInit(): void {
+  constructor(private userInfoService: UserInfoService) { 
+    this.username = userInfoService.userInfo!.username;
   }
+
+  ngOnInit(): void {}
 
   logout(){
     this.userInfoService.logout();
