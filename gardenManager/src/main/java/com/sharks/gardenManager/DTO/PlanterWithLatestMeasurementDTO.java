@@ -28,11 +28,13 @@ public class PlanterWithLatestMeasurementDTO {
         planterWithLatestMeasurementDTO.setName(planter.getName());
         planterWithLatestMeasurementDTO.setMacAddress(planter.getMacAddress());
         planterWithLatestMeasurementDTO.setLastActivity(planter.getLastActivity());
-        planterWithLatestMeasurementDTO.setSoilMoisture(planterMeasurement.getSoilMoisture());
-        planterWithLatestMeasurementDTO.setLightIntensity(planterMeasurement.getLightIntensity());
-        planterWithLatestMeasurementDTO.setTemperature(planterMeasurement.getTemperature());
-        planterWithLatestMeasurementDTO.setPressure(planterMeasurement.getPressure());
-        planterWithLatestMeasurementDTO.setWaterLevel(planterMeasurement.getWaterLevel());
+        if(planterMeasurement!=null) {
+            planterWithLatestMeasurementDTO.setSoilMoisture(planterMeasurement.getSoilMoisture());
+            planterWithLatestMeasurementDTO.setLightIntensity(planterMeasurement.getLightIntensity());
+            planterWithLatestMeasurementDTO.setTemperature(planterMeasurement.getTemperature());
+            planterWithLatestMeasurementDTO.setPressure(planterMeasurement.getPressure());
+            planterWithLatestMeasurementDTO.setWaterLevel(planterMeasurement.getWaterLevel());
+        }
         return planterWithLatestMeasurementDTO;
     }
 }

@@ -50,6 +50,7 @@ export class PageableTableConfig{
   page: number = 0;
   totalElements: number = 0;
   pageSize: number = PageableTableComponent.allowedPageSizes[0];
+  noElementsMessage: string = "There are no elements to show.";
 }
 
 export class Table{

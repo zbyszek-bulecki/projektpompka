@@ -25,6 +25,7 @@ export class DevicesListComponent implements OnInit {
       const pageSizeParam = params.get('pageSize');
       this.tableConfig.page = pageParam ? +pageParam : this.tableConfig.page;
       this.tableConfig.pageSize = pageSizeParam ? +pageSizeParam : PageableTableComponent.getDefaultPageSize();
+      this.tableConfig.noElementsMessage = "No devices found.";
       this.loadDevices(this.tableConfig.page, this.tableConfig.pageSize);
     });
   }

@@ -15,7 +15,7 @@ import java.util.UUID;
 @Repository
 public interface PlanterMeasurementRepository extends JpaRepository<PlanterMeasurement, UUID> {
 
-    @Query(value = "SELECT m FROM PlanterMeasurement m " +
+    @Query(value = "SELECT DISTINCT m FROM PlanterMeasurement m " +
             "LEFT JOIN (SELECT MAX(ma.createdAt) date, ma.planter planter " +
             "FROM PlanterMeasurement ma GROUP BY ma.planter) lm " +
             "WHERE m.createdAt=lm.date AND lm.planter IN :ids")

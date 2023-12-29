@@ -35,7 +35,6 @@ public class PlantersPreviewService {
         List<Planter> planters = planterRepository.findAll(Pageable.ofSize(size).withPage(page)).toList();
         Map<Planter, PlanterMeasurement> plantersWithLatestMeasurements = getLatestMeasurements(planters);
         List<PlanterWithLatestMeasurementDTO> plantersWithMeasurements = mapToPlanterWithLatestMeasurementDTO(planters, plantersWithLatestMeasurements);
-        addPlantersWithoutMeasurements(planters, plantersWithLatestMeasurements, plantersWithMeasurements);
         return PageDTO.of(page, totalElements, size, plantersWithMeasurements);
     }
 
@@ -53,13 +52,6 @@ public class PlantersPreviewService {
         return planters.stream()
                 .map(planter -> PlanterWithLatestMeasurementDTO.mapToDTO(planter, plantersWithLatestMeasurements.get(planter)))
                 .collect(Collectors.toList());
-    }
-
-    private void addPlantersWithoutMeasurements(List<Planter> planters, Map<Planter, PlanterMeasurement> plantersWithLatestMeasurements, List<PlanterWithLatestMeasurementDTO> plantersWithMeasurements) {
-        plantersWithMeasurements.addAll(
-                planters.stream()
-                        .filter(planter -> !plantersWithLatestMeasurements.containsKey(planter))
-                        .map(planter -> objectMapper.convertValue(planter, PlanterWithLatestMeasurementDTO.class)).toList());
     }
 
     public PlanterDTO getPlanterByNameAndMacAddress(String name, String macAddress) {
