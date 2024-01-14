@@ -63,7 +63,7 @@ public class PlantersPreviewService {
     }
 
     public PlanterDTO getPlanterByNameAndMacAddress(String name, String macAddress) {
-        return planterRepository.findByNameAndMacAddress(name, macAddress)
+        return planterRepository.findFirstByNameAndMacAddress(name, macAddress)
                 .map(PlanterDTO::mapToDTO)
                 .orElseThrow();
     }

@@ -11,5 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface PlanterSettingsRepository extends JpaRepository<PlanterSettings, UUID> {
+    int countByPlanterAndUpdated(Planter planter, boolean updated);
     List<PlanterSettings> findByPlanterAndUpdated(Planter planter, boolean updated);
 }

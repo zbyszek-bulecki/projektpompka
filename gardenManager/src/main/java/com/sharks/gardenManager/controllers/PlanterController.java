@@ -1,9 +1,8 @@
 package com.sharks.gardenManager.controllers;
 
-import com.sharks.gardenManager.DTO.CommandsRequesterDTO;
-import com.sharks.gardenManager.DTO.MeasurementsReportDTO;
-import com.sharks.gardenManager.DTO.TaskDTO;
+import com.sharks.gardenManager.DTO.*;
 import com.sharks.gardenManager.service.MeasurementService;
+import com.sharks.gardenManager.service.SettingsService;
 import com.sharks.gardenManager.service.TasksService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +15,12 @@ public class PlanterController {
 
     private final MeasurementService measurementService;
     private final TasksService tasksService;
+    private final SettingsService settingsService;
 
-    public PlanterController(MeasurementService measurementService, TasksService tasksService) {
+    public PlanterController(MeasurementService measurementService, TasksService tasksService, SettingsService settingsService) {
         this.measurementService = measurementService;
         this.tasksService = tasksService;
+        this.settingsService = settingsService;
     }
 
     @GetMapping
@@ -28,13 +29,18 @@ public class PlanterController {
     }
 
     @PostMapping("/measurements")
-    public ResponseEntity<Void> post(@RequestBody MeasurementsReportDTO measurementsDTO){
+    public ResponseEntity<Void> consumeMeasurements(@RequestBody MeasurementsReportDTO measurementsDTO){
         measurementService.registerMeasurements(measurementsDTO);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/tasks")
-    public List<TaskDTO<Object>> getTasks(@RequestBody CommandsRequesterDTO commandsRequesterDTO){
-        return tasksService.getTasks(commandsRequesterDTO);
+    @PostMapping("/next_task")
+    public NextTaskDTO<Object> getNextTask(@RequestBody CommandsRequesterDTO commandsRequesterDTO){
+        return tasksService.getNextTask(commandsRequesterDTO);
+    }
+
+    @PostMapping("/settings_updates")
+    public List<SettingsDTO> getSettingsUpdates(@RequestBody CommandsRequesterDTO commandsRequesterDTO){
+        return settingsService.getAwaitingSettingsUpdates(commandsRequesterDTO);
     }
 }

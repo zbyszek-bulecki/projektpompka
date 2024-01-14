@@ -14,6 +14,6 @@ import java.util.UUID;
 public interface PlanterRepository extends JpaRepository<Planter, UUID> {
 
     Page<Planter> findAll(Pageable pageable);
-    Optional<Planter> findByNameAndMacAddress(String name, String macAddress);
+    Optional<Planter> findFirstByNameAndMacAddress(String name, String macAddress);
 
 }

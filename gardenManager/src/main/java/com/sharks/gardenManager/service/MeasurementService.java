@@ -27,7 +27,7 @@ public class MeasurementService {
     @Transactional
     public void registerMeasurements(MeasurementsReportDTO measurementsDTO){
         Optional<Planter> optionalPlanter = planterRepository
-                .findByNameAndMacAddress(measurementsDTO.getName(), measurementsDTO.getMacAddress());
+                .findFirstByNameAndMacAddress(measurementsDTO.getName(), measurementsDTO.getMacAddress());
         if(optionalPlanter.isPresent()){
             saveMeasurementsForExistingPlanter(measurementsDTO, optionalPlanter.get());
         }
