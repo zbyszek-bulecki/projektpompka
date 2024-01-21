@@ -1,9 +1,16 @@
 <div *ngIf="config.totalElements!=0">
-    <p>
-        <select [(ngModel)]="config.pageSize" convert-to-number (change)="onChangeSize()">
-            <option *ngFor="let size of getAllowedPageSizes()" [value]="size">{{size}}</option>
-        </select>
-    </p>
+    <div class="row">
+        <div class="col-1">
+            <select class="form-select" [(ngModel)]="config.pageSize" convert-to-number (change)="onChangeSize()">
+                <option selected *ngFor="let size of getAllowedPageSizes()" [value]="size">{{size}}</option>
+            </select>
+        </div>
+        <div class="col-1">
+            <button class="btn" (click)="openPage(config.page)">
+                <i class="bi bi-bootstrap-reboot"></i>
+            </button>
+        </div>
+    </div>
     <div *ngIf="table!=null">
         <table class="table">
             <thead>

@@ -5,6 +5,7 @@ import { UserInfoService } from '../services/user-info.service';
 import { RestClientService } from '../services/rest-client.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { PageableTableComponent, PageableTableConfig, Table, TableColumn, TableHeader, TableRow } from '../pageable-table/pageable-table.component';
+import {Location} from '@angular/common'; 
 
 @Component({
   selector: 'app-devices-list',
@@ -13,7 +14,7 @@ import { PageableTableComponent, PageableTableConfig, Table, TableColumn, TableH
 })
 export class DevicesListComponent implements OnInit {
 
-  constructor(private userInfoService: UserInfoService, private restClient: RestClientService, private router: Router, private route: ActivatedRoute) {
+  constructor(private route: ActivatedRoute, private userInfoService: UserInfoService, private restClient: RestClientService, private location: Location) {
   }
 
   tableConfig = new PageableTableConfig();
@@ -40,11 +41,13 @@ export class DevicesListComponent implements OnInit {
   }
 
   openPage(page: number){
+    console.log(page);
+    this.loadDevices(page, this.tableConfig.pageSize);
     if(this.tableConfig.pageSize!=PageableTableComponent.getDefaultPageSize()){
-      this.router.navigate(['/devices', page, this.tableConfig.pageSize]);
+      this.location.replaceState(['/devices', page, this.tableConfig.pageSize].join("/"));      
     }
     else{
-      this.router.navigate(['/devices', page]);
+      this.location.replaceState(['/devices', page].join("/"));
     }
   }
 
