@@ -10,9 +10,12 @@ import { HomePageComponent } from './home-page/home-page.component';
 const routes: Routes = [
   { path: 'login', component: LoginPageComponent, canActivate: [AnonymousUserService] },
   { path: '', component: HomePageComponent, canActivate: [UserInfoService], children: [
-    { path: 'device/:name/:mac', component: DeviceStatusComponent},
-    { path: 'device/:name/:mac/:page', component: DeviceStatusComponent},
-    { path: 'device/:name/:mac/:page/:pageSize', component: DeviceStatusComponent},
+    { path: 'device/:name/:mac', component: DeviceStatusComponent, children: [
+      { path: '', component: DeviceStatusComponent},
+      { path: 'status', component: DeviceStatusComponent},
+      { path: 'status/:page', component: DeviceStatusComponent},
+      { path: 'status/:page/:pageSize', component: DeviceStatusComponent},
+    ]},
     { path: '', component: DevicesListComponent},
     { path: 'devices', component: DevicesListComponent},
     { path: 'devices/:page', component: DevicesListComponent},

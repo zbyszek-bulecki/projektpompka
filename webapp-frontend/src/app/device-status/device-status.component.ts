@@ -14,29 +14,19 @@ export class DeviceStatusComponent implements OnInit {
 
   constructor(private restClient: RestClientService, private route: ActivatedRoute, private location: Location) { }
 
-  name: string | null = null;
-  macAddress: string | null = null;
-  lastActivity: string | null = null;
+  @Input() name: string | null = null;
+  @Input() macAddress: string | null = null;
 
   tableConfig = new PageableTableConfig();
   table: Table | null = null;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
-      this.name = params.get('name');
-      this.macAddress = params.get('mac');
       const pageParam = params.get('page');
       const pageSizeParam = params.get('pageSize');
       this.tableConfig.page = pageParam ? +pageParam : this.tableConfig.page;
       this.tableConfig.pageSize = pageSizeParam ? +pageSizeParam : PageableTableComponent.getDefaultPageSize();
-      this.loadInfo();
       this.loadMeasurements(this.tableConfig.page, this.tableConfig.pageSize);
-    });
-  }
-
-  loadInfo(){  
-    this.restClient.get("/manager/planters/"+this.name+"/"+this.macAddress).subscribe(response =>{
-      this.lastActivity = response.body.lastActivity;
     });
   }
 
