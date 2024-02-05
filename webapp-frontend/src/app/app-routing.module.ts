@@ -6,11 +6,12 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { UserInfoService } from './services/user-info.service';
 import { AnonymousUserService } from './services/anonymous-user.service';
 import { HomePageComponent } from './home-page/home-page.component';
+import { DevicePreviewComponent } from './device-preview/device-preview.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginPageComponent, canActivate: [AnonymousUserService] },
   { path: '', component: HomePageComponent, canActivate: [UserInfoService], children: [
-    { path: 'device/:name/:mac', component: DeviceStatusComponent, children: [
+    { path: 'device/:name/:mac', component: DevicePreviewComponent, children: [
       { path: '', component: DeviceStatusComponent},
       { path: 'status', component: DeviceStatusComponent},
       { path: 'status/:page', component: DeviceStatusComponent},

@@ -4,6 +4,7 @@ import { PageableTableComponent, PageableTableConfig, Table, TableHeader, TableR
 import { HttpParams } from '@angular/common/http';
 import { RestClientService } from '../services/rest-client.service';
 import {Location} from '@angular/common'; 
+import { DevicePreviewDataService } from '../services/device-preview-data.service';
 
 @Component({
   selector: 'app-device-status',
@@ -12,15 +13,22 @@ import {Location} from '@angular/common';
 })
 export class DeviceStatusComponent implements OnInit {
 
-  constructor(private restClient: RestClientService, private route: ActivatedRoute, private location: Location) { }
+  constructor(
+    private restClient: RestClientService, 
+    private route: ActivatedRoute, 
+    private location: Location, 
+    private devicePreviewData: DevicePreviewDataService
+  ) { }
 
-  @Input() name: string | null = null;
-  @Input() macAddress: string | null = null;
+  name: string | null = null;
+  macAddress: string | null = null;
 
   tableConfig = new PageableTableConfig();
   table: Table | null = null;
 
   ngOnInit(): void {
+    this.name = this.devicePreviewData.selected.name;
+    this.macAddress = this.devicePreviewData.selected.macAddress;
     this.route.paramMap.subscribe((params: ParamMap) => {
       const pageParam = params.get('page');
       const pageSizeParam = params.get('pageSize');
