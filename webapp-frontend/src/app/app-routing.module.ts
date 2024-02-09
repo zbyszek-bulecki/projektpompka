@@ -7,6 +7,7 @@ import { UserInfoService } from './services/user-info.service';
 import { AnonymousUserService } from './services/anonymous-user.service';
 import { HomePageComponent } from './home-page/home-page.component';
 import { DevicePreviewComponent } from './device-preview/device-preview.component';
+import { DeviceSettingsComponent } from './device-settings/device-settings.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginPageComponent, canActivate: [AnonymousUserService] },
@@ -16,6 +17,7 @@ const routes: Routes = [
       { path: 'status', component: DeviceStatusComponent},
       { path: 'status/:page', component: DeviceStatusComponent},
       { path: 'status/:page/:pageSize', component: DeviceStatusComponent},
+      { path: 'settings', component: DeviceSettingsComponent}
     ]},
     { path: '', component: DevicesListComponent},
     { path: 'devices', component: DevicesListComponent},

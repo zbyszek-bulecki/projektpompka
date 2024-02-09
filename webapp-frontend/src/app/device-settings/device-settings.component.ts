@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { DevicePreviewDataService } from '../services/device-preview-data.service';
 
 @Component({
   selector: 'app-device-settings',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./device-settings.component.css']
 })
 export class DeviceSettingsComponent {
+
+  constructor (private devicePreviewData: DevicePreviewDataService) {
+    
+  }
 
 }
