@@ -11,7 +11,6 @@ import { LoginPageComponent } from './login-page/login-page.component';
 import { FormsModule } from '@angular/forms';
 import { PageableTableComponent } from './pageable-table/pageable-table.component';
 import { HomePageComponent } from './home-page/home-page.component';
-import { DeviceSettingsComponent } from './device-settings/device-settings.component';
 import { DevicePreviewComponent } from './device-preview/device-preview.component';
 
 @NgModule({
@@ -20,10 +19,8 @@ import { DevicePreviewComponent } from './device-preview/device-preview.componen
     NavigationBarComponent,
     DevicesListComponent,
     DeviceStatusComponent,
-    LoginPageComponent,
     PageableTableComponent,
     HomePageComponent,
-    DeviceSettingsComponent,
     DevicePreviewComponent
   ],
   imports: [

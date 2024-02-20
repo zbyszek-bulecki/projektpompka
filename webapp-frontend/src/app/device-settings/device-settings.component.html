@@ -1,1 +1,23 @@
-<p>device-settings works!</p>
+<h4>Device Settings</h4>
+
+<form [formGroup]="settingsForm" (submit)="submitSettings()">
+    <p>
+        <label for="ssid">Wi-Fi NetworkSSID</label>
+        <input id="ssid" type="text" formControlName="ssid">
+    </p>
+    <p>
+        <label for="password">Wi-Fi Password</label>
+        <input id="password" type="text" formControlName="password">
+    </p>
+    <p>
+        <label for="host">Hostname and port (hostname:port)</label>
+        <input id="host" type="text" formControlName="host">
+    </p>
+    <p>
+        <label for="sleepTime">Sleep Time in ms</label>
+        <input id="sleepTime" type="text" formControlName="sleepTime">
+    </p>
+    <p>
+        <button type="submit" class="primary">Save</button>
+    </p>
+</form>
