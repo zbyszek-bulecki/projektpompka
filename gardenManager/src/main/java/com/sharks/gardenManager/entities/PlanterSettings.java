@@ -26,10 +26,15 @@ public class PlanterSettings {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = COLUMN_PREFIX + "id")
     private UUID id;
-    @Column(name = COLUMN_PREFIX + "setting_key")
-    private String settingKey;
-    @Column(name = COLUMN_PREFIX + "setting_value")
-    private String settingValue;
+    @Column(name = COLUMN_PREFIX + "ssid")
+    private String settingSsid;
+    @Column(name = COLUMN_PREFIX + "password")
+    private String settingValPassword;
+    @Column(name = COLUMN_PREFIX + "hostname")
+    private String settingHostname;
+    @Column(name = COLUMN_PREFIX + "sleep_time")
+    private Integer settingSleepTime;
+
     @Column(name = COLUMN_PREFIX + "updated")
     private boolean updated;
 
