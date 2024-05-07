@@ -1,14 +1,4 @@
-DROP TABLE Planter_Settings;
-
-CREATE TABLE Planter_Settings (
-    settings_id VARCHAR(36) default UUID(),
-    settings_ssid VARCHAR(32),
-    settings_password VARCHAR(63),
-    settings_host VARCHAR(200),
-    settings_sleep_time NUMERIC,
-    settings_updated BOOL,
-    settings_planter_id VARCHAR(96),
-
-    PRIMARY KEY (settings_id),
-    FOREIGN KEY (settings_planter_id) REFERENCES Planters(planter_id)
-);
+CREATE UNIQUE INDEX planter_unique_settings_key
+ON planter_settings (settings_planter_id, settings_setting_key);
+ALTER TABLE planter_settings CHANGE COLUMN settings_setting_key settings_key varchar(50);
+ALTER TABLE planter_settings CHANGE COLUMN settings_setting_value settings_value varchar(200);

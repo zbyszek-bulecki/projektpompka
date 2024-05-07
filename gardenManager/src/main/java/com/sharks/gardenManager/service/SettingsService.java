@@ -1,39 +1,49 @@
 package com.sharks.gardenManager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sharks.gardenManager.DTO.CommandsRequesterDTO;
+import com.sharks.gardenManager.DTO.CommandsRequesterWithTimestampDTO;
 import com.sharks.gardenManager.DTO.SettingsDTO;
 import com.sharks.gardenManager.entities.Planter;
+import com.sharks.gardenManager.entities.PlanterSettings;
 import com.sharks.gardenManager.repositories.PlanterRepository;
 import com.sharks.gardenManager.repositories.PlanterSettingsRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SettingsService {
 
     private final PlanterRepository planterRepository;
     private final PlanterSettingsRepository planterSettingsRepository;
-    private final ObjectMapper objectMapper;
 
-    public SettingsService(PlanterRepository planterRepository, PlanterSettingsRepository planterSettingsRepository, ObjectMapper objectMapper) {
+    public SettingsService(PlanterRepository planterRepository, PlanterSettingsRepository planterSettingsRepository) {
         this.planterRepository = planterRepository;
         this.planterSettingsRepository = planterSettingsRepository;
-        this.objectMapper = objectMapper;
     }
 
-    public List<SettingsDTO> getAwaitingSettingsUpdates(CommandsRequesterDTO commandsRequesterDTO) {
+    public SettingsDTO getAwaitingSettingsUpdates(CommandsRequesterWithTimestampDTO commandsRequesterWithTimestampDTO) {
+        Instant currentUpdateTimestamp = Instant.now();
+        Instant previousUpdateTimestamp = commandsRequesterWithTimestampDTO.getTimestamp() == null ? Instant.MIN : commandsRequesterWithTimestampDTO.getTimestamp();
         Optional<Planter> planter = planterRepository
-                .findFirstByNameAndMacAddress(commandsRequesterDTO.getName(), commandsRequesterDTO.getMacAddress());
-        return planter.map(this::prepareSettingsUpdates).orElseGet(List::of);
+                .findFirstByNameAndMacAddress(commandsRequesterWithTimestampDTO.getName(), commandsRequesterWithTimestampDTO.getMacAddress());
+        return planter.map(p -> prepareSettingsUpdates(p, currentUpdateTimestamp, previousUpdateTimestamp))
+                .orElseGet(() -> new SettingsDTO(currentUpdateTimestamp, Map.of()));
     }
 
-    private List<SettingsDTO> prepareSettingsUpdates(Planter planter) {
-        return planterSettingsRepository.findByPlanterAndUpdated(planter, false)
+    private SettingsDTO prepareSettingsUpdates(Planter planter, Instant currentUpdateTimestamp, Instant previousUpdateTimestamp) {
+        Map <String, String> settings =  planterSettingsRepository.findByPlanterWithDefaultSettingsAndUpdateTimestamp(planter, previousUpdateTimestamp)
                 .stream()
-                .map(planterSettings -> objectMapper.convertValue(planterSettings, SettingsDTO.class))
-                .toList();
+                .collect(Collectors.toMap(PlanterSettings::getKey, ps -> ps, this::handleDuplicateSettings))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue()));
+        return new SettingsDTO(currentUpdateTimestamp, settings);
+    }
+    private PlanterSettings handleDuplicateSettings(PlanterSettings s1, PlanterSettings s2){
+        return s1.getPlanter().getId() != null ? s1 : s2;
     }
 }

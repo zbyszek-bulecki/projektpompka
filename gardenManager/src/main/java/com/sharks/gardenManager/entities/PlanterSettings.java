@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.sharks.gardenManager.entities.PlanterSettings.TABLE_NAME;
@@ -26,17 +28,12 @@ public class PlanterSettings {
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(name = COLUMN_PREFIX + "id")
     private UUID id;
-    @Column(name = COLUMN_PREFIX + "ssid")
-    private String settingSsid;
-    @Column(name = COLUMN_PREFIX + "password")
-    private String settingValPassword;
-    @Column(name = COLUMN_PREFIX + "hostname")
-    private String settingHostname;
-    @Column(name = COLUMN_PREFIX + "sleep_time")
-    private Integer settingSleepTime;
-
-    @Column(name = COLUMN_PREFIX + "updated")
-    private boolean updated;
+    @Column(name = COLUMN_PREFIX + "key")
+    private String key;
+    @Column(name = COLUMN_PREFIX + "value")
+    private String value;
+    @Column(name = COLUMN_PREFIX + "update_timestamp")
+    private Instant updateTimestamp;
 
     @JsonIgnoreProperties("planterSettings")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

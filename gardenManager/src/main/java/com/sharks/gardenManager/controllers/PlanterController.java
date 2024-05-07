@@ -40,7 +40,9 @@ public class PlanterController {
     }
 
     @PostMapping("/settings_updates")
-    public List<SettingsDTO> getSettingsUpdates(@RequestBody CommandsRequesterDTO commandsRequesterDTO){
-        return settingsService.getAwaitingSettingsUpdates(commandsRequesterDTO);
+    public SettingsDTO getSettingsUpdates(@RequestBody CommandsRequesterWithTimestampDTO commandsRequesterWithTimestampDTO){
+        return settingsService.getAwaitingSettingsUpdates(commandsRequesterWithTimestampDTO);
     }
 }
+
+//TODO: add timestamp to PlanterController to take timestamp from planter

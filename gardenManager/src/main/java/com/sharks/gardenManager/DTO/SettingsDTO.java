@@ -1,9 +1,6 @@
 package com.sharks.gardenManager.DTO;
 
-import java.util.UUID;
+import java.time.Instant;
+import java.util.Map;
 
-public class SettingsDTO {
-    private UUID id;
-    private String settingKey;
-    private String settingValue;
-}
+public record SettingsDTO (Instant timestamp, Map<String, String> settings){}
