@@ -43,13 +43,13 @@ class SettingsServiceTest extends TestContainersBase {
         //zapisać je do planter repository i planter settings (DB)
 
         Planter planter = new Planter();
-        planter.setId(UUID.randomUUID());
+        planter.setId(null);
         planter.setName("planter_1");
         planter.setMacAddress("00:00:00:00:00:00");
         planter.setLastActivity(Instant.now().minusSeconds(6));
 
         PlanterSettings planterSettings = new PlanterSettings();
-        planterSettings.setId(UUID.randomUUID());
+        planterSettings.setId(null);
         planterSettings.setPlanter(planter);
         planterSettings.setKey("sleep_time");
         planterSettings.setValue("666");
@@ -71,6 +71,7 @@ class SettingsServiceTest extends TestContainersBase {
 
         //Then
         //Porównuję to co otrzymałem w When z instancjami, które stworzyłem w given
+        //SettingsDTO porównane z tym co utworzyłem w teście
 
     }
 }
