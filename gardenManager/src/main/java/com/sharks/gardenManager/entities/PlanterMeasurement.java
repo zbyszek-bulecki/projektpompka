@@ -7,6 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class PlanterMeasurement {
     @Column(name = COLUMN_PREFIX + "water_level")
     private double waterLevel;
     @Column(name = COLUMN_PREFIX + "created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @JsonIgnoreProperties("planterMeasurement")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

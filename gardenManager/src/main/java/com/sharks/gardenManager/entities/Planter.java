@@ -8,6 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -34,7 +35,7 @@ public class Planter {
     @Column(name = COLUMN_PREFIX + "mac_address")
     private String macAddress;
     @Column(name = COLUMN_PREFIX + "last_activity")
-    private LocalDateTime lastActivity;
+    private Instant lastActivity;
     @JsonIgnoreProperties("planter")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @OneToMany(mappedBy="planter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

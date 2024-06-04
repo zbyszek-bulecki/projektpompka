@@ -7,6 +7,7 @@ import com.sharks.gardenManager.entities.PlanterMeasurement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,7 +17,7 @@ public class PlanterWithLatestMeasurementDTO {
     private String name;
     private String macAddress;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime lastActivity;
+    private Instant lastActivity;
     private double soilMoisture;
     private double lightIntensity;
     private double temperature;

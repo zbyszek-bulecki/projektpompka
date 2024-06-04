@@ -6,6 +6,7 @@ import com.sharks.gardenManager.entities.PlanterMeasurement;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +19,7 @@ public class MeasurementsDTO {
     private double pressure;
     private double waterLevel;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     public static MeasurementsDTO mapToDTO(PlanterMeasurement planterMeasurement) {
         MeasurementsDTO measurementsDTO = new MeasurementsDTO();

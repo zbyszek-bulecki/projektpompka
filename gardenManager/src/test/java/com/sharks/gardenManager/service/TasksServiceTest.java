@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -96,7 +97,7 @@ class TasksServiceTest extends TestContainersBase {
         Planter planter = new Planter();
         planter.setName(planterTestInstance.name());
         planter.setMacAddress(planterTestInstance.macAddress());
-        planter.setLastActivity(LocalDateTime.now());
+        planter.setLastActivity(Instant.now());
         return planterRepository.save(planter);
     }
 
