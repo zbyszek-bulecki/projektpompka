@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { RestClientService } from './rest-client.service';
 import { Observable, catchError, map, of } from 'rxjs';
+import { HttpStatusCode } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +20,9 @@ export class UserInfoService{
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.isUserLogged().pipe(map(isLogged => {
-      console.log(isLogged);   
       if(!isLogged){
-        this.router.navigate(["/"]);
-      }  
-      console.log(isLogged);    
+        this.router.navigate(["/login"]);
+      }
       return isLogged;
     }));
   }
@@ -37,15 +36,10 @@ export class UserInfoService{
 
   requestUserInfo(): Observable<boolean>{
     return this.restClient.get('/auth/info').pipe(
-      map(data => {
-        if(data.status==200){
+      map(response => {
+        if(response.status==200){
           this.status = 'authenticated';
-          if(data.role && data.username){
-            this.userInfo = {
-              username: data.username,
-              role: data.role
-            }
-          }
+          this.setupUserData(response.body);
         }
         else{
           this.status = 'unauthenticated';
@@ -59,11 +53,30 @@ export class UserInfoService{
     )
   }
 
+  public login(credentials: {username: string, password: string}){
+    this.restClient.post('/auth/login', credentials).subscribe(response => {
+      if(response.status === HttpStatusCode.Ok){
+        this.setupUserData(response.body);
+      }
+    });
+  }
+
+  private setupUserData(data: any){
+    this.status = 'authenticated';
+    if(data.role && data.username){
+      this.userInfo = {
+        username: data.username,
+        role: data.role
+      }
+      this.router.navigate(["/"]);
+    }
+  }
+
   public logout(){
     this.status = 'unknown';
     this.userInfo = null;
     this.restClient.get('/auth/logout').subscribe(response => {
-      this.router.navigate(["/"]);
+      this.router.navigate(["/login"]);
     });
   }
 

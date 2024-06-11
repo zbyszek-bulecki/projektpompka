@@ -1,0 +1,18 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+task cleanDist(type: Delete) {
+  buildDir = 'dist'
+  delete "${buildDir}"
+}
+
+task ngBuild(type:Exec, dependsOn: cleanDist) {
+  workingDir = file('../webapp-frontend')
+  if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    commandLine 'cmd', '/c', 'ng', 'build', '--base-href', '/app/'
+  } else if (Os.isFamily(Os.FAMILY_MAC) || Os.isFamily(Os.FAMILY_UNIX)) {
+    commandLine 'ng', 'build', '--base-href', '/app/'
+  } else {
+    // Handle other operating systems if needed
+    throw new GradleException("Unsupported operating system")
+  }
+}

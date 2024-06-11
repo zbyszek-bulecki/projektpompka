@@ -1,0 +1,42 @@
+<div *ngIf="config.totalElements!=0">
+    <div class="row">
+        <div class="col-1">
+            <select class="form-select" [(ngModel)]="config.pageSize" convert-to-number (change)="onChangeSize()">
+                <option selected *ngFor="let size of getAllowedPageSizes()" [value]="size">{{size}}</option>
+            </select>
+        </div>
+        <div class="col-1">
+            <button class="btn" (click)="openPage(config.page)">
+                <i class="bi bi-bootstrap-reboot"></i>
+            </button>
+        </div>
+    </div>
+    <div *ngIf="table!=null">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th *ngFor="let headerColumn of table.header.getHeaders()">{{headerColumn}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of table.rows">
+                    <td *ngFor="let column of row.getColumns()">
+                        <a *ngIf="column.link && column.isLinkArray()" [routerLink]="column.link">{{column.value}}</a>
+                        <a *ngIf="column.link && column.isLinkText()" [routerLink]="[column.link]">{{column.value}}</a>
+                        <span *ngIf="!column.link">{{column.value}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" *ngFor="let i of pageButtons()" [ngClass]="{'active': i === config.page}" (click)="openPage(i)">
+                    <span class="page-link" href="#">{{i+1}}</span>
+                </li>
+            </ul>
+        </nav>
+    </div> 
+</div>
+<div *ngIf="config.totalElements===0">
+    <p>{{config.noElementsMessage}}</p>
+</div>

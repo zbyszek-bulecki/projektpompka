@@ -2,28 +2,24 @@ package com.sharks.gardenManager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sharks.gardenManager.DTO.CommandsRequesterDTO;
+import com.sharks.gardenManager.DTO.NextTaskDTO;
 import com.sharks.gardenManager.DTO.TaskDTO;
 import com.sharks.gardenManager.TestContainersBase;
 import com.sharks.gardenManager.entities.Planter;
-import com.sharks.gardenManager.entities.PlanterSettings;
 import com.sharks.gardenManager.entities.PlanterTask;
-import com.sharks.gardenManager.repositories.PlanterMeasurementRepository;
 import com.sharks.gardenManager.repositories.PlanterRepository;
 import com.sharks.gardenManager.repositories.PlanterSettingsRepository;
 import com.sharks.gardenManager.repositories.PlanterTaskRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @SpringBootTest
 @Transactional
@@ -44,7 +40,7 @@ class TasksServiceTest extends TestContainersBase {
         planterRepository.deleteAll();
         planterTaskRepository.deleteAll();
         planterSettingsRepository.deleteAll();
-        objectUnderTest = new TasksService(planterRepository, planterTaskRepository, planterSettingsRepository, objectMapper);
+        objectUnderTest = new TasksService(planterRepository, planterTaskRepository, objectMapper);
     }
 
     @Test
@@ -54,8 +50,6 @@ class TasksServiceTest extends TestContainersBase {
         CommandsRequesterDTO commandsRequesterDTO = prepareCommandsRequesterDTO(planterTestInstance);
         Planter planter = savePlanter(planterTestInstance);
 
-        saveSetting(planter,"ssid","ssid012345", true);
-        saveSetting(planter,"sleep","1000", false);
 
         saveTasks(planter, "watering", "{}", false);
         saveTasks(planter, "other", "{}", true);
@@ -64,8 +58,28 @@ class TasksServiceTest extends TestContainersBase {
         List<TaskDTO<Object>> tasks = objectUnderTest.getTasks(commandsRequesterDTO);
 
         //Then
-        Assertions.assertThat(tasks).hasSize(2);
-        Assertions.assertThat(tasks).extracting(TaskDTO::getCommand).containsExactlyInAnyOrder("watering", "update_settings");
+        Assertions.assertThat(tasks).hasSize(1);
+        Assertions.assertThat(tasks).extracting(TaskDTO::getCommand).containsExactlyInAnyOrder("watering");
+
+    }
+
+    @Test
+    void testNextTaskService(){
+        //Given
+        PlanterTestInstance planterTestInstance = new PlanterTestInstance("planter_1", "00:00:00:00:00:01");
+        CommandsRequesterDTO commandsRequesterDTO = prepareCommandsRequesterDTO(planterTestInstance);
+        Planter planter = savePlanter(planterTestInstance);
+
+
+        saveTasks(planter, "watering", "{}", false);
+        saveTasks(planter, "other", "{}", true);
+
+        //When
+        NextTaskDTO<Object> task = objectUnderTest.getNextTask(commandsRequesterDTO);
+
+        //Then
+        Assertions.assertThat(task.getAwaitingTasks()).isEqualTo(1);
+        Assertions.assertThat(task.getNextTask().getCommand()).isEqualTo("watering");
 
     }
 
@@ -78,24 +92,15 @@ class TasksServiceTest extends TestContainersBase {
         return planterTaskRepository.save(planterTask);
     }
 
-    private PlanterSettings saveSetting(Planter planter, String settingKey, String settingValue, boolean updated) {
-        PlanterSettings planterSettings = new PlanterSettings();
-        planterSettings.setPlanter(planter);
-        planterSettings.setSettingKey(settingKey);
-        planterSettings.setSettingValue(settingValue);
-        planterSettings.setUpdated(updated);
-        return planterSettingsRepository.save(planterSettings);
-    }
 
     private Planter savePlanter(PlanterTestInstance planterTestInstance) {
         Planter planter = new Planter();
         planter.setName(planterTestInstance.name());
         planter.setMacAddress(planterTestInstance.macAddress());
-        planter.setLastActivity(LocalDateTime.now());
+        planter.setLastActivity(Instant.now());
         return planterRepository.save(planter);
     }
 
-    @NotNull
     private static CommandsRequesterDTO prepareCommandsRequesterDTO(PlanterTestInstance planterTestInstance) {
         CommandsRequesterDTO commandsRequesterDTO = new CommandsRequesterDTO();
         commandsRequesterDTO.setName(planterTestInstance.name());

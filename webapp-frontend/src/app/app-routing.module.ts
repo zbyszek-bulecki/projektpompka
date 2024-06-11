@@ -5,11 +5,25 @@ import { DevicesListComponent } from './devices-list/devices-list.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { UserInfoService } from './services/user-info.service';
 import { AnonymousUserService } from './services/anonymous-user.service';
+import { HomePageComponent } from './home-page/home-page.component';
+import { DevicePreviewComponent } from './device-preview/device-preview.component';
+import { DeviceSettingsComponent } from './device-settings/device-settings.component';
 
 const routes: Routes = [
-  { path: 'device', component: DeviceStatusComponent, canActivate: [UserInfoService] },
-  { path: 'devices', component: DevicesListComponent, canActivate: [UserInfoService] },
-  { path: '**', component: LoginPageComponent, canActivate: [AnonymousUserService] }
+  { path: 'login', component: LoginPageComponent, canActivate: [AnonymousUserService] },
+  { path: '', component: HomePageComponent, canActivate: [UserInfoService], children: [
+    { path: 'device/:name/:mac', component: DevicePreviewComponent, children: [
+      { path: '', component: DeviceStatusComponent},
+      { path: 'status', component: DeviceStatusComponent},
+      { path: 'status/:page', component: DeviceStatusComponent},
+      { path: 'status/:page/:pageSize', component: DeviceStatusComponent},
+      { path: 'settings', component: DeviceSettingsComponent}
+    ]},
+    { path: '', component: DevicesListComponent},
+    { path: 'devices', component: DevicesListComponent},
+    { path: 'devices/:page', component: DevicesListComponent},
+    { path: 'devices/:page/:pageSize', component: DevicesListComponent}
+  ]}
 ];
 
 @NgModule({

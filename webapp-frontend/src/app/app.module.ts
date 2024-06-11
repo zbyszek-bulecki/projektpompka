@@ -9,6 +9,9 @@ import { DeviceStatusComponent } from './device-status/device-status.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { FormsModule } from '@angular/forms';
+import { PageableTableComponent } from './pageable-table/pageable-table.component';
+import { HomePageComponent } from './home-page/home-page.component';
+import { DevicePreviewComponent } from './device-preview/device-preview.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +19,9 @@ import { FormsModule } from '@angular/forms';
     NavigationBarComponent,
     DevicesListComponent,
     DeviceStatusComponent,
-    LoginPageComponent
+    PageableTableComponent,
+    HomePageComponent,
+    DevicePreviewComponent
   ],
   imports: [
     BrowserModule,

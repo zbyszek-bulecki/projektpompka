@@ -9,6 +9,7 @@ import com.sharks.gardenManager.repositories.PlanterRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -27,17 +28,18 @@ public class MeasurementService {
     @Transactional
     public void registerMeasurements(MeasurementsReportDTO measurementsDTO){
         Optional<Planter> optionalPlanter = planterRepository
-                .findByNameAndMacAddress(measurementsDTO.getName(), measurementsDTO.getMacAddress());
+                .findFirstByNameAndMacAddress(measurementsDTO.getName(), measurementsDTO.getMacAddress());
         if(optionalPlanter.isPresent()){
             saveMeasurementsForExistingPlanter(measurementsDTO, optionalPlanter.get());
         }
         else {
             saveMeasurementsForNewPlanter(measurementsDTO);
         }
+
     }
 
     private void saveMeasurementsForExistingPlanter(MeasurementsReportDTO measurementsDTO, Planter planter) {
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         planter.setLastActivity(now);
 
         PlanterMeasurement planterMeasurement = objectMapper.convertValue(measurementsDTO, PlanterMeasurement.class);
@@ -47,7 +49,7 @@ public class MeasurementService {
     }
 
     private void saveMeasurementsForNewPlanter(MeasurementsReportDTO measurementsDTO){
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
 
         Planter planter = new Planter();
         planter.setName(measurementsDTO.getName());

@@ -3,25 +3,26 @@ import { UserInfoService } from '../services/user-info.service';
 import { RestClientService } from '../services/rest-client.service';
 import { HttpStatusCode } from '@angular/common/http';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.css']
+  styleUrls: ['./login-page.component.css'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class LoginPageComponent implements OnInit {
 
   error: string | null = null;
 
-  credentials: {
-    username: string,
-    password: string
-  } = {
-    username: '',
-    password: ''
-  }
+  credentialsForm = new FormGroup({
+    username: new FormControl(''),
+    password: new FormControl('')
+  })
 
-  constructor(private userInfoService: UserInfoService, private restClient: RestClientService, private router: Router) { }
+  constructor(private userInfoService: UserInfoService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -31,10 +32,9 @@ export class LoginPageComponent implements OnInit {
   }
 
   performLoginAttempt(){
-    this.restClient.post('auth/login', this.credentials).subscribe(response => {
-      if(response.status === HttpStatusCode.Ok){
-        this.userInfoService.requestUserInfo().subscribe(data => this.router.navigate(["/devices"]));
-      }
+    this.userInfoService.login({
+      username : this.credentialsForm.value.username ?? '',
+      password : this.credentialsForm.value.password ?? ''
     });
   }
 }

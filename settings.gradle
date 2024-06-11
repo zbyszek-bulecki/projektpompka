@@ -1,3 +1,5 @@
 rootProject.name = 'GardenManager'
 
-include 'databaseMigration', 'planterSimulator', 'gardenManager', 'webapp'
+include ':gardenManager'
+include ':webapp-frontend'
+
