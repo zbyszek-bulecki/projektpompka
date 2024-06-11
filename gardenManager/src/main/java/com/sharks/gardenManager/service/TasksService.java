@@ -3,21 +3,16 @@ package com.sharks.gardenManager.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sharks.gardenManager.DTO.CommandsRequesterDTO;
+import com.sharks.gardenManager.DTO.CommandsRequestDTO;
 import com.sharks.gardenManager.DTO.NextTaskDTO;
 import com.sharks.gardenManager.DTO.TaskDTO;
 import com.sharks.gardenManager.entities.Planter;
-import com.sharks.gardenManager.entities.PlanterSettings;
-import com.sharks.gardenManager.entities.PlanterTask;
 import com.sharks.gardenManager.repositories.PlanterRepository;
-import com.sharks.gardenManager.repositories.PlanterSettingsRepository;
 import com.sharks.gardenManager.repositories.PlanterTaskRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 public class TasksService {
@@ -32,13 +27,13 @@ public class TasksService {
         this.objectMapper = objectMapper;
     }
 
-    public List<TaskDTO<Object>> getTasks(CommandsRequesterDTO commandsRequesterDTO) {
-        Optional<Planter> planter = findPlanter(commandsRequesterDTO);
+    public List<TaskDTO<Object>> getTasks(CommandsRequestDTO commandsRequestDTO) {
+        Optional<Planter> planter = findPlanter(commandsRequestDTO);
         return planter.map(this::getAwaitingTasks).orElseGet(List::of);
     }
 
-    public NextTaskDTO<Object> getNextTask(CommandsRequesterDTO commandsRequesterDTO) {
-        Optional<Planter> planter = findPlanter(commandsRequesterDTO);
+    public NextTaskDTO<Object> getNextTask(CommandsRequestDTO commandsRequestDTO) {
+        Optional<Planter> planter = findPlanter(commandsRequestDTO);
 
         if(planter.isEmpty()){
             return new NextTaskDTO<>(0, null);
@@ -52,9 +47,9 @@ public class TasksService {
         return new NextTaskDTO<>(awaitingTasks, nextTask);
     }
 
-    private Optional<Planter> findPlanter(CommandsRequesterDTO commandsRequesterDTO) {
+    private Optional<Planter> findPlanter(CommandsRequestDTO commandsRequestDTO) {
         return planterRepository
-                .findFirstByNameAndMacAddress(commandsRequesterDTO.getName(), commandsRequesterDTO.getMacAddress());
+                .findFirstByNameAndMacAddress(commandsRequestDTO.getName(), commandsRequestDTO.getMacAddress());
     }
 
     private List<TaskDTO<Object>> getAwaitingTasks(Planter planter) {

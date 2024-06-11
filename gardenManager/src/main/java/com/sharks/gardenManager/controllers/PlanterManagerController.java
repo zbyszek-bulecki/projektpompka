@@ -13,10 +13,10 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/manager/planters")
-public class PlantersManagerController {
+public class PlanterManagerController {
     private final PlantersPreviewService plantersPreviewService;
 
-    public PlantersManagerController(PlantersPreviewService plantersPreviewService) {
+    public PlanterManagerController(PlantersPreviewService plantersPreviewService) {
         this.plantersPreviewService = plantersPreviewService;
     }
 

@@ -1,7 +1,6 @@
 package com.sharks.gardenManager.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sharks.gardenManager.DTO.CommandsRequesterWithTimestampDTO;
+import com.sharks.gardenManager.DTO.SettingsRequestDTO;
 import com.sharks.gardenManager.DTO.SettingsDTO;
 import com.sharks.gardenManager.entities.Planter;
 import com.sharks.gardenManager.entities.PlanterSettings;
@@ -25,11 +24,11 @@ public class SettingsService {
         this.planterSettingsRepository = planterSettingsRepository;
     }
 
-    public SettingsDTO getAwaitingSettingsUpdates(CommandsRequesterWithTimestampDTO commandsRequesterWithTimestampDTO) {
+    public SettingsDTO getAwaitingSettingsUpdates(SettingsRequestDTO settingsRequestDTO) {
         Instant currentUpdateTimestamp = Instant.now();
-        Instant previousUpdateTimestamp = commandsRequesterWithTimestampDTO.getTimestamp() == null ? Instant.MIN : commandsRequesterWithTimestampDTO.getTimestamp();
+        Instant previousUpdateTimestamp = settingsRequestDTO.getTimestamp() == null ? Instant.MIN : settingsRequestDTO.getTimestamp();
         Optional<Planter> planter = planterRepository
-                .findFirstByNameAndMacAddress(commandsRequesterWithTimestampDTO.getName(), commandsRequesterWithTimestampDTO.getMacAddress());
+                .findFirstByNameAndMacAddress(settingsRequestDTO.getName(), settingsRequestDTO.getMacAddress());
         return planter.map(p -> prepareSettingsUpdates(p, currentUpdateTimestamp, previousUpdateTimestamp))
                 .orElseGet(() -> new SettingsDTO(currentUpdateTimestamp, Map.of()));
     }

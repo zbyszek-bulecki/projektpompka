@@ -7,17 +7,15 @@ import com.sharks.gardenManager.service.TasksService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/planter")
-public class PlanterController {
+public class PlanterDeviceController {
 
     private final MeasurementService measurementService;
     private final TasksService tasksService;
     private final SettingsService settingsService;
 
-    public PlanterController(MeasurementService measurementService, TasksService tasksService, SettingsService settingsService) {
+    public PlanterDeviceController(MeasurementService measurementService, TasksService tasksService, SettingsService settingsService) {
         this.measurementService = measurementService;
         this.tasksService = tasksService;
         this.settingsService = settingsService;
@@ -35,14 +33,12 @@ public class PlanterController {
     }
 
     @PostMapping("/next_task")
-    public NextTaskDTO<Object> getNextTask(@RequestBody CommandsRequesterDTO commandsRequesterDTO){
-        return tasksService.getNextTask(commandsRequesterDTO);
+    public NextTaskDTO<Object> getNextTask(@RequestBody CommandsRequestDTO commandsRequestDTO){
+        return tasksService.getNextTask(commandsRequestDTO);
     }
 
     @PostMapping("/settings_updates")
-    public SettingsDTO getSettingsUpdates(@RequestBody CommandsRequesterWithTimestampDTO commandsRequesterWithTimestampDTO){
-        return settingsService.getAwaitingSettingsUpdates(commandsRequesterWithTimestampDTO);
+    public SettingsDTO getSettingsUpdates(@RequestBody SettingsRequestDTO settingsRequestDTO){
+        return settingsService.getAwaitingSettingsUpdates(settingsRequestDTO);
     }
 }
-
-//TODO: add timestamp to PlanterController to take timestamp from planter
