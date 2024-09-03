@@ -40,4 +40,8 @@ public class PlanterSettings {
     @ManyToOne(targetEntity = Planter.class, fetch = FetchType.LAZY)
     @JoinColumn(name=COLUMN_PREFIX + Planter.COLUMN_PREFIX + "id", nullable=false)
     private Planter planter;
+
+    public boolean isNotDefault() {
+        return planter != null;
+    }
 }

@@ -37,7 +37,7 @@ public class PlanterDeviceController {
         return tasksService.getNextTask(commandsRequestDTO);
     }
 
-    @PostMapping("/settings_updates")
+    @PostMapping("/settings")
     public SettingsDTO getSettingsUpdates(@RequestBody SettingsRequestDTO settingsRequestDTO){
         return settingsService.getAwaitingSettingsUpdates(settingsRequestDTO);
     }

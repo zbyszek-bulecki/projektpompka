@@ -1,23 +1,24 @@
 package com.sharks.gardenManager.controllers;
 
-import com.sharks.gardenManager.DTO.MeasurementsDTO;
-import com.sharks.gardenManager.DTO.PageDTO;
-import com.sharks.gardenManager.DTO.PlanterDTO;
-import com.sharks.gardenManager.DTO.PlanterWithLatestMeasurementDTO;
+import com.sharks.gardenManager.DTO.*;
 import com.sharks.gardenManager.service.PlantersPreviewService;
+import com.sharks.gardenManager.service.SettingsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/manager/planters")
 public class PlanterManagerController {
     private final PlantersPreviewService plantersPreviewService;
+    private final SettingsService settingsService;
 
-    public PlanterManagerController(PlantersPreviewService plantersPreviewService) {
+    public PlanterManagerController(PlantersPreviewService plantersPreviewService, SettingsService settingsService) {
         this.plantersPreviewService = plantersPreviewService;
+        this.settingsService = settingsService;
     }
 
     @GetMapping
@@ -46,6 +47,18 @@ public class PlanterManagerController {
         catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{name}/{macAddress}/settings")
+    public List<SettingDTO> getSettingsListByPlanterId (@PathVariable String name, @PathVariable String macAddress) {
+        return settingsService.getSettings(name, macAddress);
+    }
+
+    @PostMapping("/{name}/{macAddress}/settings")
+    public ResponseEntity<Void> postSettingsListByPlanterId (@PathVariable String name, @PathVariable String macAddress, @RequestBody Map <String, SettingUpdateDTO> settingsUpdateDTO) {
+        if(settingsService.updateSettingsAndConfirmIfSuccessful(name, macAddress, settingsUpdateDTO))
+            return ResponseEntity.ok().build();
+        return ResponseEntity.notFound().build();
     }
 
 }

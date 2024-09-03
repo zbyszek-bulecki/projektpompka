@@ -16,5 +16,10 @@ public interface PlanterSettingsRepository extends JpaRepository<PlanterSettings
     List<PlanterSettings> findByPlanterAndUpdateTimestampGreaterThanEqual(Planter planter, Instant timestamp);
 
     @Query("SELECT s FROM PlanterSettings s WHERE (s.planter = :planter OR s.planter IS NULL) AND s.updateTimestamp >= :timestamp")
-    List<PlanterSettings> findByPlanterWithDefaultSettingsAndUpdateTimestamp(Planter planter, Instant timestamp);
+    List<PlanterSettings> findByPlanterAndUpdateTimestampIncludingDefaultSettings(Planter planter, Instant timestamp);
+
+    @Query("SELECT s FROM PlanterSettings s WHERE s.planter = :planter OR s.planter IS NULL")
+    List<PlanterSettings> findByPlanterIncludingDefaultSettings(Planter planter);
+
+    List<PlanterSettings> findByPlanter(Planter planter);
 }

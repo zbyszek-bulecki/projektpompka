@@ -1,7 +1,7 @@
 package com.sharks.gardenManager.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sharks.gardenManager.DTO.CommandsRequesterDTO;
+import com.sharks.gardenManager.DTO.CommandsRequestDTO;
 import com.sharks.gardenManager.DTO.NextTaskDTO;
 import com.sharks.gardenManager.DTO.TaskDTO;
 import com.sharks.gardenManager.TestContainersBase;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
@@ -47,7 +46,7 @@ class TasksServiceTest extends TestContainersBase {
     void testTaskService(){
         //Given
         PlanterTestInstance planterTestInstance = new PlanterTestInstance("planter_1", "00:00:00:00:00:01");
-        CommandsRequesterDTO commandsRequesterDTO = prepareCommandsRequesterDTO(planterTestInstance);
+        CommandsRequestDTO commandsRequestDTO = prepareCommandsRequesterDTO(planterTestInstance);
         Planter planter = savePlanter(planterTestInstance);
 
 
@@ -55,7 +54,7 @@ class TasksServiceTest extends TestContainersBase {
         saveTasks(planter, "other", "{}", true);
 
         //When
-        List<TaskDTO<Object>> tasks = objectUnderTest.getTasks(commandsRequesterDTO);
+        List<TaskDTO<Object>> tasks = objectUnderTest.getTasks(commandsRequestDTO);
 
         //Then
         Assertions.assertThat(tasks).hasSize(1);
@@ -67,7 +66,7 @@ class TasksServiceTest extends TestContainersBase {
     void testNextTaskService(){
         //Given
         PlanterTestInstance planterTestInstance = new PlanterTestInstance("planter_1", "00:00:00:00:00:01");
-        CommandsRequesterDTO commandsRequesterDTO = prepareCommandsRequesterDTO(planterTestInstance);
+        CommandsRequestDTO commandsRequestDTO = prepareCommandsRequesterDTO(planterTestInstance);
         Planter planter = savePlanter(planterTestInstance);
 
 
@@ -75,7 +74,7 @@ class TasksServiceTest extends TestContainersBase {
         saveTasks(planter, "other", "{}", true);
 
         //When
-        NextTaskDTO<Object> task = objectUnderTest.getNextTask(commandsRequesterDTO);
+        NextTaskDTO<Object> task = objectUnderTest.getNextTask(commandsRequestDTO);
 
         //Then
         Assertions.assertThat(task.getAwaitingTasks()).isEqualTo(1);
@@ -101,11 +100,11 @@ class TasksServiceTest extends TestContainersBase {
         return planterRepository.save(planter);
     }
 
-    private static CommandsRequesterDTO prepareCommandsRequesterDTO(PlanterTestInstance planterTestInstance) {
-        CommandsRequesterDTO commandsRequesterDTO = new CommandsRequesterDTO();
-        commandsRequesterDTO.setName(planterTestInstance.name());
-        commandsRequesterDTO.setMacAddress(planterTestInstance.macAddress());
-        return commandsRequesterDTO;
+    private static CommandsRequestDTO prepareCommandsRequesterDTO(PlanterTestInstance planterTestInstance) {
+        CommandsRequestDTO commandsRequestDTO = new CommandsRequestDTO();
+        commandsRequestDTO.setName(planterTestInstance.name());
+        commandsRequestDTO.setMacAddress(planterTestInstance.macAddress());
+        return commandsRequestDTO;
     }
 
 
