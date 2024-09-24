@@ -12,6 +12,7 @@ import com.sharks.gardenManager.repositories.PlanterSettingsRepository;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.groups.Tuple;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,38 +45,19 @@ class SettingsServiceTest extends TestContainersBase {
     @Test
     void testSettingsService_WhenFetchingAllSettings() {
 
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now().minusSeconds(6));
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        PlanterSettings planterSettings = new PlanterSettings();
-        planterSettings.setId(null);
-        planterSettings.setPlanter(planter);
-        planterSettings.setKey("sleep_time");
-        planterSettings.setValue("666");
-        planterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings planterSettings = getSettings(planter, "sleep_time", "666", Instant.now());
 
         planterSettingsRepository.save(planterSettings);
 
-        PlanterSettings defaultPlanterSettings = new PlanterSettings();
-        defaultPlanterSettings.setId(null);
-        defaultPlanterSettings.setPlanter(null);
-        defaultPlanterSettings.setKey("water_level");
-        defaultPlanterSettings.setValue("100");
-        defaultPlanterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings defaultPlanterSettings = getSettings(null, "water_level", "100", Instant.now());
 
         planterSettingsRepository.save(defaultPlanterSettings);
 
-        PlanterSettings ignoredDefaultPlanterSettings = new PlanterSettings();
-        ignoredDefaultPlanterSettings.setId(null);
-        ignoredDefaultPlanterSettings.setPlanter(null);
-        ignoredDefaultPlanterSettings.setKey("sleep_time");
-        ignoredDefaultPlanterSettings.setValue("500");
-        ignoredDefaultPlanterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings ignoredDefaultPlanterSettings = getSettings(null, "sleep_time", "500", Instant.now());
 
         planterSettingsRepository.save(ignoredDefaultPlanterSettings);
 
@@ -100,38 +82,19 @@ class SettingsServiceTest extends TestContainersBase {
     @Test
     void testSettingsService_WhenFetchingOnlyUpdates() {
 
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now().minusSeconds(6));
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        PlanterSettings oldPlanterSettings = new PlanterSettings();
-        oldPlanterSettings.setId(null);
-        oldPlanterSettings.setPlanter(planter);
-        oldPlanterSettings.setKey("sleep_time");
-        oldPlanterSettings.setValue("666");
-        oldPlanterSettings.setUpdateTimestamp(Instant.ofEpochSecond(1718033674));
+        PlanterSettings oldPlanterSettings = getSettings(planter, "sleep_time", "666", Instant.ofEpochSecond(1718033674));
 
         planterSettingsRepository.save(oldPlanterSettings);
 
-        PlanterSettings updatedPlanterSettings1 = new PlanterSettings();
-        updatedPlanterSettings1.setId(null);
-        updatedPlanterSettings1.setPlanter(planter);
-        updatedPlanterSettings1.setKey("water_level");
-        updatedPlanterSettings1.setValue("367");
-        updatedPlanterSettings1.setUpdateTimestamp(Instant.ofEpochSecond(1718033675));
+        PlanterSettings updatedPlanterSettings1 = getSettings(planter, "water_level", "367", Instant.ofEpochSecond(1718033675));
 
         planterSettingsRepository.save(updatedPlanterSettings1);
 
-        PlanterSettings updatedPlanterSettings2 = new PlanterSettings();
-        updatedPlanterSettings2.setId(null);
-        updatedPlanterSettings2.setPlanter(planter);
-        updatedPlanterSettings2.setKey("light_multiplier");
-        updatedPlanterSettings2.setValue("34");
-        updatedPlanterSettings2.setUpdateTimestamp(Instant.ofEpochSecond(1718033679));
+        PlanterSettings updatedPlanterSettings2 = getSettings(planter, "light_multiplier", "34", Instant.ofEpochSecond(1718033679));
 
         planterSettingsRepository.save(updatedPlanterSettings2);
 
@@ -157,29 +120,15 @@ class SettingsServiceTest extends TestContainersBase {
     void testSettingService_WhenFetchingUserSettings() {
 
         //Given
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now());
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        PlanterSettings planterSettings = new PlanterSettings();
-        planterSettings.setId(null);
-        planterSettings.setPlanter(planter);
-        planterSettings.setKey("sleep_time");
-        planterSettings.setValue("666");
-        planterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings planterSettings = getSettings(planter, "sleep_time", "666", Instant.now());
 
         planterSettingsRepository.save(planterSettings);
 
-        PlanterSettings defaultPlanterSettings = new PlanterSettings();
-        defaultPlanterSettings.setId(null);
-        defaultPlanterSettings.setPlanter(null);
-        defaultPlanterSettings.setKey("water_level");
-        defaultPlanterSettings.setValue("367");
-        defaultPlanterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings defaultPlanterSettings = getSettings(null, "water_level", "367", Instant.now());
 
         planterSettingsRepository.save(defaultPlanterSettings);
 
@@ -201,17 +150,11 @@ class SettingsServiceTest extends TestContainersBase {
 
         //Given
 
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now());
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        Map<String, SettingUpdateDTO> settingsToBeUpdated = Map.of(
-                "water_level", new SettingUpdateDTO("987", false)
-        );
+        Map<String, SettingUpdateDTO> settingsToBeUpdated = getSettingsToBeUpdated();
 
         //When
         boolean result = objectUnderTest.updateSettingsAndConfirmIfSuccessful(planter.getName(), planter.getMacAddress(), settingsToBeUpdated);
@@ -227,25 +170,23 @@ class SettingsServiceTest extends TestContainersBase {
                 .containsExactlyInAnyOrderElementsOf(expectedSettings);
     }
 
+    @NotNull
+    private static Map<String, SettingUpdateDTO> getSettingsToBeUpdated() {
+        return Map.of(
+                "water_level", new SettingUpdateDTO("987", false)
+        );
+    }
+
     @Test
     void testSettingService_WhenUpdatingExistingParameter() {
 
         //Given
 
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now());
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        PlanterSettings planterSettings = new PlanterSettings();
-        planterSettings.setId(null);
-        planterSettings.setPlanter(planter);
-        planterSettings.setKey("sleep_time");
-        planterSettings.setValue("666");
-        planterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings planterSettings = getSettings(planter, "sleep_time", "666", Instant.now());
 
         planterSettingsRepository.save(planterSettings);
 
@@ -272,20 +213,11 @@ class SettingsServiceTest extends TestContainersBase {
 
         //Given
 
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now());
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        PlanterSettings defaultPlanterSettings = new PlanterSettings();
-        defaultPlanterSettings.setId(null);
-        defaultPlanterSettings.setPlanter(null);
-        defaultPlanterSettings.setKey("water_level");
-        defaultPlanterSettings.setValue("367");
-        defaultPlanterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings defaultPlanterSettings = getSettings(null, "water_level", "367", Instant.now());
 
         planterSettingsRepository.save(defaultPlanterSettings);
 
@@ -313,29 +245,15 @@ class SettingsServiceTest extends TestContainersBase {
 
         //Given
 
-        Planter planter = new Planter();
-        planter.setId(null);
-        planter.setName("planter_1");
-        planter.setMacAddress("00:00:00:00:00:00");
-        planter.setLastActivity(Instant.now());
+        Planter planter = createNewPlanter();
 
         planterRepository.save(planter);
 
-        PlanterSettings planterSettings = new PlanterSettings();
-        planterSettings.setId(null);
-        planterSettings.setPlanter(planter);
-        planterSettings.setKey("water_level");
-        planterSettings.setValue("666");
-        planterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings planterSettings = getSettings(planter, "water_level", "666", Instant.now());
 
         planterSettingsRepository.save(planterSettings);
 
-        PlanterSettings defaultPlanterSettings = new PlanterSettings();
-        defaultPlanterSettings.setId(null);
-        defaultPlanterSettings.setPlanter(null);
-        defaultPlanterSettings.setKey("water_level");
-        defaultPlanterSettings.setValue("367");
-        defaultPlanterSettings.setUpdateTimestamp(Instant.now());
+        PlanterSettings defaultPlanterSettings = getSettings(null, "water_level", "367", Instant.now());
 
         planterSettingsRepository.save(defaultPlanterSettings);
 
@@ -351,4 +269,26 @@ class SettingsServiceTest extends TestContainersBase {
         Assertions.assertThat(actualSettings).extracting(s -> Tuple.tuple(s.key(), s.value(), s.isDefault()))
                 .containsExactlyInAnyOrder(Tuple.tuple(defaultPlanterSettings.getKey(), defaultPlanterSettings.getValue(), true));
     }
+
+    @NotNull
+    private static Planter createNewPlanter() {
+        Planter planter = new Planter();
+        planter.setId(null);
+        planter.setName("planter_1");
+        planter.setMacAddress("00:00:00:00:00:00");
+        planter.setLastActivity(Instant.now());
+        return planter;
+    }
+
+    @NotNull
+    private static PlanterSettings getSettings(Planter planter, String sleep_time, String value, Instant now) {
+        PlanterSettings planterSettings = new PlanterSettings();
+        planterSettings.setId(null);
+        planterSettings.setPlanter(planter);
+        planterSettings.setKey(sleep_time);
+        planterSettings.setValue(value);
+        planterSettings.setUpdateTimestamp(now);
+        return planterSettings;
+    }
+
 }
