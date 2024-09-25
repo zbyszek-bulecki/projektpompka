@@ -35,7 +35,7 @@ export class UserInfoService{
   }
 
   requestUserInfo(): Observable<boolean>{
-    return this.restClient.get('/auth/info').pipe(
+    return this.restClient.get<any>('/auth/info').pipe(
       map(response => {
         if(response.status==200){
           this.status = 'authenticated';
@@ -54,7 +54,7 @@ export class UserInfoService{
   }
 
   public login(credentials: {username: string, password: string}){
-    this.restClient.post('/auth/login', credentials).subscribe(response => {
+    this.restClient.post<any>('/auth/login', credentials).subscribe(response => {
       if(response.status === HttpStatusCode.Ok){
         this.setupUserData(response.body);
       }

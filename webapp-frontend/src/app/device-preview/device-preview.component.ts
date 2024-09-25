@@ -28,7 +28,7 @@ export class DevicePreviewComponent implements OnInit{
   }
 
   loadInfo(){  
-    this.restClient.get("/manager/planters/"+this.name+"/"+this.macAddress).subscribe(response =>{
+    this.restClient.get<any>("/manager/planters/"+this.name+"/"+this.macAddress).subscribe(response =>{
       this.lastActivity = response.body.lastActivity;
     });
   }

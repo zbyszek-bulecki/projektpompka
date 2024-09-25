@@ -40,7 +40,7 @@ export class DeviceStatusComponent implements OnInit {
 
   loadMeasurements(page: number, size: number){
     const requestParams = new HttpParams().set("page", page).set("size", size);    
-    this.restClient.get("/manager/planters/"+this.name+"/"+this.macAddress+"/measurements", requestParams).subscribe(response =>{
+    this.restClient.get<any>("/manager/planters/"+this.name+"/"+this.macAddress+"/measurements", requestParams).subscribe(response =>{
       this.setupTable(response.body.content);
       console.log(response);
       this.tableConfig.page = response.body.page;

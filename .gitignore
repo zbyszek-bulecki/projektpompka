@@ -95,3 +95,4 @@ hs_err_pid*
 
 dbdata
 gardenManager/src/main/resources/static/app/*
+planter/lib/*

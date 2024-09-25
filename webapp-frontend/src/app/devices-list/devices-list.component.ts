@@ -33,7 +33,7 @@ export class DevicesListComponent implements OnInit {
   
   loadDevices(page: number, size: number){
     const requestParams = new HttpParams().set("page", page).set("size", size);    
-    this.restClient.get("/manager/planters", requestParams).subscribe(response =>{
+    this.restClient.get<any>("/manager/planters", requestParams).subscribe(response =>{
       this.setupTable(response.body.content);
       this.tableConfig.page = response.body.page;
       this.tableConfig.totalElements = response.body.totalElements;   
