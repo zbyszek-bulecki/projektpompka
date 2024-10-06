@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { DevicePreviewDataService } from '../services/device-preview-data.service';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RestClientService } from '../services/rest-client.service';
 
@@ -16,11 +16,14 @@ export class DeviceSettingsComponent {
   constructor (
     private devicePreviewData: DevicePreviewDataService,
     private restClient: RestClientService,
+    private formBuilder : FormBuilder
   ) { }
 
   macAddress: string | null = null;
   name: string | null = null;
-  settingsList: SettingRow[] = [];
+  settingsList: SettingRow[] | null = [];
+
+  settingsForm : FormGroup | null = null;
 
   ngOnInit(): void {
     this.name = this.devicePreviewData.selected.name;
@@ -30,42 +33,51 @@ export class DeviceSettingsComponent {
 
   loadSettings() { 
     this.restClient.get<SettingRow[]>("/manager/planters/" + this.name + "/" + this.macAddress + "/settings").subscribe(response =>{
-      this.settingsList = response;
+      this.settingsList = response.body;
       console.log("test");
       console.log(this.settingsList);
+      this.createForm();
     });
   }
 
-  settingsForm = new FormGroup({
-    ssid: new FormControl(''),
-    password: new FormControl(''),
-    host: new FormControl (''),
-    sleepTime: new FormControl('')
-  })
+  // createFormControl(settingRow : SettingRow) {
+
+  // }
+
+  createForm() {
+    if(this.settingsList != null) {
+      const formGroup : Record <string, FormControl> = {};
+      this.settingsList.forEach(s => console.log(s as SettingRow));
+      this.settingsList.forEach(s => formGroup[s.getKey()] = new FormControl(s.getValue()));
+      this.settingsForm = this.formBuilder.group(formGroup);
+      console.log("Cokolwiek");
+    }
+    console.log("Coś innego");
+  }
+
 
   submitSettings() {
-    console.log(
-      this.settingsForm.value.ssid ?? '',
-      this.settingsForm.value.password ?? '',
-      this.settingsForm.value.host ?? '',
-      this.settingsForm.value.sleepTime ?? ''
-    )
+    if(this.settingsForm instanceof FormGroup)
+      {console.log(
+        this.settingsForm.value
+    );
   }
+    }
 
 }
 
 class SettingRow {
   constructor (
-    private key: String,
-    private value: String,
+    private key: string,
+    private value: string,
     private isDefault: Boolean
   ) { }
 
-  getKey(): String{
+  getKey(): string{
     return this.key;
   }
 
-  getValue(): String{
+  getValue(): string{
     return this.value;
   }
 
