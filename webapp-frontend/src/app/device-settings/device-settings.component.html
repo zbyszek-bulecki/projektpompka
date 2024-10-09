@@ -3,20 +3,23 @@
 <div *ngIf="settingsForm != null">
     <form [formGroup]="settingsForm" (submit)="submitSettings()">
         <p *ngFor="let setting of settingsList">
-            <label [for]="setting.getKey()">{{ setting.getKey() | titlecase }}</label>
+            <label [for]="setting.key">{{ setting.key | titlecase }}</label>
 
             <!-- Dynamiczne renderowanie pól input na podstawie fieldName -->
-            <input
-              [id]="setting.getKey()"
+            <input *ngIf="setting.value instanceof string"
+              [id]="setting.key"
               type="text"
-              [formControlName]="setting.getKey()"
-              [placeholder]="setting.getKey() | titlecase"
+              [formControlName]="setting.key"
+              [placeholder]="setting.key | titlecase"
             />
-        </p>
 
+            <input *ngIf="setting.value instanceof boolean"
+            [id]="setting.key"
+            type="checkbox"
+            [formControlName]="setting.key"
+            [placeholder]="setting.key | titlecase"
+          />
+        </p>
+        <input type = "submit" value = "submit">
     </form>
 </div>
-
-<!-- <div *ngFor="let row of settingsList">
-    {{row.getKey()}} : {{row.getValue()}} : {{row.getIsDefault()}}
-</div> -->
