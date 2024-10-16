@@ -57,15 +57,44 @@ export class DeviceSettingsComponent {
         formGroup[s.key + '_default'] = new FormControl(s.isDefault);
       });
       this.settingsForm = this.formBuilder.group(formGroup);
-      console.log('Cokolwiek');
     }
-    console.log('Coś innego');
   }
 
   submitSettings() {
     if (this.settingsForm instanceof FormGroup) {
-      console.log(this.settingsForm.value);
+      console.log(this.groupFields(this.settingsForm.value));
     }
+  }
+  groupFields(obj: any) {
+    return Object.entries(obj).reduce((acc: any, [key, value]) => {
+      // Sprawdź, czy pole to 'nazwa' czy 'nazwa_default'
+      if (key.endsWith('_default')) {
+        const baseKey = key.replace('_default', '');
+
+        // Jeśli grupa już istnieje, przypisz 'default'
+        if (!acc[baseKey]) {
+          acc[baseKey] = { value: null, resetToDefault: value };
+        } else {
+          acc[baseKey].resetToDefault = value;
+        }
+      } else {
+        // Pole zwykłe (bez _default)
+        const baseKey = key;
+
+        if (!acc[baseKey]) {
+          acc[baseKey] = { value: value, resetToDefault: null };
+        } else {
+          acc[baseKey].value = value;
+        }
+      }
+      return acc;
+    }, {});
+  }
+
+  getIsDefaultCheck(label: string): boolean {
+    if (label.endsWith('_default')) label = label.replace('_default', '');
+    console.log(this.settingsForm?.value[label + '_default']);
+    return this.settingsForm?.value[label + '_default'];
   }
 }
 

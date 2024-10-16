@@ -11,13 +11,15 @@
               type="text"
               [formControlName]="setting.key"
               [placeholder]="setting.key | titlecase"
-            />
+              [disabled]="getIsDefaultCheck(setting.key)"
+            /> <!-- Sprawdzić czemu nie działa blokowanie wartości pół z formualrza -->
 
             <input *ngIf="setting.value instanceof boolean"
             [id]="setting.key"
             type="checkbox"
             [formControlName]="setting.key"
             [placeholder]="setting.key | titlecase"
+            [checked]="getIsDefaultCheck(setting.key)"
           />
         </p>
         <input type = "submit" value = "submit">
