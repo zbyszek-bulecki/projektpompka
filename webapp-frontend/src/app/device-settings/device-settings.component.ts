@@ -53,11 +53,26 @@ export class DeviceSettingsComponent {
       const formGroup: Record<string, FormControl> = {};
       this.settingsList.forEach((s) => console.log(s as SettingRow));
       this.settingsList.forEach((s) => {
-        formGroup[s.key] = new FormControl(s.value);
-        formGroup[s.key + '_default'] = new FormControl(s.isDefault);
+        formGroup[s.key] = new FormControl({
+          value: s.value,
+          disabled: s.isDefault,
+        });
+        let checkboxName = s.key + '_default';
+        let checkbox = new FormControl(s.isDefault);
+        checkbox.valueChanges.subscribe((value) =>
+          this.updateForm(checkboxName.replace('_default', ''), value!)
+        );
+        formGroup[checkboxName] = checkbox;
       });
       this.settingsForm = this.formBuilder.group(formGroup);
     }
+  }
+
+  updateForm(checkboxName: string, value: boolean) {
+    if (value) this.settingsForm!.get(checkboxName)!.disable();
+    else this.settingsForm!.get(checkboxName)!.enable();
+    console.log(value);
+    console.log(checkboxName);
   }
 
   submitSettings() {
