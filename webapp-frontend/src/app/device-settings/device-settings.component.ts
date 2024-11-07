@@ -78,6 +78,17 @@ export class DeviceSettingsComponent {
   submitSettings() {
     if (this.settingsForm instanceof FormGroup) {
       console.log(this.groupFields(this.settingsForm.value));
+
+      this.restClient
+        .post<void>(
+          '/manager/planters/' +
+            this.name +
+            '/' +
+            this.macAddress +
+            '/settings',
+          this.groupFields(this.settingsForm.value)
+        )
+        .subscribe((response) => {});
     }
   }
   groupFields(obj: any) {

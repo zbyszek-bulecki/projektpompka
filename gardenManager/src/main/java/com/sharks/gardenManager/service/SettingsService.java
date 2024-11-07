@@ -76,7 +76,7 @@ public class SettingsService {
     }
 
     private PlanterSettings handleDuplicateSettings(PlanterSettings s1, PlanterSettings s2) {
-        return s1.getPlanter().getId() != null && s1.getValue() != null ? s1 : s2;
+        return s1.getPlanter() != null && s1.getPlanter().getId() != null && s1.getValue() != null ? s1 : s2;
     }
 
     public boolean updateSettingsAndConfirmIfSuccessful(String name, String macAddress, Map<String, SettingUpdateDTO> settingsUpdateDTO) {
