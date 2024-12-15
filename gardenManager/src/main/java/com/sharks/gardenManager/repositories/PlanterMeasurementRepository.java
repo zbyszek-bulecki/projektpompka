@@ -21,6 +21,12 @@ public interface PlanterMeasurementRepository extends JpaRepository<PlanterMeasu
             "WHERE m.createdAt=lm.date AND lm.planter IN :ids")
     List<PlanterMeasurement> findLastMeasurementForEachDevice(@Param("ids") List<Planter> idList);
 
+    @Query(value = "SELECT DISTINCT m FROM PlanterMeasurement m " +
+            "LEFT JOIN (SELECT MAX(ma.createdAt) date, ma.planter planter " +
+            "FROM PlanterMeasurement ma GROUP BY ma.planter) lm " +
+            "WHERE m.createdAt=lm.date AND lm.planter = :id")
+    PlanterMeasurement findLastMeasurement(@Param("id") Planter id);
+
     @Query(value = "SELECT COUNT(*) FROM PlanterMeasurement m " +
             "WHERE m.planter.name = :name AND m.planter.macAddress = :macAddress")
     long countAllByPlanterNameAndMacAddress(String name, String macAddress);

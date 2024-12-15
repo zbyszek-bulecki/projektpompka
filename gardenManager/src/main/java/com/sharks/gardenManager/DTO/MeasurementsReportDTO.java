@@ -8,9 +8,9 @@ import lombok.Data;
 public class MeasurementsReportDTO {
     private String name;
     private String macAddress;
-    private double soilMoisture;
-    private double lightIntensity;
-    private double temperature;
-    private double pressure;
-    private double waterLevel;
+    private Double soilMoisture;
+    private Double lightIntensity;
+    private Double temperature;
+    private Double pressure;
+    private Double waterLevel;
 }

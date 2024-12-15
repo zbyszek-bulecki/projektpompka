@@ -107,6 +107,5 @@ class TasksServiceTest extends TestContainersBase {
         return commandsRequestDTO;
     }
 
-
     private record PlanterTestInstance(String name, String macAddress){}
 }

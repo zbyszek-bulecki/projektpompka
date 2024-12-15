@@ -30,15 +30,15 @@ public class PlanterMeasurement {
     @Column(name = COLUMN_PREFIX + "id")
     private UUID id;
     @Column(name = COLUMN_PREFIX + "soil_moisture")
-    private double soilMoisture;
+    private Double soilMoisture;
     @Column(name = COLUMN_PREFIX + "light_intensity")
-    private double lightIntensity;
+    private Double lightIntensity;
     @Column(name = COLUMN_PREFIX + "temperature")
-    private double temperature;
+    private Double temperature;
     @Column(name = COLUMN_PREFIX + "pressure")
-    private double pressure;
+    private Double pressure;
     @Column(name = COLUMN_PREFIX + "water_level")
-    private double waterLevel;
+    private Double waterLevel;
     @Column(name = COLUMN_PREFIX + "created_at")
     private Instant createdAt;
 

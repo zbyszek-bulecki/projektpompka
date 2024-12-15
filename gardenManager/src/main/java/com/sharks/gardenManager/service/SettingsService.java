@@ -48,7 +48,7 @@ public class SettingsService {
         return new SettingsDTO(currentUpdateTimestamp, settings);
     }
 
-    private Map<String, PlanterSettings> getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(Planter planter, Instant previousUpdateTimestamp) {
+    public Map<String, PlanterSettings> getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(Planter planter, Instant previousUpdateTimestamp) {
         return fetchSettingsFromDb(planter, previousUpdateTimestamp)
                 .stream()
                 .collect(Collectors.toMap(PlanterSettings::getKey, ps -> ps, this::handleDuplicateSettings));
@@ -76,7 +76,17 @@ public class SettingsService {
     }
 
     private PlanterSettings handleDuplicateSettings(PlanterSettings s1, PlanterSettings s2) {
-        return s1.getPlanter() != null && s1.getPlanter().getId() != null && s1.getValue() != null ? s1 : s2;
+        PlanterSettings defaultSettings, notDefaultSettings;
+        if(s1.getPlanter() != null && s1.getPlanter().getId() != null) {
+            defaultSettings = s2;
+            notDefaultSettings = s1;
+        } else if(s2.getPlanter() != null && s2.getPlanter().getId() != null) {
+            defaultSettings = s1;
+            notDefaultSettings = s2;
+        } else {
+            throw new IllegalArgumentException("Unexpected settings case.");
+        }
+        return notDefaultSettings.getValue() != null ? notDefaultSettings : defaultSettings;
     }
 
     public boolean updateSettingsAndConfirmIfSuccessful(String name, String macAddress, Map<String, SettingUpdateDTO> settingsUpdateDTO) {

@@ -7,17 +7,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 public class MeasurementsDTO {
-    private double soilMoisture;
-    private double lightIntensity;
-    private double temperature;
-    private double pressure;
-    private double waterLevel;
+    private Double soilMoisture;
+    private Double lightIntensity;
+    private Double temperature;
+    private Double pressure;
+    private Double waterLevel;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Instant createdAt;
 

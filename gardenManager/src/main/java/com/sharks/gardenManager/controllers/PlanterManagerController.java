@@ -51,7 +51,8 @@ public class PlanterManagerController {
 
     @GetMapping("/{name}/{macAddress}/settings")
     public List<SettingDTO> getSettingsListByPlanterId (@PathVariable String name, @PathVariable String macAddress) {
-        return settingsService.getSettings(name, macAddress);
+        var test = settingsService.getSettings(name, macAddress);
+        return test;
     }
 
     @PostMapping("/{name}/{macAddress}/settings")

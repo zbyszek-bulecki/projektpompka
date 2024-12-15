@@ -20,11 +20,11 @@ public class PlanterWithLatestMeasurementDTO {
     private String macAddress;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Instant lastActivity;
-    private double soilMoisture;
-    private double lightIntensity;
-    private double temperature;
-    private double pressure;
-    private double waterLevel;
+    private Double soilMoisture;
+    private Double lightIntensity;
+    private Double temperature;
+    private Double pressure;
+    private Double waterLevel;
 
     public static PlanterWithLatestMeasurementDTO mapToDTO(Planter planter, PlanterMeasurement planterMeasurement) {
         PlanterWithLatestMeasurementDTO planterWithLatestMeasurementDTO = new PlanterWithLatestMeasurementDTO();
