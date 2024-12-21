@@ -12,7 +12,7 @@ import com.sharks.gardenManager.repositories.PlanterTaskRepository;
 import com.sharks.gardenManager.service.SettingsService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test;y
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
