@@ -1,21 +1,31 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http'
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Device } from 'src/domain/device';
 import { UserInfoService } from '../services/user-info.service';
 import { RestClientService } from '../services/rest-client.service';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { PageableTableComponent, PageableTableConfig, Table, TableColumn, TableHeader, TableRow } from '../pageable-table/pageable-table.component';
-import {Location} from '@angular/common'; 
+import {
+  PageableTableComponent,
+  PageableTableConfig,
+  Table,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '../pageable-table/pageable-table.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-devices-list',
   templateUrl: './devices-list.component.html',
-  styleUrls: ['./devices-list.component.css']
+  styleUrls: ['./devices-list.component.css'],
 })
 export class DevicesListComponent implements OnInit {
-
-  constructor(private route: ActivatedRoute, private userInfoService: UserInfoService, private restClient: RestClientService, private location: Location) {
-  }
+  constructor(
+    private route: ActivatedRoute,
+    private userInfoService: UserInfoService,
+    private restClient: RestClientService,
+    private location: Location
+  ) {}
 
   tableConfig = new PageableTableConfig();
   table: Table | null = null;
@@ -25,53 +35,86 @@ export class DevicesListComponent implements OnInit {
       const pageParam = params.get('page');
       const pageSizeParam = params.get('pageSize');
       this.tableConfig.page = pageParam ? +pageParam : this.tableConfig.page;
-      this.tableConfig.pageSize = pageSizeParam ? +pageSizeParam : PageableTableComponent.getDefaultPageSize();
-      this.tableConfig.noElementsMessage = "No devices found.";
+      this.tableConfig.pageSize = pageSizeParam
+        ? +pageSizeParam
+        : PageableTableComponent.getDefaultPageSize();
+      this.tableConfig.noElementsMessage = 'No devices found.';
       this.loadDevices(this.tableConfig.page, this.tableConfig.pageSize);
     });
   }
-  
-  loadDevices(page: number, size: number){
-    const requestParams = new HttpParams().set("page", page).set("size", size);    
-    this.restClient.get<any>("/manager/planters", requestParams).subscribe(response =>{
-      this.setupTable(response.body.content);
-      this.tableConfig.page = response.body.page;
-      this.tableConfig.totalElements = response.body.totalElements;   
-    });
+
+  loadDevices(page: number, size: number) {
+    const requestParams = new HttpParams().set('page', page).set('size', size);
+    this.restClient
+      .get<any>('/manager/planters', requestParams)
+      .subscribe((response) => {
+        this.setupTable(response.body.content);
+        this.tableConfig.page = response.body.page;
+        this.tableConfig.totalElements = response.body.totalElements;
+      });
   }
 
-  openPage(page: number){
+  openPage(page: number) {
     console.log(page);
     this.loadDevices(page, this.tableConfig.pageSize);
-    if(this.tableConfig.pageSize!=PageableTableComponent.getDefaultPageSize()){
-      this.location.replaceState(['/devices', page, this.tableConfig.pageSize].join("/"));      
-    }
-    else{
-      this.location.replaceState(['/devices', page].join("/"));
+    if (
+      this.tableConfig.pageSize != PageableTableComponent.getDefaultPageSize()
+    ) {
+      this.location.replaceState(
+        ['/devices', page, this.tableConfig.pageSize].join('/')
+      );
+    } else {
+      this.location.replaceState(['/devices', page].join('/'));
     }
   }
 
-  setupTable(devices: [
-    {
-        name: string,
-        macAddress: string,
-        lastActivity: string,
-        soilMoisture: number,
-        lightIntensity: number,
-        temperature: number,
-        pressure: number,
-        waterLevel: number
-    }
-  ]){
-    let header = TableHeader.of(["name","mac address","last activity","soil moisture","light intensity","temperature","pressure","water level",""]);
+  setupTable(
+    devices: [
+      {
+        name: string;
+        macAddress: string;
+        lastActivity: string | null;
+        soilMoisture: number | null;
+        lightIntensity: number | null;
+        temperature: number | null;
+        pressure: number | null;
+        waterLevel: number | null;
+      }
+    ]
+  ) {
+    let header = TableHeader.of([
+      'name',
+      'mac address',
+      'last activity',
+      'soil moisture',
+      'light intensity',
+      'temperature',
+      'pressure',
+      'water level',
+      '',
+    ]);
 
     let rows: TableRow[] = [];
-    for(let r of devices){
-      rows.push(TableRow.of([r.name, r.macAddress, r.lastActivity, r.soilMoisture.toString(), 
-        r.lightIntensity.toString(), r.temperature.toString(), r.pressure.toString(), 
-        r.waterLevel.toString(), {value: 'details', link:['/device',r.name,r.macAddress]}]));
+    for (let r of devices) {
+      rows.push(
+        TableRow.of([
+          r.name,
+          r.macAddress,
+          this.prepareValueForDisplay(r.lastActivity),
+          this.prepareValueForDisplay(r.soilMoisture),
+          this.prepareValueForDisplay(r.lightIntensity),
+          this.prepareValueForDisplay(r.temperature),
+          this.prepareValueForDisplay(r.pressure),
+          this.prepareValueForDisplay(r.waterLevel),
+          { value: 'details', link: ['/device', r.name, r.macAddress] },
+        ])
+      );
     }
-  
+
     this.table = new Table(header, rows);
+  }
+
+  prepareValueForDisplay(value: number | string | null) {
+    return value == null ? '-' : value.toString();
   }
 }
