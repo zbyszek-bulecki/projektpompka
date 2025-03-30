@@ -6,6 +6,7 @@ import com.sharks.gardenManager.DTO.SettingsRequestDTO;
 import com.sharks.gardenManager.DTO.SettingsDTO;
 import com.sharks.gardenManager.entities.Planter;
 import com.sharks.gardenManager.entities.PlanterSettings;
+import com.sharks.gardenManager.entities.PlanterSettingsWithDefaults;
 import com.sharks.gardenManager.repositories.PlanterRepository;
 import com.sharks.gardenManager.repositories.PlanterSettingsRepository;
 import org.springframework.stereotype.Service;
@@ -48,10 +49,11 @@ public class SettingsService {
         return new SettingsDTO(currentUpdateTimestamp, settings);
     }
 
-    public Map<String, PlanterSettings> getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(Planter planter, Instant previousUpdateTimestamp) {
+    public Map<String, PlanterSettingsWithDefaults> getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(Planter planter, Instant previousUpdateTimestamp) {
         return fetchSettingsFromDb(planter, previousUpdateTimestamp)
                 .stream()
-                .collect(Collectors.toMap(PlanterSettings::getKey, ps -> ps, this::handleDuplicateSettings));
+                .map(this::handleDefaultValues)
+                .collect(Collectors.toMap(PlanterSettingsWithDefaults::getKey, ps -> ps));
     }
 
     private Map<String, String> getSettingsMap(Planter planter, Instant previousUpdateTimestamp) {
@@ -69,24 +71,17 @@ public class SettingsService {
                 .toList();
     }
 
-    private List<PlanterSettings> fetchSettingsFromDb(Planter planter, Instant previousUpdateTimestamp) {
+    private List<PlanterSettingsWithDefaults> fetchSettingsFromDb(Planter planter, Instant previousUpdateTimestamp) {
         return previousUpdateTimestamp == null ?
                 planterSettingsRepository.findByPlanterIncludingDefaultSettings(planter) :
                 planterSettingsRepository.findByPlanterAndUpdateTimestampIncludingDefaultSettings(planter, previousUpdateTimestamp);
     }
 
-    private PlanterSettings handleDuplicateSettings(PlanterSettings s1, PlanterSettings s2) {
-        PlanterSettings defaultSettings, notDefaultSettings;
-        if(s1.getPlanter() != null && s1.getPlanter().getId() != null) {
-            defaultSettings = s2;
-            notDefaultSettings = s1;
-        } else if(s2.getPlanter() != null && s2.getPlanter().getId() != null) {
-            defaultSettings = s1;
-            notDefaultSettings = s2;
-        } else {
-            throw new IllegalArgumentException("Unexpected settings case.");
+    private PlanterSettingsWithDefaults handleDefaultValues(PlanterSettingsWithDefaults settings) {
+        if(settings.getValue() == null) {
+            settings.setValue(settings.getDefaultValue());
         }
-        return notDefaultSettings.getValue() != null ? notDefaultSettings : defaultSettings;
+        return settings;
     }
 
     public boolean updateSettingsAndConfirmIfSuccessful(String name, String macAddress, Map<String, SettingUpdateDTO> settingsUpdateDTO) {

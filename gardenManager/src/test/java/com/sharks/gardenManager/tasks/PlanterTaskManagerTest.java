@@ -1,10 +1,7 @@
 package com.sharks.gardenManager.tasks;
 
 import com.sharks.gardenManager.TestContainersBase;
-import com.sharks.gardenManager.entities.Planter;
-import com.sharks.gardenManager.entities.PlanterMeasurement;
-import com.sharks.gardenManager.entities.PlanterSettings;
-import com.sharks.gardenManager.entities.PlanterTask;
+import com.sharks.gardenManager.entities.*;
 import com.sharks.gardenManager.repositories.PlanterMeasurementRepository;
 import com.sharks.gardenManager.repositories.PlanterRepository;
 import com.sharks.gardenManager.repositories.PlanterSettingsRepository;
@@ -12,7 +9,7 @@ import com.sharks.gardenManager.repositories.PlanterTaskRepository;
 import com.sharks.gardenManager.service.SettingsService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;y
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -72,10 +69,7 @@ class PlanterTaskManagerTest extends TestContainersBase {
         measurementLatest.setCreatedAt(Instant.now());
         planterMeasurementRepository.save(measurementLatest);
 
-        var test1 = planterMeasurementRepository.findAll();
-        var test2 = planterMeasurementRepository.findLastMeasurement(planter);
-
-        Map<String, PlanterSettings> settingsMap = Map.of("watering_threshold", new PlanterSettings(null, "watering_threshold", "46", Instant.now(), planter));
+        Map<String, PlanterSettingsWithDefaults> settingsMap = Map.of("watering_threshold", new PlanterSettingsWithDefaults(null, "watering_threshold", "46", "50", Instant.now(), planter));
         SettingsService settingsService = Mockito.mock(SettingsService.class);
         when(settingsService.getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(planter, null)).thenReturn(settingsMap);
 

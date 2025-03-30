@@ -12,36 +12,38 @@
 #define REST_PUT 3
 #define REST_DELETE 4
 
-struct Response{    
+struct Response
+{
     int statusCode;
-    DynamicJsonDocument* payload;
-
+    DynamicJsonDocument *payload;
 };
 
-class RestClient{
-    const char* wifiSsid;
-    const char* wifiPassword;
+class RestClient
+{
+    const char *wifiSsid;
+    const char *wifiPassword;
     String serverUrl;
     bool useBasicAuthentiction;
-    char* username;
-    char* password;
+    char *username;
+    char *password;
 
     bool active = false;
 
     void logRequest(String url, Response response);
-    DynamicJsonDocument* deserializeResponsePayload(String rawPayload);
-    Response sendRequest(int method, String url, DynamicJsonDocument* body);
-    void addCredentials(HTTPClient& http);
-    
-    public:
-    RestClient(char* wifiSsid, char* wifiPassword, char* serverUrl);
-    void withBasicAuthentication(char* username, char* password);
+    DynamicJsonDocument *deserializeResponsePayload(String rawPayload);
+    Response sendRequest(int method, String url, DynamicJsonDocument *body);
+    void addCredentials(HTTPClient &http);
+
+public:
+    RestClient(char *wifiSsid, char *wifiPassword, char *serverUrl);
+    void withBasicAuthentication(char *username, char *password);
     void setup();
     Response sendGet(String url);
     Response sendDelete(String url);
-    Response sendPost(String url, DynamicJsonDocument* body);
-    Response sendPatch(String url, DynamicJsonDocument* body);
-    Response sendPut(String url, DynamicJsonDocument* body);
+    Response sendPost(String url, DynamicJsonDocument *body);
+    Response sendPatch(String url, DynamicJsonDocument *body);
+    Response sendPut(String url, DynamicJsonDocument *body);
     void flushResponse(Response response);
     void disconnect();
+    char *getMacAddress();
 };

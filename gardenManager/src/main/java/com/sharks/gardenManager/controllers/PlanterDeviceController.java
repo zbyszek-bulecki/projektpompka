@@ -4,9 +4,12 @@ import com.sharks.gardenManager.DTO.*;
 import com.sharks.gardenManager.service.MeasurementService;
 import com.sharks.gardenManager.service.SettingsService;
 import com.sharks.gardenManager.service.TasksService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+@Slf4j
 @RestController
 @RequestMapping("/planter")
 public class PlanterDeviceController {
@@ -28,6 +31,7 @@ public class PlanterDeviceController {
 
     @PostMapping("/measurements")
     public ResponseEntity<Void> consumeMeasurements(@RequestBody MeasurementsReportDTO measurementsDTO){
+        log.info("Measurement received *(^^)*");
         measurementService.registerMeasurements(measurementsDTO);
         return ResponseEntity.ok().build();
     }

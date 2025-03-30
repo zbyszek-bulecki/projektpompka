@@ -1,5 +1,6 @@
 package com.sharks.gardenManager.tasks;
 
+import com.sharks.gardenManager.entities.PlanterSettingsWithDefaults;
 import com.sharks.gardenManager.entities.PlanterTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,13 @@ public class WateringTaskLogic implements TaskLogic {
     public PlanterTask runLogic(PlanterStatusAndSettings planterStatusAndSettings, List<PlanterTask> planterTasks) {
         log.info("Hello from WateringTaskLogic");
         if(planterTasks.stream().map(PlanterTask::getTask).anyMatch(TASK_NAME::equals)) return null;
-        String wateringThresholdStr = planterStatusAndSettings.settings().get("watering_threshold").getValue();
+        PlanterSettingsWithDefaults planterSettingsWithDefaults = planterStatusAndSettings.settings().get("watering_threshold");
+        if(planterSettingsWithDefaults == null) {
+            log.info("{}",planterStatusAndSettings);
+            log.error("SETTINGS NOT FOUND!!");
+            return null;
+        }
+        String wateringThresholdStr = planterSettingsWithDefaults.getValue();
         if (wateringThresholdStr == null || planterStatusAndSettings.measurement() == null) return null;
         Double wateringThreshold = Double.valueOf(wateringThresholdStr);
         Double waterLevel = planterStatusAndSettings.measurement().getWaterLevel();

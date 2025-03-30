@@ -100,21 +100,17 @@ export class DevicesListComponent implements OnInit {
         TableRow.of([
           r.name,
           r.macAddress,
-          this.prepareValueForDisplay(r.lastActivity),
-          this.prepareValueForDisplay(r.soilMoisture),
-          this.prepareValueForDisplay(r.lightIntensity),
-          this.prepareValueForDisplay(r.temperature),
-          this.prepareValueForDisplay(r.pressure),
-          this.prepareValueForDisplay(r.waterLevel),
+          r.lastActivity,
+          r.soilMoisture,
+          r.lightIntensity,
+          r.temperature,
+          r.pressure,
+          r.waterLevel,
           { value: 'details', link: ['/device', r.name, r.macAddress] },
         ])
       );
     }
 
     this.table = new Table(header, rows);
-  }
-
-  prepareValueForDisplay(value: number | string | null) {
-    return value == null ? '-' : value.toString();
   }
 }

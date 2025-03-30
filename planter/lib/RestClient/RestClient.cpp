@@ -1,27 +1,32 @@
 #include "RestClient.h"
 
-RestClient::RestClient(char* ssid, char* password, char* serverUrl){
+RestClient::RestClient(char *ssid, char *password, char *serverUrl)
+{
     this->wifiSsid = ssid;
     this->wifiPassword = password;
     this->serverUrl = String(serverUrl);
     useBasicAuthentiction = false;
-    if(!this->serverUrl.startsWith("http://")){
+    if (!this->serverUrl.startsWith("http://"))
+    {
         this->serverUrl = String("http://") + this->serverUrl;
     }
 }
 
-void RestClient::withBasicAuthentication(char* username, char* password){
+void RestClient::withBasicAuthentication(char *username, char *password)
+{
     useBasicAuthentiction = true;
     this->username = username;
     this->password = password;
 }
 
-void RestClient::setup(){
+void RestClient::setup()
+{
     this->active = true;
 
     WiFi.begin(this->wifiSsid, this->wifiPassword);
     Serial.println("Connecting");
-    while(WiFi.status() != WL_CONNECTED) {
+    while (WiFi.status() != WL_CONNECTED)
+    {
         delay(500);
         Serial.print(".");
     }
@@ -30,119 +35,149 @@ void RestClient::setup(){
     Serial.println(WiFi.localIP());
 }
 
-Response RestClient::sendGet(String path){
+Response RestClient::sendGet(String path)
+{
     return sendRequest(REST_GET, path, NULL);
 }
 
-Response RestClient::sendDelete(String path){
+Response RestClient::sendDelete(String path)
+{
     return sendRequest(REST_DELETE, path, NULL);
 }
 
-Response RestClient::sendPost(String path, DynamicJsonDocument* body){
+Response RestClient::sendPost(String path, DynamicJsonDocument *body)
+{
     return sendRequest(REST_POST, path, body);
 }
 
-Response RestClient::sendPatch(String path, DynamicJsonDocument* body){
+Response RestClient::sendPatch(String path, DynamicJsonDocument *body)
+{
     return sendRequest(REST_PATCH, path, body);
 }
 
-Response RestClient::sendPut(String path, DynamicJsonDocument* body){
+Response RestClient::sendPut(String path, DynamicJsonDocument *body)
+{
     return sendRequest(REST_PUT, path, body);
 }
 
-Response RestClient::sendRequest(int method, String path, DynamicJsonDocument* body){
+Response RestClient::sendRequest(int method, String path, DynamicJsonDocument *body)
+{
     Response response;
-    if(WiFi.status()!=WL_CONNECTED && this->active){
+    if (WiFi.status() != WL_CONNECTED && this->active)
+    {
         this->setup();
     }
 
-    if(WiFi.status()==WL_CONNECTED){
+    if (WiFi.status() == WL_CONNECTED)
+    {
         HTTPClient http;
         String serverPath = this->serverUrl + path;
 
         http.begin(serverPath);
 
-        if(useBasicAuthentiction){
+        if (useBasicAuthentiction)
+        {
             addCredentials(http);
         }
-        
+
         String payload;
-        switch (method){
-            case REST_POST:
-            case REST_PATCH:
-            case REST_PUT:
-                http.addHeader("Content-Type", "application/json");
-                serializeJson(*body, payload);
-                Serial.println(payload);
-                break;            
-            default:
-                break;
+        switch (method)
+        {
+        case REST_POST:
+        case REST_PATCH:
+        case REST_PUT:
+            http.addHeader("Content-Type", "application/json");
+            serializeJson(*body, payload);
+            Serial.println(payload);
+            break;
+        default:
+            break;
         }
-        
-        switch (method){
-            case REST_GET:
-                response.statusCode = http.GET();
-                break;
-            case REST_DELETE:
-                response.statusCode = http.sendRequest("DELETE");
-                break;  
-            case REST_POST:
-                response.statusCode = http.POST(payload);
-                break; 
-            case REST_PATCH:
-                response.statusCode = http.PATCH(payload);
-                break; 
-            case REST_PUT:
-                response.statusCode = http.PUT(payload);
-                break;            
-            default:
-                break;
+
+        switch (method)
+        {
+        case REST_GET:
+            response.statusCode = http.GET();
+            break;
+        case REST_DELETE:
+            response.statusCode = http.sendRequest("DELETE");
+            break;
+        case REST_POST:
+            response.statusCode = http.POST(payload);
+            break;
+        case REST_PATCH:
+            response.statusCode = http.PATCH(payload);
+            break;
+        case REST_PUT:
+            response.statusCode = http.PUT(payload);
+            break;
+        default:
+            break;
         }
         String responseBody = http.getString();
         Serial.print(responseBody);
         response.payload = deserializeResponsePayload(responseBody);
-        
+
         logRequest(serverPath, response);
         http.end();
     }
-    else {
-      Serial.println("WiFi Disconnected");
+    else
+    {
+        Serial.println("WiFi Disconnected");
     }
     return response;
 }
 
-void RestClient::addCredentials(HTTPClient& http){
+void RestClient::addCredentials(HTTPClient &http)
+{
     String user = this->username;
     String credentials = base64::encode(user + ":" + this->password);
     http.addHeader("Authorization", "Basic " + credentials);
 }
 
-void RestClient::logRequest(String url, Response response){
+void RestClient::logRequest(String url, Response response)
+{
     Serial.print("HTTP Response [");
     Serial.print(url);
     Serial.print("]: ");
     Serial.println(response.statusCode);
 }
 
-DynamicJsonDocument* RestClient::deserializeResponsePayload(String rawResponse){
+DynamicJsonDocument *RestClient::deserializeResponsePayload(String rawResponse)
+{
     Serial.println(rawResponse);
-    DynamicJsonDocument* doc = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
-    if(rawResponse.length()==0){
+    DynamicJsonDocument *doc = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
+    if (rawResponse.length() == 0)
+    {
         return doc;
     }
     DeserializationError error = deserializeJson(*doc, rawResponse);
-    if(error){
+    if (error)
+    {
         Serial.print("Couldn't parse: ");
         Serial.println(rawResponse);
     }
     return doc;
 }
 
-void RestClient::flushResponse(Response response){
+void RestClient::flushResponse(Response response)
+{
     delete response.payload;
 }
 
-void RestClient::disconnect(){
+void RestClient::disconnect()
+{
     this->active = false;
     WiFi.disconnect();
+}
+
+char *RestClient::getMacAddress()
+{
+    static char macStr[18]; // "XX:XX:XX:XX:XX:XX\0"
+    uint8_t mac[6];
+
+    WiFi.macAddress(mac);
+    sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+    return macStr;
 }

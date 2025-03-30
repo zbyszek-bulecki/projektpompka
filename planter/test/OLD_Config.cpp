@@ -1,0 +1,141 @@
+#include "Config.h"
+
+#define KEY_BUFFOR 60
+#define PATH "/config/config.txt"
+
+Config::Config() {}
+Config::~Config()
+{
+	delete memory;
+}
+void Config::loadConfigFile()
+{
+	if (!SD.begin())
+	{
+		Serial.println("Card Mount Failed");
+		return;
+	}
+
+	File file = SD.open(PATH);
+	if (!file)
+		return;
+
+	memorySize = file.available();
+	memory = new char[memorySize + 1];
+	memset(memory, '\0', memorySize + 1);
+
+	for (int i = 0; i < memorySize; i++)
+	{
+		memory[i] = file.read();
+	}
+
+	file.close();
+}
+void Config::loadConfig()
+{
+	loadConfigFile();
+	parseConfigFile();
+}
+void Config::parseConfigFile()
+{
+	bool readingKey = true;
+	char *keyPointer = memory;
+	char *valuePointer = NULL;
+
+	for (int i = 0; i < memorySize; i++)
+	{
+		if (readingKey)
+		{
+			if (memory[i] == '=')
+			{
+				memory[i] = '\0';
+				readingKey = !readingKey;
+				valuePointer = memory + i + 1;
+			}
+			else if (memory[i] == '\0')
+			{
+				break;
+			}
+		}
+		else
+		{
+			if (memory[i] == '\n' || memory[i] == '\0')
+			{
+				readingKey = !readingKey;
+				memory[i] = '\0';
+				setValueBasedOnKey(keyPointer, valuePointer);
+				keyPointer = memory + i + 1;
+			}
+			if (memory[i] == '\r' && memory[i + 1] == '\n')
+			{
+				readingKey = !readingKey;
+				memory[i++] = '\0';
+				memory[i] = '\0';
+				setValueBasedOnKey(keyPointer, valuePointer);
+				keyPointer = memory + i + 1;
+			}
+		}
+	}
+}
+
+void Config::setValueBasedOnKey(char *key, char *valuePointer)
+{
+	configs.insert(std::pair<char *, char *>(key, valuePointer));
+}
+bool Config::has(char *key)
+{
+	return configs.find(key) == configs.end() ? false : true;
+}
+bool Config::has(const char *key)
+{
+	return has(strdup(key));
+}
+char *Config::get(char *key)
+{
+	return configs[key];
+}
+char *Config::get(const char *key)
+{
+	return get(strdup(key));
+}
+int Config::getInt(char *key)
+{
+	return atoi(get(key));
+}
+int Config::getInt(const char *key)
+{
+	return getInt(strdup(key));
+}
+float Config::getFloat(char *key)
+{
+	return atof(get(key));
+}
+float Config::getFloat(const char *key)
+{
+	return getFloat(strdup(key));
+}
+
+char *Config::configToChar()
+{
+	// Calculate the total length required for the char buffer
+	size_t totalLength = 0;
+	for (const auto &pair : configs)
+	{
+		totalLength += 1 + strlen(pair.second) + 2; // key + '=' + value + '\n'
+	}
+
+	// Allocate the char* buffer
+	char *result = new char[totalLength + 1]; // +1 for null terminator
+	result[0] = '\0';						  // Initialize to an empty string
+
+	// Populate the char* buffer with key=value\n format
+	for (const auto &pair : configs)
+	{
+		char keyStr[2] = {pair.first, '\0'}; // Convert key (char) to string
+		strcat(result, keyStr);
+		strcat(result, "=");
+		strcat(result, pair.second);
+		strcat(result, "\n");
+	}
+	return result;
+}

@@ -1,9 +1,6 @@
 package com.sharks.gardenManager.tasks;
 
-import com.sharks.gardenManager.entities.Planter;
-import com.sharks.gardenManager.entities.PlanterMeasurement;
-import com.sharks.gardenManager.entities.PlanterSettings;
-import com.sharks.gardenManager.entities.PlanterTask;
+import com.sharks.gardenManager.entities.*;
 import com.sharks.gardenManager.repositories.PlanterMeasurementRepository;
 import com.sharks.gardenManager.repositories.PlanterRepository;
 import com.sharks.gardenManager.repositories.PlanterTaskRepository;
@@ -38,7 +35,7 @@ public class PlanterTaskManager {
         this.taskLogicList = taskLogicList;
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 600000)
     void run() {
         log.info("Test of PlanterTaskManager");
         List<Planter> planterList = planterRepository.findAll();
@@ -49,7 +46,7 @@ public class PlanterTaskManager {
     }
 
     void processPlanterTasks(Planter planter) {
-        Map<String, PlanterSettings> settingsMap = settingsService.getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(planter, null);
+        Map<String, PlanterSettingsWithDefaults> settingsMap = settingsService.getSettingsFromDBIncludingDefaultsAndRemoveDuplicates(planter, null);
         PlanterMeasurement planterMeasurement = planterMeasurementRepository.findLastMeasurement(planter);
         PlanterStatusAndSettings planterStatusAndSettings = PlanterStatusAndSettings.of(planter, planterMeasurement, settingsMap);
         List<PlanterTask> planterTasks = planterTaskRepository.findByPlanterAndFinished(planter, false);
