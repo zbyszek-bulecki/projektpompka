@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -93,21 +94,29 @@ public class SettingsService {
         Planter planter = optionalPlanter.get();
         List<PlanterSettings> settings = planterSettingsRepository.findByPlanter(planter);
         List<String> existingSettings = settings.stream().map(PlanterSettings::getKey).toList();
-        Stream<PlanterSettings> updatedSettings = settings.stream()
+        settings.stream()
                 .filter(s -> settingsUpdateDTO.containsKey(s.getKey()))
-                .peek(s -> updateExistingSetting(settingsUpdateDTO, s));
-        Stream<PlanterSettings> newSettings = settingsUpdateDTO.entrySet().stream()
+                .map(s -> updateExistingSetting(settingsUpdateDTO, s))
+                .filter(Objects::nonNull)
+                .forEach(planterSettingsRepository::save);
+        settingsUpdateDTO.entrySet().stream()
                 .filter(s -> !existingSettings.contains(s.getKey()))
-                .map(s -> new PlanterSettings(null, s.getKey(), s.getValue().value(), Instant.now(), planter));
-        planterSettingsRepository.saveAll(Stream.concat(updatedSettings, newSettings).toList());
+                .map(s -> new PlanterSettings(null, s.getKey(), s.getValue().value(), Instant.now(), planter))
+                .forEach(planterSettingsRepository::save);
         return true;
     }
 
-    private void updateExistingSetting(Map<String, SettingUpdateDTO> settingsUpdateDTO, PlanterSettings setting) {
+    private PlanterSettings updateExistingSetting(Map<String, SettingUpdateDTO> settingsUpdateDTO, PlanterSettings setting) {
         if (settingsUpdateDTO.containsKey(setting.getKey())) {
             SettingUpdateDTO update = settingsUpdateDTO.get(setting.getKey());
-            setting.setValue(update.resetToDefault() ? null : update.value());
+            String newValue = update.resetToDefault() ? null : update.value();
+            if(!Objects.equals(newValue, setting.getValue())) {
+                setting.setValue(update.resetToDefault() ? null : update.value());
+                setting.setUpdateTimestamp(Instant.now());
+                return setting;
+            }
         }
+        return null;
     }
 
 }

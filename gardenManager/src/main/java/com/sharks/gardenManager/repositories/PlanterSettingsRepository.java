@@ -17,17 +17,25 @@ public interface PlanterSettingsRepository extends JpaRepository<PlanterSettings
     List<PlanterSettings> findByPlanterAndUpdateTimestampGreaterThanEqual(Planter planter, Instant timestamp);
 
     @Query("""
-            SELECT new com.sharks.gardenManager.entities.PlanterSettingsWithDefaults(s.id, s.key, s.value, d.value, s.updateTimestamp, s.planter)
-            FROM PlanterSettings d
-            JOIN PlanterSettings s ON s.planter = :planter AND s.updateTimestamp >= :timestamp AND s.key=d.key
-            WHERE d.planter IS NULL""")
+            SELECT new com.sharks.gardenManager.entities.PlanterSettingsWithDefaults(d.id, d.key, s.value, d.value, s.updateTimestamp, s.planter)
+                        FROM PlanterSettings d
+                        LEFT JOIN PlanterSettings s
+                            ON s.planter = :planter
+                            AND s.updateTimestamp >= :timestamp
+                            AND s.key=d.key
+                            AND s.value IS NOT NULL
+                        WHERE d.planter IS NULL AND (d.updateTimestamp >= :timestamp OR s.updateTimestamp >= :timestamp)
+           """)
     List<PlanterSettingsWithDefaults> findByPlanterAndUpdateTimestampIncludingDefaultSettings(Planter planter, Instant timestamp);
 
     @Query("""
-            SELECT new com.sharks.gardenManager.entities.PlanterSettingsWithDefaults(s.id, s.key, s.value, d.value, s.updateTimestamp, s.planter)
-            FROM PlanterSettings d
-            JOIN PlanterSettings s ON s.planter = :planter  AND s.key=d.key
-            WHERE d.planter IS NULL
+            SELECT new com.sharks.gardenManager.entities.PlanterSettingsWithDefaults(d.id, d.key, s.value, d.value, s.updateTimestamp, s.planter)
+                        FROM PlanterSettings d
+                        LEFT JOIN PlanterSettings s
+                            ON s.planter = :planter
+                            AND s.key=d.key
+                            AND s.value IS NOT NULL
+                        WHERE d.planter IS NULL
             """)
     List<PlanterSettingsWithDefaults> findByPlanterIncludingDefaultSettings(Planter planter);
 
