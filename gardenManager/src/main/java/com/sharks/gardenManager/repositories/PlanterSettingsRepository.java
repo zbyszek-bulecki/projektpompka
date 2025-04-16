@@ -21,9 +21,7 @@ public interface PlanterSettingsRepository extends JpaRepository<PlanterSettings
                         FROM PlanterSettings d
                         LEFT JOIN PlanterSettings s
                             ON s.planter = :planter
-                            AND s.updateTimestamp >= :timestamp
                             AND s.key=d.key
-                            AND s.value IS NOT NULL
                         WHERE d.planter IS NULL AND (d.updateTimestamp >= :timestamp OR s.updateTimestamp >= :timestamp)
            """)
     List<PlanterSettingsWithDefaults> findByPlanterAndUpdateTimestampIncludingDefaultSettings(Planter planter, Instant timestamp);
@@ -34,7 +32,6 @@ public interface PlanterSettingsRepository extends JpaRepository<PlanterSettings
                         LEFT JOIN PlanterSettings s
                             ON s.planter = :planter
                             AND s.key=d.key
-                            AND s.value IS NOT NULL
                         WHERE d.planter IS NULL
             """)
     List<PlanterSettingsWithDefaults> findByPlanterIncludingDefaultSettings(Planter planter);
