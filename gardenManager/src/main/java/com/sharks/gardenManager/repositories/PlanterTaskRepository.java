@@ -13,5 +13,6 @@ import java.util.UUID;
 public interface PlanterTaskRepository extends JpaRepository<PlanterTask, UUID> {
     int countByPlanterAndFinished(Planter planter, boolean finished);
     List<PlanterTask> findByPlanterAndFinished(Planter planter, boolean finished);
+    List<PlanterTask> findByPlanterAndTaskAndFinished(Planter planter, String task, boolean finished);
     Optional<PlanterTask> findFirstByPlanterAndFinished(Planter planter, boolean finished);
 }

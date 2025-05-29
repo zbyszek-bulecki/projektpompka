@@ -35,7 +35,7 @@ public class PlanterTaskManager {
         this.taskLogicList = taskLogicList;
     }
 
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 60000)
     void run() {
         log.info("Test of PlanterTaskManager");
         List<Planter> planterList = planterRepository.findAll();

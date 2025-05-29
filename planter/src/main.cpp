@@ -127,6 +127,8 @@ void fetchSettings(Config *config)
 
     JsonObject settings = (*response.payload)["settings"].as<JsonObject>();
 
+    // check why this works
+
     for (JsonPair kv : settings)
     {
       Serial.print("Key: ");
@@ -140,6 +142,99 @@ void fetchSettings(Config *config)
   else
   {
     Serial.print("Failed to send data with status code: ");
+    Serial.println(response.statusCode);
+  }
+  client->flushResponse(response);
+}
+
+bool executeWatering()
+{
+  Serial.println("**** START OF WATERING");
+  uint8_t relayPin = 26;
+  int wateringTime = 2000;
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH);
+
+  
+  digitalWrite(relayPin, LOW);
+  delay(wateringTime);
+  digitalWrite(relayPin, HIGH);
+  Serial.println("END OF WATERING ****");
+  return true;
+}
+
+void sendTaskConfirmationWithRetries(char *deviceName, const char *command)
+{
+  int retryCounter = 0;
+  int responseStatus = -1;
+
+  do
+  {
+    Serial.println("***********POST***********");
+    DynamicJsonDocument *request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
+
+    (*request)["name"] = deviceName;
+    (*request)["macAddress"] = client->getMacAddress();
+    (*request)["command"] = command;
+
+    Serial.println("Sending...");
+    Response response = client->sendPost("/planter/task_confirmation", request);
+    delete request;
+    responseStatus = response.statusCode;
+
+    if (responseStatus != 200)
+    {
+      sleep(3);
+    }
+
+  } while (responseStatus != 200 || retryCounter > 3);
+
+  if (responseStatus == 200)
+  {
+    Serial.println("Confirmation of task execution sent successfully to server!");
+  }
+  else
+  {
+    Serial.println("Failed to send confirmation of task execution to server!");
+  }
+}
+
+void fetchTasks(Config *config)
+{
+  DynamicJsonDocument *request = new DynamicJsonDocument(REST_PAYLOAD_SIZE);
+
+  (*request)["name"] = config->get("device_name");
+  (*request)["macAddress"] = client->getMacAddress();
+
+  Serial.println("Sending...");
+  Response response = client->sendPost("/planter/next_task", request);
+  delete request;
+
+  if (response.statusCode == 200)
+  {
+    int awaitingTasks = (*response.payload)["awaitingTasks"];
+
+    Serial.print("awaiting tasks: ");
+    Serial.println(awaitingTasks);
+    if (awaitingTasks <= 0)
+      return;
+
+    JsonObject nextTask = (*response.payload)["nextTask"].as<JsonObject>();
+    String taskNameStr = nextTask["command"].as<String>();
+    const char *taskName = taskNameStr.c_str();
+
+    Serial.print("task name: ");
+    Serial.println(taskName);
+
+    if (strcmp("Watering", taskName) == 0 && executeWatering())
+    {
+      executeWatering();
+      sendTaskConfirmationWithRetries(config->get("device_name"), taskName);
+    }
+  }
+  else
+  {
+    Serial.print("Failed to fetch tasks.");
     Serial.println(response.statusCode);
   }
   client->flushResponse(response);
@@ -194,11 +289,18 @@ void executeProcedure()
   client->setup();
   postMeasurements(config->get("device_name"), measurements);
   fetchSettings(config);
+  fetchTasks(config);
+
+  int sleepTime = config->getInt("sleep_time");
+  Serial.println("");
+  Serial.print("Sleep_time: ");
+  Serial.println(sleepTime);
 
   delete client;
   delete config;
 
-  sleep(5);
+  esp_sleep_enable_timer_wakeup(sleepTime * 1000000);
+  esp_deep_sleep_start();
 }
 
 void setup()

@@ -5,8 +5,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sharks.gardenManager.DTO.CommandsRequestDTO;
 import com.sharks.gardenManager.DTO.NextTaskDTO;
+import com.sharks.gardenManager.DTO.TaskConfirmationRequestDTO;
 import com.sharks.gardenManager.DTO.TaskDTO;
 import com.sharks.gardenManager.entities.Planter;
+import com.sharks.gardenManager.entities.PlanterTask;
 import com.sharks.gardenManager.repositories.PlanterRepository;
 import com.sharks.gardenManager.repositories.PlanterTaskRepository;
 import org.springframework.stereotype.Service;
@@ -28,12 +30,12 @@ public class TasksService {
     }
 
     public List<TaskDTO<Object>> getTasks(CommandsRequestDTO commandsRequestDTO) {
-        Optional<Planter> planter = findPlanter(commandsRequestDTO);
+        Optional<Planter> planter = findPlanter(commandsRequestDTO.getName(), commandsRequestDTO.getMacAddress());
         return planter.map(this::getAwaitingTasks).orElseGet(List::of);
     }
 
     public NextTaskDTO<Object> getNextTask(CommandsRequestDTO commandsRequestDTO) {
-        Optional<Planter> planter = findPlanter(commandsRequestDTO);
+        Optional<Planter> planter = findPlanter(commandsRequestDTO.getName(), commandsRequestDTO.getMacAddress());
 
         if(planter.isEmpty()){
             return new NextTaskDTO<>(0, null);
@@ -47,9 +49,25 @@ public class TasksService {
         return new NextTaskDTO<>(awaitingTasks, nextTask);
     }
 
-    private Optional<Planter> findPlanter(CommandsRequestDTO commandsRequestDTO) {
+    public boolean confirmTask (TaskConfirmationRequestDTO taskConfirmationRequestDTO) {
+        Optional<Planter> planter = findPlanter(taskConfirmationRequestDTO.getName(), taskConfirmationRequestDTO.getMacAddress());
+        if(planter.isEmpty()){
+            return false;
+        }
+        List<PlanterTask> planterTasks = planterTaskRepository.findByPlanterAndTaskAndFinished(planter.get(), taskConfirmationRequestDTO.getCommand(), false);
+        if (planterTasks.isEmpty()) {
+            return false;
+        }
+        planterTasks.forEach(task -> {
+            task.setFinished(true);
+            planterTaskRepository.save(task);
+        });
+        return true;
+    }
+
+    private Optional<Planter> findPlanter(String name, String macAddress) {
         return planterRepository
-                .findFirstByNameAndMacAddress(commandsRequestDTO.getName(), commandsRequestDTO.getMacAddress());
+                .findFirstByNameAndMacAddress(name, macAddress);
     }
 
     private List<TaskDTO<Object>> getAwaitingTasks(Planter planter) {

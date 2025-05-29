@@ -49,5 +49,6 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "iostream": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "/Users/zbyszekbulecki/Downloads/github/projektpompka/planter/lib/Adafruit_BusIO"
 }

@@ -40,6 +40,10 @@ public class PlanterDeviceController {
     public NextTaskDTO<Object> getNextTask(@RequestBody CommandsRequestDTO commandsRequestDTO){
         return tasksService.getNextTask(commandsRequestDTO);
     }
+    @PostMapping("task_confirmation")
+    public ResponseEntity<Void> confirmTask(@RequestBody TaskConfirmationRequestDTO taskConfirmationRequestDTO) {
+        return tasksService.confirmTask(taskConfirmationRequestDTO) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
 
     @PostMapping("/settings")
     public SettingsDTO getSettingsUpdates(@RequestBody SettingsRequestDTO settingsRequestDTO){
