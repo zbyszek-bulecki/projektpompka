@@ -181,3 +181,19 @@ char *RestClient::getMacAddress()
 
     return macStr;
 }
+
+Response RestClient::runWithRetries(int maxAttempts, unsigned int delay, std::function<Response()> request)
+{
+    Response response;
+    for (int attempt = 1; attempt <= maxAttempts; ++attempt)
+    {
+        response = request();
+        if (response.statusCode == 200)
+        {
+            return response;
+        }
+        Serial.println("Waiting for retry.. ");
+        sleep(delay);
+    }
+    return response;
+}

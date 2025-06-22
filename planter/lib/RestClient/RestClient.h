@@ -46,4 +46,5 @@ public:
     void flushResponse(Response response);
     void disconnect();
     char *getMacAddress();
+    static Response runWithRetries(int maxAttempts, unsigned int delay, std::function<Response()> request);
 };

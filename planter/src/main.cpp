@@ -88,7 +88,8 @@ void postMeasurements(char *deviceName, Measurements measurements)
   (*request)["waterLevel"] = measurements.waterLevel;
 
   Serial.println("Sending...");
-  Response response = client->sendPost("/planter/measurements", request);
+  Response response = RestClient::runWithRetries(3, 30, [&]()
+                                                 { return client->sendPost("/planter/measurements", request); });
   delete request;
 
   if (response.statusCode == 200)
@@ -115,7 +116,8 @@ void fetchSettings(Config *config)
   }
 
   Serial.println("Sending...");
-  Response response = client->sendPost("/planter/settings", request);
+  Response response = RestClient::runWithRetries(3, 30, [&]()
+                                                 { return client->sendPost("/planter/settings", request); });
   delete request;
 
   if (response.statusCode == 200)
@@ -155,7 +157,6 @@ bool executeWatering()
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, HIGH);
 
-  
   digitalWrite(relayPin, LOW);
   delay(wateringTime);
   digitalWrite(relayPin, HIGH);
@@ -178,7 +179,8 @@ void sendTaskConfirmationWithRetries(char *deviceName, const char *command)
     (*request)["command"] = command;
 
     Serial.println("Sending...");
-    Response response = client->sendPost("/planter/task_confirmation", request);
+    Response response = RestClient::runWithRetries(3, 30, [&]()
+                                                   { return client->sendPost("/planter/task_confirmation", request); });
     delete request;
     responseStatus = response.statusCode;
 
@@ -207,7 +209,8 @@ void fetchTasks(Config *config)
   (*request)["macAddress"] = client->getMacAddress();
 
   Serial.println("Sending...");
-  Response response = client->sendPost("/planter/next_task", request);
+  Response response = RestClient::runWithRetries(3, 30, [&]()
+                                                 { return client->sendPost("/planter/next_task", request); });
   delete request;
 
   if (response.statusCode == 200)
